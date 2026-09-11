@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Horarios · Consulta pública</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --guinda:#2C5F8A; --gris:#555555; --dorado:#D9A441;
+  --tinta:#1d1d1f; --papel:#ffffff; --lienzo:#eceae9; --linea:#e2dedc;
+  --ui:"Inter","Segoe UI",system-ui,-apple-system,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;height:100%;overflow:hidden}
+body{font-family:var(--ui);background:var(--lienzo);color:var(--tinta);font-size:14px;
+  display:flex;flex-direction:column}
+button,input,select{font-family:inherit;font-size:inherit}
+
+.barra{background:var(--papel);border-bottom:1px solid var(--linea);flex:none}
+.barra .reglas{height:5px;display:flex}
+.barra .reglas i{display:block;height:100%}
+.barra .reglas i:first-child{width:22%;background:var(--guinda)}
+.barra .reglas i:last-child{flex:1;background:var(--gris)}
+.barra .fila{display:flex;align-items:center;gap:16px;padding:11px 20px;flex-wrap:wrap}
+.marca{display:flex;flex-direction:column;line-height:1.2;min-width:0}
+.marca b{font-size:15px}
+.marca span{font-size:11px;color:var(--gris);text-transform:uppercase;letter-spacing:.09em}
+.controles{margin-left:auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.modos{display:flex;border:1px solid var(--linea);border-radius:7px;overflow:hidden}
+.modos button{border:0;background:var(--papel);padding:7px 14px;cursor:pointer;color:var(--gris);
+  font-size:12.5px;font-weight:500;white-space:nowrap}
+.modos button+button{border-left:1px solid var(--linea)}
+.modos button.on{background:var(--guinda);color:#fff}
+select.filtro,input.filtro{border:1px solid var(--linea);border-radius:7px;padding:7px 10px;
+  background:var(--papel);color:var(--tinta);min-width:150px;max-width:230px}
+
+.escena{flex:1;position:relative;perspective:1500px;overflow:hidden;
+  background:radial-gradient(ellipse at 50% 42%, #f7f6f5 0%, var(--lienzo) 62%, #ddd9d7 100%)}
+.pista{position:absolute;inset:0;transform-style:preserve-3d}
+.tarjeta{position:absolute;top:50%;left:50%;width:min(760px,86vw);
+  transform-origin:50% 50%;will-change:transform,opacity;
+  background:var(--papel);border:1px solid var(--linea);border-radius:12px;
+  box-shadow:0 18px 44px rgba(0,0,0,.16);overflow:hidden;cursor:pointer}
+.tarjeta.frente{cursor:default;box-shadow:0 26px 64px rgba(0,0,0,.22)}
+.tcab{display:flex;align-items:baseline;gap:10px;padding:12px 16px;border-bottom:1px solid var(--linea);
+  background:linear-gradient(var(--papel),#fbfaf9)}
+.tcab b{font-size:16px}
+.tcab span{font-size:11.5px;color:var(--gris);text-transform:uppercase;letter-spacing:.08em}
+.tcab .cuenta{margin-left:auto;font-size:11.5px;color:var(--gris)}
+.tcuerpo{max-height:min(58vh,520px);overflow:auto}
+table.rejilla{border-collapse:collapse;width:100%;font-size:11.5px;table-layout:fixed}
+table.rejilla th{position:sticky;top:0;z-index:2;background:#fbfaf9;color:var(--gris);
+  font-size:10px;text-transform:uppercase;letter-spacing:.07em;font-weight:700;
+  padding:7px 5px;border-bottom:1px solid var(--linea);white-space:nowrap}
+table.rejilla th.hora{width:74px;text-align:right;padding-right:9px}
+table.rejilla td{border-bottom:1px solid #f1efee;border-left:1px solid #f1efee;
+  padding:0;height:40px;vertical-align:top}
+table.rejilla td.hora{border-left:0;text-align:right;padding:5px 9px 0 4px;color:var(--gris);
+  font-size:10px;white-space:nowrap;background:#fdfcfc}
+.bloque{height:100%;padding:5px 7px;display:flex;flex-direction:column;gap:2px;justify-content:center}
+.bloque b{font-weight:600;font-size:11.5px;line-height:1.25}
+.bloque em{font-style:normal;font-size:10px;color:#4a4a4a;line-height:1.2}
+.bloque.receso{align-items:center;justify-content:center;background:#f4f2f1;color:var(--gris);
+  font-size:10px;text-transform:uppercase;letter-spacing:.1em}
+
+.nav{position:absolute;left:0;right:0;bottom:16px;display:flex;align-items:center;
+  justify-content:center;gap:14px;pointer-events:none}
+.nav button{pointer-events:auto;border:1px solid var(--linea);background:var(--papel);
+  width:38px;height:38px;border-radius:50%;cursor:pointer;color:var(--guinda);font-size:16px;
+  box-shadow:0 4px 14px rgba(0,0,0,.10);display:flex;align-items:center;justify-content:center}
+.nav button:hover{background:#f6f4f3}
+.nav .cual{pointer-events:none;background:rgba(255,255,255,.92);border:1px solid var(--linea);
+  border-radius:999px;padding:7px 16px;font-size:12px;color:var(--gris);max-width:52vw;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pista-vacia{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  text-align:center;padding:40px}
+.pista-vacia div{max-width:44ch;color:var(--gris);line-height:1.6}
+.pie{flex:none;background:var(--papel);border-top:1px solid var(--linea);padding:7px 20px;
+  font-size:11px;color:var(--gris);display:flex;gap:14px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+
+<div class="barra">
+  <div class="reglas"><i></i><i></i></div>
+  <div class="fila">
+    <div class="marca">
+      <b id="mInst">Horarios</b>
+      <span id="mSub">Consulta pública</span>
+    </div>
+    <div class="controles">
+      <div class="modos" id="modos">
+        <button data-modo="grupo" class="on">Por grupo</button>
+        <button data-modo="docente">Por docente</button>
+        <button data-modo="materia">Por materia</button>
+      </div>
+      <select class="filtro" id="selInst" style="display:none"></select>
+      <input class="filtro" id="buscar" placeholder="Buscar…" autocomplete="off">
+    </div>
+  </div>
+</div>
+
+<div class="escena" id="escena">
+  <div class="pista" id="pista"></div>
+  <div class="pista-vacia" id="vacio"><div>Cargando horarios…</div></div>
+  <div class="nav" id="nav" style="display:none">
+    <button id="anterior" title="Anterior" aria-label="Anterior">‹</button>
+    <span class="cual" id="cual"></span>
+    <button id="siguiente" title="Siguiente" aria-label="Siguiente">›</button>
+  </div>
+</div>
+
+<div class="pie">
+  <span>Gire la rueda del ratón o deslice para pasar de un horario a otro.</span>
+  <span id="pieFecha" style="margin-left:auto"></span>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://yjbvjprzfnetvrxqufwa.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlqYnZqcHJ6Zm5ldHZyeHF1ZndhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwNDE0NjQsImV4cCI6MjEwMTYxNzQ2NH0.jPhFqyuzaKkjKvIA8XRlZOM3CT6Pkv_P3DwsRGa0nUI';
+const CLAVE_PUBLICA = 'publico:horarios';
+
+const PALETA = ["#FBE0E4","#EAE0F5","#DFEFE4","#DEE9F7","#D9F1F3","#FCE7D6","#FAF4D2","#EDE9E7","#E4F0DA","#F5E1EC","#DDEAE9","#F6E6D2"];
+const norm = s => (s||"").toString().normalize("NFC").trim().toLowerCase().replace(/\s+/g," ");
+const esc = s => (s??"").toString().replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const cellKey = (d,b) => d + "|" + b;
+
+let datos = null;            // instantánea publicada
+let publicadas = [];         // [{institucion_id, nombre, valor, actualizado_en}]
+let modo = "grupo";
+let filtro = "";
+let tarjetas = [];           // {clave, titulo, sub, cuenta, html}
+let idx = 0, destino = 0, animando = false;
+
+function colorMateria(m){
+  const fijo = (datos && datos.coloresMateria || {})[norm(m)];
+  if (fijo) return fijo;
+  let h = 0; const s = norm(m);
+  for (let i=0;i<s.length;i++) h = (h*31 + s.charCodeAt(i)) >>> 0;
+  return PALETA[h % PALETA.length];
+}
+const grupoNombre = g => (g.semestre || "") + (g.grupo || "");
+const docNombre = id => {
+  const d = (datos.docentes || []).find(x => x.id === id);
+  return d ? d.nombre : "";
+};
+
+/* ---------------------------------------------------------------
+   Construcción de las tarjetas según el modo elegido
+   --------------------------------------------------------------- */
+function bloquesUnion(){
+  const s = new Set();
+  (datos.grupos || []).forEach(g => (g.bloques || []).forEach(b => s.add(b)));
+  return [...s].sort(compararBloques);
+}
+// Los bloques se ordenan por la hora en que empiezan, no alfabéticamente.
+function compararBloques(a, b){
+  const min = t => {
+    const m = /(\d{1,2}):(\d{2})/.exec(t || "");
+    return m ? Number(m[1])*60 + Number(m[2]) : 0;
+  };
+  return min(a) - min(b);
+}
+
+function celdaHTML(c, extra){
+  if (!c) return "";
+  if (c.tipo === "receso") return `<div class="bloque receso">Receso</div>`;
+  if (c.tipo === "texto") return `<div class="bloque"><b>${esc(c.texto || "")}</b></div>`;
+  const pie = extra ? extra(c) : (c.docenteId ? docNombre(c.docenteId) : "");
+  return `<div class="bloque" style="background:${colorMateria(c.materia)}">
+    <b>${esc(c.materia || "")}</b>${pie ? `<em>${esc(pie)}</em>` : ""}</div>`;
+}
+
+function tablaHTML(bloques, buscar, extra){
+  const dias = datos.dias || [];
+  let h = `<table class="rejilla"><thead><tr><th class="hora">Hora</th>` +
+    dias.map(d => `<th>${esc(d)}</th>`).join("") + `</tr></thead><tbody>`;
+  bloques.forEach(b => {
+    h += `<tr><td class="hora">${esc(b)}</td>` +
+      dias.map(d => `<td>${celdaHTML(buscar(d, b), extra)}</td>`).join("") + `</tr>`;
+  });
+  return h + `</tbody></table>`;
+}
+
+function armarTarjetas(){
+  tarjetas = [];
+  if (!datos) return;
+  const q = norm(filtro);
+
+  if (modo === "grupo"){
+    (datos.grupos || []).slice()
+      .sort((a,b) => grupoNombre(a).localeCompare(grupoNombre(b), "es", {numeric:true}))
+      .forEach(g => {
+        if (q && !norm(grupoNombre(g)).includes(q)) return;
+        const bloques = (g.bloques || []).slice().sort(compararBloques);
+        const n = Object.values(g.celdas || {}).filter(c => c && c.tipo === "clase").length;
+        tarjetas.push({
+          titulo: grupoNombre(g), sub: "Grupo", cuenta: n + " clase(s)",
+          html: tablaHTML(bloques, (d,b) => (g.celdas || {})[cellKey(d,b)])
+        });
+      });
+    return;
+  }
+
+  if (modo === "docente"){
+    // El horario de un docente se arma cruzando todos los grupos: en cada
+    // bloque se anota la materia y el grupo donde la imparte.
+    const bloques = bloquesUnion();
+    (datos.docentes || []).slice()
+      .sort((a,b) => (a.nombre||"").localeCompare(b.nombre||"", "es"))
+      .forEach(doc => {
+        if (q && !norm(doc.nombre).includes(q)) return;
+        const suyas = {};
+        let n = 0;
+        (datos.grupos || []).forEach(g => {
+          Object.entries(g.celdas || {}).forEach(([k, c]) => {
+            if (c && c.tipo === "clase" && c.docenteId === doc.id){
+              suyas[k] = Object.assign({}, c, {_grupo: grupoNombre(g)});
+              n++;
+            }
+          });
+        });
+        if (!n) return;
+        tarjetas.push({
+          titulo: doc.nombre, sub: doc.contratacion || "Docente", cuenta: n + " h semanales",
+          html: tablaHTML(bloques, (d,b) => suyas[cellKey(d,b)], c => c._grupo || "")
+        });
+      });
+    return;
+  }
+
+  // Por materia: en qué grupo y con qué docente se imparte cada bloque.
+  const bloques = bloquesUnion();
+  const porMateria = new Map();
+  (datos.grupos || []).forEach(g => {
+    Object.entries(g.celdas || {}).forEach(([k, c]) => {
+      if (!c || c.tipo !== "clase" || !c.materia) return;
+      const kk = norm(c.materia);
+      if (!porMateria.has(kk)) porMateria.set(kk, {nombre:c.materia, celdas:{}, n:0, grupos:new Set()});
+      const m = porMateria.get(kk);
+      m.celdas[k] = Object.assign({}, c, {_grupo: grupoNombre(g)});
+      m.grupos.add(grupoNombre(g));
+      m.n++;
+    });
+  });
+  [...porMateria.values()]
+    .sort((a,b) => a.nombre.localeCompare(b.nombre, "es"))
+    .forEach(m => {
+      if (q && !norm(m.nombre).includes(q)) return;
+      tarjetas.push({
+        titulo: m.nombre, sub: [...m.grupos].sort().join(" · ") || "Materia",
+        cuenta: m.n + " h semanales",
+        html: tablaHTML(bloques, (d,b) => m.celdas[cellKey(d,b)],
+                        c => [c._grupo, c.docenteId ? docNombre(c.docenteId) : ""].filter(Boolean).join(" · "))
+      });
+    });
+}
+
+/* ---------------------------------------------------------------
+   Carrusel: las tarjetas giran alrededor del eje vertical
+   --------------------------------------------------------------- */
+function pintarPista(){
+  const pista = document.getElementById("pista");
+  pista.innerHTML = tarjetas.map((t, i) => `
+    <article class="tarjeta" data-i="${i}">
+      <div class="tcab"><b>${esc(t.titulo)}</b><span>${esc(t.sub)}</span>
+        <span class="cuenta">${esc(t.cuenta)}</span></div>
+      <div class="tcuerpo">${t.html}</div>
+    </article>`).join("");
+  pista.querySelectorAll(".tarjeta").forEach(el => {
+    el.onclick = () => { const i = Number(el.dataset.i); if (i !== Math.round(idx)) irA(i); };
+  });
+  document.getElementById("vacio").style.display = tarjetas.length ? "none" : "flex";
+  if (!tarjetas.length){
+    document.getElementById("vacio").innerHTML =
+      `<div>No hay horarios que coincidan con la búsqueda.</div>`;
+  }
+  document.getElementById("nav").style.display = tarjetas.length > 1 ? "flex" : "none";
+  idx = destino = Math.min(Math.max(0, Math.round(idx)), Math.max(0, tarjetas.length - 1));
+  colocar();
+}
+
+function colocar(){
+  const pista = document.getElementById("pista");
+  const anchoCarta = pista.querySelector(".tarjeta");
+  const paso = anchoCarta ? Math.min(anchoCarta.offsetWidth * 0.52, 330) : 300;
+  pista.querySelectorAll(".tarjeta").forEach(el => {
+    const o = Number(el.dataset.i) - idx;
+    const a = Math.abs(o);
+    const frente = a < 0.5;
+    el.classList.toggle("frente", frente);
+    const x = o * paso;
+    const z = -a * 300;
+    const giro = Math.max(-52, Math.min(52, -o * 34));
+    const escala = Math.max(0.66, 1 - a * 0.1);
+    el.style.transform =
+      `translate(-50%,-50%) translateX(${x}px) translateZ(${z}px) rotateY(${giro}deg) scale(${escala})`;
+    el.style.opacity = a > 3.2 ? 0 : Math.max(0, 1 - a * 0.24);
+    el.style.zIndex = String(100 - Math.round(a * 10));
+    el.style.pointerEvents = a > 3.2 ? "none" : "auto";
+    // Sólo la tarjeta del frente deja desplazar su tabla por dentro.
+    const cuerpo = el.querySelector(".tcuerpo");
+    if (cuerpo) cuerpo.style.overflow = frente ? "auto" : "hidden";
+  });
+  const t = tarjetas[Math.round(idx)];
+  const cual = document.getElementById("cual");
+  if (cual) cual.textContent = t ? `${Math.round(idx)+1} de ${tarjetas.length} · ${t.titulo}` : "";
+}
+
+function animar(){
+  if (animando) return;
+  animando = true;
+  const paso = () => {
+    const d = destino - idx;
+    if (Math.abs(d) < 0.002){ idx = destino; colocar(); animando = false; return; }
+    idx += d * 0.18;          // acercamiento suave, sin rebote
+    colocar();
+    requestAnimationFrame(paso);
+  };
+  requestAnimationFrame(paso);
+}
+function irA(i){
+  destino = Math.min(Math.max(0, i), Math.max(0, tarjetas.length - 1));
+  animar();
+}
+
+/* La rueda acumula: un giro corto pasa una tarjeta, uno largo varias. */
+let acumulado = 0, ultimoGiro = 0;
+document.getElementById("escena").addEventListener("wheel", e => {
+  if (tarjetas.length < 2) return;
+  // Dentro de la tabla del frente, la rueda desplaza la tabla si aún puede.
+  const cuerpo = e.target.closest && e.target.closest(".tarjeta.frente .tcuerpo");
+  if (cuerpo){
+    const abajo = cuerpo.scrollTop + cuerpo.clientHeight < cuerpo.scrollHeight - 1;
+    const arriba = cuerpo.scrollTop > 0;
+    if ((e.deltaY > 0 && abajo) || (e.deltaY < 0 && arriba)) return;
+  }
+  e.preventDefault();
+  const ahora = Date.now();
+  if (ahora - ultimoGiro > 220) acumulado = 0;
+  ultimoGiro = ahora;
+  acumulado += e.deltaY + e.deltaX;
+  const umbral = 60;
+  while (Math.abs(acumulado) >= umbral){
+    irA(destino + (acumulado > 0 ? 1 : -1));
+    acumulado -= (acumulado > 0 ? umbral : -umbral);
+  }
+}, {passive:false});
+
+document.addEventListener("keydown", e => {
+  if (e.target.matches("input,select")) return;
+  if (e.key === "ArrowRight" || e.key === "PageDown") irA(destino + 1);
+  if (e.key === "ArrowLeft"  || e.key === "PageUp")   irA(destino - 1);
+  if (e.key === "Home") irA(0);
+  if (e.key === "End") irA(tarjetas.length - 1);
+});
+document.getElementById("anterior").onclick  = () => irA(destino - 1);
+document.getElementById("siguiente").onclick = () => irA(destino + 1);
+
+// Deslizar con el dedo o arrastrando: mismo recorrido que la rueda.
+let x0 = null;
+const escena = document.getElementById("escena");
+escena.addEventListener("pointerdown", e => { x0 = e.clientX; });
+escena.addEventListener("pointerup", e => {
+  if (x0 === null) return;
+  const d = e.clientX - x0; x0 = null;
+  if (Math.abs(d) > 45) irA(destino + (d < 0 ? 1 : -1));
+});
+window.addEventListener("resize", colocar);
+
+/* ---------------------------------------------------------------
+   Datos
+   --------------------------------------------------------------- */
+document.querySelectorAll("#modos button").forEach(b => b.onclick = () => {
+  modo = b.dataset.modo;
+  document.querySelectorAll("#modos button").forEach(x => x.classList.toggle("on", x === b));
+  document.getElementById("buscar").placeholder =
+    modo === "grupo" ? "Buscar grupo…" : modo === "docente" ? "Buscar docente…" : "Buscar materia…";
+  idx = destino = 0;
+  armarTarjetas(); pintarPista();
+});
+let tBuscar;
+document.getElementById("buscar").oninput = e => {
+  clearTimeout(tBuscar);
+  tBuscar = setTimeout(() => {
+    filtro = e.target.value;
+    idx = destino = 0;
+    armarTarjetas(); pintarPista();
+  }, 160);
+};
+
+function mostrarInstitucion(fila){
+  try { datos = JSON.parse(fila.valor); }
+  catch(err){ datos = null; }
+  if (!datos){ document.getElementById("vacio").innerHTML = `<div>El horario publicado no se pudo leer.</div>`; return; }
+  document.getElementById("mInst").textContent = fila.nombre || datos.institucion || "Horarios";
+  document.getElementById("mSub").textContent =
+    [datos.programa, datos.periodo].filter(Boolean).join(" · ") || "Consulta pública";
+  const f = fila.actualizado_en || datos.guardadoEn;
+  document.getElementById("pieFecha").textContent = f
+    ? "Publicado el " + new Date(f).toLocaleDateString("es-MX", {day:"numeric", month:"long", year:"numeric"})
+    : "";
+  idx = destino = 0;
+  armarTarjetas(); pintarPista();
+}
+
+(async function arrancar(){
+  const vacio = document.getElementById("vacio");
+  if (!window.supabase || !window.supabase.createClient){
+    vacio.innerHTML = `<div>No se pudo cargar la conexión. Revise su acceso a internet y recargue.</div>`;
+    return;
+  }
+  const cliente = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+  const {data, error} = await cliente.from('horarios_almacen')
+    .select('institucion_id, valor, actualizado_en').eq('clave', CLAVE_PUBLICA);
+  if (error){
+    vacio.innerHTML = `<div>No fue posible leer los horarios publicados.<br><small>${esc(error.message)}</small></div>`;
+    return;
+  }
+  publicadas = (data || []).filter(r => r.valor);
+  if (!publicadas.length){
+    vacio.innerHTML = `<div>Todavía no hay horarios publicados. La escuela los publica desde DIRIN, en «Páginas públicas».</div>`;
+    return;
+  }
+  // Los nombres de institución son un adorno: si no se pueden leer, se sigue.
+  try {
+    const inst = await cliente.from('instituciones').select('id, nombre');
+    const mapa = new Map((inst.data || []).map(i => [i.id, i.nombre]));
+    publicadas.forEach(r => { r.nombre = mapa.get(r.institucion_id) || ""; });
+  } catch(err){}
+
+  const pedida = new URLSearchParams(location.search).get('inst');
+  let elegida = publicadas.find(r => r.institucion_id === pedida) || publicadas[0];
+
+  if (publicadas.length > 1){
+    const sel = document.getElementById("selInst");
+    sel.style.display = "";
+    sel.innerHTML = publicadas.map(r =>
+      `<option value="${esc(r.institucion_id)}">${esc(r.nombre || r.institucion_id)}</option>`).join("");
+    sel.value = elegida.institucion_id;
+    sel.onchange = () => {
+      const r = publicadas.find(x => x.institucion_id === sel.value);
+      if (r) mostrarInstitucion(r);
+    };
+  }
+  mostrarInstitucion(elegida);
+})();
+</script>
+</body>
+</html>
