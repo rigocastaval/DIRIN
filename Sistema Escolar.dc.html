@@ -41,34 +41,18 @@ a:hover{color:var(--color-accent-700)}
 </sc-if>
 
 <sc-if value="{{ noSesion }}" hint-placeholder-val="{{ true }}">
-<div style="position:fixed;inset:0;z-index:100;display:grid;grid-template-columns:1fr 520px;background:var(--color-bg)">
-  <div style="background:var(--color-accent);color:var(--color-bg);padding:48px 56px;display:flex;flex-direction:column;justify-content:space-between">
-    <div style="display:flex;align-items:center;gap:14px">
-      <div style="width:42px;height:42px;border:2px solid var(--color-bg);display:flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-weight:800;font-size:13px;letter-spacing:.04em">DI</div>
-      <div style="line-height:1.15">
-        <div style="font-family:var(--font-heading);font-weight:800;font-size:15px;letter-spacing:.06em">DIRIN</div>
-        <div style="font-size:11px;text-transform:uppercase;letter-spacing:.1em;opacity:.75">Dirección Inteligente</div>
-      </div>
-    </div>
-    <div>
-      <div style="height:2px;background:var(--color-bg);opacity:.45;margin-bottom:28px;max-width:640px"></div>
-      <h1 style="margin:0;font-size:56px;line-height:1.04;color:var(--color-bg);max-width:12ch">Toda la operación académica.</h1>
-      <p style="margin:24px 0 0;font-size:16px;line-height:1.55;max-width:44ch;text-wrap:pretty">Dirección, admisión, coordinaciones, control escolar e indicadores. Cada perfil accede únicamente a los módulos que le corresponden.</p>
-    </div>
-    <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.75">Ciclo 2026-A · {{ estadoConexion }}</div>
-  </div>
-
-  <div style="background:var(--color-bg);padding:48px 48px;display:flex;flex-direction:column;justify-content:center;border-left:2px solid var(--color-divider)">
+<div style="position:relative;z-index:100;min-height:100vh;display:flex;flex-direction:row-reverse;flex-wrap:wrap;align-items:stretch;background:var(--color-bg)">
+  <div style="flex:1 1 340px;min-width:min(100%,320px);max-width:520px;background:var(--color-bg);padding:clamp(28px,5vw,48px);display:flex;flex-direction:column;justify-content:center;border-left:2px solid var(--color-divider)">
     <h6 style="margin:0 0 6px">Acceso</h6>
     <h2 style="margin:0 0 28px">Iniciar sesión</h2>
 
     <div class="field" style="margin-bottom:16px">
       <label>Correo institucional</label>
-      <input class="input" value="{{ usuario }}" onChange="{{ setUsuario }}" onKeyDown="{{ enterEntrar }}" placeholder="nombre.apellido@universidad.mx" style="width:100%">
+      <input class="input" type="email" inputmode="email" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" value="{{ usuario }}" onChange="{{ setUsuario }}" onKeyDown="{{ enterEntrar }}" placeholder="nombre.apellido@universidad.mx" style="width:100%;font-size:16px">
     </div>
     <div class="field" style="margin-bottom:20px">
       <label>Contraseña</label>
-      <input class="input" type="password" value="{{ clave }}" onChange="{{ setClave }}" onKeyDown="{{ enterEntrar }}" placeholder="••••••••" style="width:100%">
+      <input class="input" type="password" autocomplete="current-password" value="{{ clave }}" onChange="{{ setClave }}" onKeyDown="{{ enterEntrar }}" placeholder="••••••••" style="width:100%;font-size:16px">
     </div>
 
     <sc-if value="{{ hayError }}" hint-placeholder-val="{{ false }}">
@@ -89,6 +73,22 @@ a:hover{color:var(--color-accent-700)}
       <span class="text-muted" style="font-size:12px">{{ estadoConexion }}</span>
     </div>
     <p class="text-muted" style="font-size:12.5px;margin:0;line-height:1.5">El acceso es exclusivo para cuentas autorizadas por la Dirección. No hay registro abierto: si necesitas una cuenta, solicítala al administrador del sistema.</p>
+  </div>
+
+  <div style="flex:1 1 420px;background:var(--color-accent);color:var(--color-bg);padding:clamp(28px,4vw,48px) clamp(24px,5vw,56px);display:flex;flex-direction:column;justify-content:space-between;gap:28px">
+    <div style="display:flex;align-items:center;gap:14px">
+      <div style="width:42px;height:42px;border:2px solid var(--color-bg);display:flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-weight:800;font-size:13px;letter-spacing:.04em">DI</div>
+      <div style="line-height:1.15">
+        <div style="font-family:var(--font-heading);font-weight:800;font-size:15px;letter-spacing:.06em">DIRIN</div>
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:.1em;opacity:.75">Dirección Inteligente</div>
+      </div>
+    </div>
+    <div>
+      <div style="height:2px;background:var(--color-bg);opacity:.45;margin-bottom:28px;max-width:640px"></div>
+      <h1 style="margin:0;font-size:clamp(34px,6vw,56px);line-height:1.04;color:var(--color-bg);max-width:12ch">Toda la operación académica.</h1>
+      <p style="margin:24px 0 0;font-size:16px;line-height:1.55;max-width:44ch;text-wrap:pretty">Dirección, admisión, coordinaciones, control escolar e indicadores. Cada perfil accede únicamente a los módulos que le corresponden.</p>
+    </div>
+    <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.75">Ciclo 2026-A · {{ estadoConexion }}</div>
   </div>
 </div>
 </sc-if>
@@ -192,6 +192,11 @@ a:hover{color:var(--color-accent-700)}
 
   <div style="background:var(--color-bg);border-bottom:2px solid var(--color-divider);position:sticky;top:0;z-index:40">
     <div style="display:flex;align-items:center;flex-wrap:wrap;row-gap:10px;gap:16px;padding:12px 24px">
+      <button onClick="{{ alternarMenu }}" title="{{ tituloMenu }}" aria-label="{{ tituloMenu }}" style="border:1.5px solid var(--color-divider);background:none;cursor:pointer;color:var(--color-text);width:34px;height:34px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;flex:none;padding:0" style-hover="{{ hoverMenu }}">
+        <span style="height:2px;width:16px;background:currentColor;display:block"></span>
+        <span style="height:2px;width:16px;background:currentColor;display:block"></span>
+        <span style="height:2px;width:16px;background:currentColor;display:block"></span>
+      </button>
       <div style="display:flex;align-items:center;gap:11px;cursor:pointer;flex:none" onClick="{{ irInicio }}">
         <div style="width:34px;height:34px;background:var(--color-accent);color:var(--color-bg);display:flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-weight:800;font-size:12px;letter-spacing:.04em">DI</div>
         <div style="line-height:1.15">
@@ -246,12 +251,6 @@ a:hover{color:var(--color-accent-700)}
         <span style="width:8px;height:8px;background:{{ colorConexion }};flex:none"></span>
         <span class="text-muted" style="font-size:11px;text-transform:uppercase;letter-spacing:.08em">{{ modoTexto }}</span>
       </div>
-
-      <button onClick="{{ alternarMenu }}" title="{{ tituloMenu }}" aria-label="{{ tituloMenu }}" style="border:1.5px solid var(--color-divider);background:none;cursor:pointer;color:var(--color-text);width:34px;height:34px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;flex:none;padding:0" style-hover="{{ hoverMenu }}">
-        <span style="height:2px;width:16px;background:currentColor;display:block"></span>
-        <span style="height:2px;width:16px;background:currentColor;display:block"></span>
-        <span style="height:2px;width:16px;background:currentColor;display:block"></span>
-      </button>
 
       <div style="display:flex;align-items:center;gap:10px">
         <span style="font-size:11px;text-transform:uppercase;letter-spacing:.09em" class="text-muted">Ciclo</span>
@@ -473,15 +472,46 @@ a:hover{color:var(--color-accent-700)}
               <sc-if value="{{ hayInstituciones }}" hint-placeholder-val="{{ false }}">
                 <div style="padding:14px 18px;display:flex;flex-direction:column;gap:10px">
                   <sc-for list="{{ instituciones }}" as="i" hint-placeholder-count="3">
-                    <div style="display:flex;align-items:center;gap:12px;padding-bottom:10px;border-bottom:1px solid var(--color-divider)">
-                      <div style="flex:1;min-width:0;line-height:1.25">
-                        <div style="font-family:var(--font-heading);font-weight:800;font-size:14px">{{ i.nombre }}</div>
-                        <div class="text-muted" style="font-size:12px">{{ i.detalle }}</div>
+                    <div style="padding-bottom:10px;border-bottom:1px solid var(--color-divider)">
+                      <div style="display:flex;align-items:center;gap:12px">
+                        <div style="flex:1;min-width:0;line-height:1.25">
+                          <div style="font-family:var(--font-heading);font-weight:800;font-size:14px">{{ i.nombre }}</div>
+                          <div class="text-muted" style="font-size:12px">{{ i.detalle }}</div>
+                        </div>
+                        <button class="btn {{ i.clase }}" style="font-size:12px;flex:none" onClick="{{ i.entrar }}">{{ i.accion }}</button>
+                        <sc-if value="{{ i.puedeProgramas }}" hint-placeholder-val="{{ false }}">
+                          <button class="btn btn-ghost" style="font-size:12px;flex:none" onClick="{{ i.abrirAltaPrograma }}" title="Dar de alta un programa académico en esta institución">+ Agregar programa</button>
+                        </sc-if>
+                        <sc-if value="{{ esSuperAdmin }}" hint-placeholder-val="{{ false }}">
+                          <button class="btn btn-ghost" style="font-size:12px;flex:none" onClick="{{ i.editar }}" title="Editar nombre, colores, logo y programas">Editar</button>
+                          <button class="btn btn-ghost" style="font-size:12px;flex:none;color:{{ i.colorBorrar }}" onClick="{{ i.borrar }}">{{ i.textoBorrar }}</button>
+                        </sc-if>
                       </div>
-                      <button class="btn {{ i.clase }}" style="font-size:12px;flex:none" onClick="{{ i.entrar }}">{{ i.accion }}</button>
-                      <sc-if value="{{ esSuperAdmin }}" hint-placeholder-val="{{ false }}">
-                        <button class="btn btn-ghost" style="font-size:12px;flex:none" onClick="{{ i.editar }}" title="Editar nombre, colores, logo y programas">Editar</button>
-                        <button class="btn btn-ghost" style="font-size:12px;flex:none;color:{{ i.colorBorrar }}" onClick="{{ i.borrar }}">{{ i.textoBorrar }}</button>
+
+                      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;padding-left:2px">
+                        <sc-for list="{{ i.programas }}" as="p" hint-placeholder-count="2">
+                          <span style="display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--color-divider);padding:3px 4px 3px 9px;font-size:12px">
+                            <span>{{ p.nombre }}</span>
+                            <sc-if value="{{ p.puedeQuitar }}" hint-placeholder-val="{{ false }}">
+                              <button onClick="{{ p.quitar }}" title="Quitar este programa de la institución" style="border:0;background:none;cursor:pointer;font-size:13px;line-height:1;padding:2px 4px;color:var(--color-neutral-600)" style-hover="color:var(--color-accent)">×</button>
+                            </sc-if>
+                          </span>
+                        </sc-for>
+                        <sc-if value="{{ i.sinProgramas }}" hint-placeholder-val="{{ false }}">
+                          <span class="text-muted" style="font-size:12px">Sin programas académicos · agrégalos para que aparezcan en el Programador de horarios</span>
+                        </sc-if>
+                      </div>
+
+                      <sc-if value="{{ i.altaAbierta }}" hint-placeholder-val="{{ false }}">
+                        <div style="display:flex;gap:8px;align-items:center;margin-top:10px;background:var(--color-neutral-100);padding:10px">
+                          <input class="input" value="{{ i.nuevoPrograma }}" onChange="{{ i.setNuevoPrograma }}" onKeyDown="{{ i.enterPrograma }}" placeholder="Licenciatura en Medicina General" style="flex:1;min-width:0">
+                          <button class="btn btn-primary" style="flex:none;font-size:12px" onClick="{{ i.guardarPrograma }}">Agregar</button>
+                          <button class="btn btn-ghost" style="flex:none;font-size:12px" onClick="{{ i.cancelarAlta }}">Cancelar</button>
+                        </div>
+                      </sc-if>
+
+                      <sc-if value="{{ i.hayAvisoProg }}" hint-placeholder-val="{{ false }}">
+                        <div style="border-left:3px solid var(--color-accent);background:var(--color-neutral-100);padding:8px 11px;margin-top:8px;font-size:12px">{{ i.avisoProg }}</div>
                       </sc-if>
                     </div>
                   </sc-for>
@@ -1207,26 +1237,53 @@ Vázquez Ledesma, Iván	MG-25-0092" style="width:100%;font-family:var(--font-bod
 
               <div>
                 <h6 style="margin:0 0 4px">Hoja membretada</h6>
-                <p class="text-muted" style="margin:0 0 12px;font-size:13px">La imagen completa de la hoja, tamaño carta y vertical. Se imprime al fondo de los documentos.</p>
-                <div style="display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap">
-                  <div style="width:132px;height:171px;border:1.5px dashed var(--color-divider);display:flex;align-items:center;justify-content:center;flex:none;background:#fff;overflow:hidden">
-                    <sc-if value="{{ hayMembrete }}" hint-placeholder-val="{{ false }}">
-                      <div role="img" aria-label="Hoja membretada" style="{{ estiloMembrete }}"></div>
-                    </sc-if>
-                    <sc-if value="{{ sinMembrete }}" hint-placeholder-val="{{ true }}">
-                      <span class="text-muted" style="font-size:11.5px;text-align:center;padding:10px;line-height:1.4">Sin hoja membretada</span>
-                    </sc-if>
+                <p class="text-muted" style="margin:0 0 12px;font-size:13px">Dos hojas: la vertical y la horizontal. Cada documento imprime al fondo la que corresponde a su orientación.</p>
+                <div style="display:flex;align-items:flex-start;gap:28px;flex-wrap:wrap">
+
+                  <div style="display:flex;align-items:flex-start;gap:14px">
+                    <div style="width:132px;height:171px;border:1.5px dashed var(--color-divider);display:flex;align-items:center;justify-content:center;flex:none;background:#fff;overflow:hidden">
+                      <sc-if value="{{ hayMembrete }}" hint-placeholder-val="{{ false }}">
+                        <div role="img" aria-label="Hoja membretada vertical" style="{{ estiloMembrete }}"></div>
+                      </sc-if>
+                      <sc-if value="{{ sinMembrete }}" hint-placeholder-val="{{ true }}">
+                        <span class="text-muted" style="font-size:11.5px;text-align:center;padding:10px;line-height:1.4">Sin hoja vertical</span>
+                      </sc-if>
+                    </div>
+                    <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-start">
+                      <span style="font-family:var(--font-heading);font-weight:800;font-size:11px;text-transform:uppercase;letter-spacing:.08em">Vertical</span>
+                      <label class="btn btn-secondary" style="cursor:pointer;margin:0;font-size:12.5px">
+                        {{ textoMembrete }}
+                        <input type="file" accept="image/*" onChange="{{ subirMembrete }}" style="display:none">
+                      </label>
+                      <sc-if value="{{ hayMembrete }}" hint-placeholder-val="{{ false }}">
+                        <button class="btn btn-ghost" style="font-size:12.5px" onClick="{{ quitarMembrete }}">Quitar hoja</button>
+                      </sc-if>
+                    </div>
                   </div>
-                  <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-start">
-                    <label class="btn btn-secondary" style="cursor:pointer;margin:0">
-                      {{ textoMembrete }}
-                      <input type="file" accept="image/*" onChange="{{ subirMembrete }}" style="display:none">
-                    </label>
-                    <sc-if value="{{ hayMembrete }}" hint-placeholder-val="{{ false }}">
-                      <button class="btn btn-ghost" style="font-size:12.5px" onClick="{{ quitarMembrete }}">Quitar hoja</button>
-                    </sc-if>
+
+                  <div style="display:flex;align-items:flex-start;gap:14px">
+                    <div style="width:171px;height:132px;border:1.5px dashed var(--color-divider);display:flex;align-items:center;justify-content:center;flex:none;background:#fff;overflow:hidden">
+                      <sc-if value="{{ hayMembreteH }}" hint-placeholder-val="{{ false }}">
+                        <div role="img" aria-label="Hoja membretada horizontal" style="{{ estiloMembreteH }}"></div>
+                      </sc-if>
+                      <sc-if value="{{ sinMembreteH }}" hint-placeholder-val="{{ true }}">
+                        <span class="text-muted" style="font-size:11.5px;text-align:center;padding:10px;line-height:1.4">Sin hoja horizontal</span>
+                      </sc-if>
+                    </div>
+                    <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-start">
+                      <span style="font-family:var(--font-heading);font-weight:800;font-size:11px;text-transform:uppercase;letter-spacing:.08em">Horizontal</span>
+                      <label class="btn btn-secondary" style="cursor:pointer;margin:0;font-size:12.5px">
+                        {{ textoMembreteH }}
+                        <input type="file" accept="image/*" onChange="{{ subirMembreteH }}" style="display:none">
+                      </label>
+                      <sc-if value="{{ hayMembreteH }}" hint-placeholder-val="{{ false }}">
+                        <button class="btn btn-ghost" style="font-size:12.5px" onClick="{{ quitarMembreteH }}">Quitar hoja</button>
+                      </sc-if>
+                    </div>
                   </div>
+
                 </div>
+                <p class="text-muted" style="margin:12px 0 0;font-size:12px;line-height:1.5">Los horarios y la requisición docente se imprimen acostados: usan la horizontal. Las cédulas y listados verticales usan la primera.</p>
               </div>
 
               <div>
@@ -1262,7 +1319,17 @@ Vázquez Ledesma, Iván	MG-25-0092" style="width:100%;font-family:var(--font-bod
                   </div>
                 </sc-if>
               </div>
-              <p class="text-muted" style="margin:12px 0 0;font-size:12px;line-height:1.5">Hoja tamaño carta con el membrete cargado. Así se imprimirán los documentos que emita el sistema.</p>
+              <div style="border:1.5px solid var(--color-divider);background:#fff;aspect-ratio:11/8.5;position:relative;overflow:hidden;margin-top:14px">
+                <sc-if value="{{ hayMembreteH }}" hint-placeholder-val="{{ false }}">
+                  <div style="{{ estiloMembreteFondoH }}"></div>
+                </sc-if>
+                <sc-if value="{{ sinMembreteH }}" hint-placeholder-val="{{ true }}">
+                  <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:28px">
+                    <span class="text-muted" style="font-size:12.5px;text-align:center;line-height:1.5">Cargue la hoja horizontal para verla aquí</span>
+                  </div>
+                </sc-if>
+              </div>
+              <p class="text-muted" style="margin:12px 0 0;font-size:12px;line-height:1.5">Hoja carta vertical y horizontal con el membrete cargado. Así se imprimirán los documentos que emita el sistema.</p>
             </div>
 
           </div>
@@ -1444,6 +1511,291 @@ Vázquez Ledesma, Iván	MG-25-0092" style="width:100%;font-family:var(--font-bod
             </sc-if>
           </sc-if>
         </div>
+      </sc-if>
+
+      <sc-if value="{{ esExpediente }}" hint-placeholder-val="{{ false }}">
+
+        <sc-if value="{{ expEnLista }}" hint-placeholder-val="{{ true }}">
+          <div style="padding:24px 28px 60px">
+            <div style="display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap">
+              <div>
+                <h6 style="margin:0 0 4px" class="text-muted">Coordinación Docente</h6>
+                <h2 style="margin:0">Expediente docente</h2>
+              </div>
+              <div style="margin-left:auto;display:flex;align-items:center;gap:10px">
+                <span class="tag tag-outline">{{ expConteo }}</span>
+                <button class="btn btn-ghost" onClick="{{ recargarExpediente }}" title="Volver a leer los horarios guardados">Actualizar</button>
+              </div>
+            </div>
+            <p class="text-muted" style="margin:10px 0 0;max-width:82ch;font-size:14px;line-height:1.55;text-wrap:pretty">Los docentes, su formación y las materias que impartieron se leen de Carga horaria, ciclo por ciclo. Aquí se guarda lo que el horario no lleva: fotografía, contacto, documentos y evaluación.</p>
+            <hr class="hr">
+
+            <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;margin-bottom:20px">
+              <div class="field" style="margin:0">
+                <label>Programa académico</label>
+                <select class="input" value="{{ expPrograma }}" onChange="{{ setExpPrograma }}" style="min-width:230px">
+                  <option value="">Todos los programas</option>
+                  <sc-for list="{{ expProgramas }}" as="p" hint-placeholder-count="2">
+                    <option value="{{ p }}">{{ p }}</option>
+                  </sc-for>
+                </select>
+              </div>
+              <div class="field" style="margin:0">
+                <label>Ciclo escolar</label>
+                <select class="input" value="{{ expCiclo }}" onChange="{{ setExpCiclo }}" style="min-width:210px">
+                  <option value="">Todos los ciclos</option>
+                  <sc-for list="{{ expCiclosOpc }}" as="c" hint-placeholder-count="3">
+                    <option value="{{ c }}">{{ c }}</option>
+                  </sc-for>
+                </select>
+              </div>
+              <div class="field" style="margin:0;flex:1;min-width:220px">
+                <label>Buscar</label>
+                <input class="input" value="{{ expBusca }}" onChange="{{ setExpBusca }}" placeholder="Nombre, formación o materia" style="width:100%">
+              </div>
+            </div>
+
+            <sc-if value="{{ expVacio }}" hint-placeholder-val="{{ false }}">
+              <div class="text-muted" style="border:2px dashed var(--color-divider);padding:36px;text-align:center;font-size:13.5px">{{ expMensajeVacio }}</div>
+            </sc-if>
+
+            <div style="border:2px solid var(--color-divider);border-bottom:0">
+              <div style="display:grid;grid-template-columns:76px minmax(0,1.5fr) minmax(0,1.6fr) 190px;gap:0;background:var(--color-neutral-100);border-bottom:2px solid var(--color-divider);font-family:var(--font-heading);font-weight:800;font-size:10.5px;text-transform:uppercase;letter-spacing:.08em">
+                <div style="padding:10px 12px">Foto</div>
+                <div style="padding:10px 12px">Docente</div>
+                <div style="padding:10px 12px">Programas donde da clases</div>
+                <div style="padding:10px 12px">Horas contratadas</div>
+              </div>
+              <sc-for list="{{ expTarjetas }}" as="d" hint-placeholder-count="8">
+                <button onClick="{{ d.abrir }}" title="Abrir el expediente completo" style="width:100%;text-align:left;border:0;border-bottom:2px solid var(--color-divider);background:var(--color-bg);cursor:pointer;padding:0;display:grid;grid-template-columns:76px minmax(0,1.5fr) minmax(0,1.6fr) 190px;align-items:center" style-hover="background:color-mix(in srgb, var(--color-accent) 8%, transparent)">
+                  <div style="padding:8px 12px">
+                    <sc-if value="{{ d.hayFoto }}" hint-placeholder-val="{{ false }}">
+                      <div style="{{ d.estiloFoto }}"></div>
+                    </sc-if>
+                    <sc-if value="{{ d.sinFoto }}" hint-placeholder-val="{{ true }}">
+                      <div style="width:44px;height:56px;border:1.5px solid var(--color-divider);background:var(--color-neutral-100);display:flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-weight:800;font-size:15px;color:var(--color-neutral-600)">{{ d.iniciales }}</div>
+                    </sc-if>
+                  </div>
+                  <div style="padding:8px 12px;min-width:0;display:flex;align-items:center;gap:7px">
+                    <span style="font-family:var(--font-heading);font-weight:800;font-size:14px">{{ d.nombre }}</span>
+                    <sc-if value="{{ d.varios }}" hint-placeholder-val="{{ false }}">
+                      <span title="{{ d.avisoVarios }}" style="flex:none;width:18px;height:18px;background:#D9A441;color:#2b2118;font-family:var(--font-heading);font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center;cursor:help">!</span>
+                    </sc-if>
+                  </div>
+                  <div class="text-muted" style="padding:8px 12px;min-width:0;font-size:12.5px;line-height:1.4">{{ d.listaProgramas }}</div>
+                  <div style="padding:8px 12px;line-height:1.35">
+                    <div style="font-family:var(--font-heading);font-weight:800;font-size:13px">{{ d.horasCiclo }}</div>
+                    <div class="text-muted" style="font-size:11px;margin-top:2px">{{ d.horasAsignadas }}</div>
+                  </div>
+                </button>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ expEnFicha }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:24px 28px 60px;max-width:1180px">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px">
+              <button class="btn btn-ghost" onClick="{{ cerrarFicha }}">← Volver al listado</button>
+              <span class="text-muted" style="margin-left:auto;font-size:11.5px">{{ expGuardando }}</span>
+            </div>
+
+            <div style="border:2px solid var(--color-text);padding:22px;display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap">
+              <div style="flex:none;display:flex;flex-direction:column;gap:8px;align-items:center">
+                <sc-if value="{{ fichaHayFoto }}" hint-placeholder-val="{{ false }}">
+                  <div style="{{ fichaEstiloFoto }}"></div>
+                </sc-if>
+                <sc-if value="{{ fichaSinFoto }}" hint-placeholder-val="{{ true }}">
+                  <div style="width:132px;height:168px;border:2px solid var(--color-divider);background:var(--color-neutral-100);display:flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-weight:800;font-size:42px;color:var(--color-neutral-600)">{{ fichaIniciales }}</div>
+                </sc-if>
+                <sc-if value="{{ expEditable }}" hint-placeholder-val="{{ false }}">
+                  <label style="font-size:11px;cursor:pointer;border:1.5px solid var(--color-text);padding:5px 10px;font-family:var(--font-heading);font-weight:800;text-transform:uppercase;letter-spacing:.07em">
+                    Cargar foto
+                    <input type="file" accept="image/*" onChange="{{ subirFoto }}" style="display:none">
+                  </label>
+                  <sc-if value="{{ fichaPuedeQuitarFoto }}" hint-placeholder-val="{{ false }}">
+                    <button class="btn btn-ghost" onClick="{{ quitarFoto }}" style="font-size:11px">Quitar</button>
+                  </sc-if>
+                </sc-if>
+              </div>
+
+              <div style="flex:1;min-width:280px">
+                <div style="display:flex;align-items:center;gap:9px">
+                  <h2 style="margin:0">{{ fichaNombre }}</h2>
+                  <sc-if value="{{ fichaVarios }}" hint-placeholder-val="{{ false }}">
+                    <span title="{{ fichaAvisoVarios }}" style="flex:none;width:22px;height:22px;background:#D9A441;color:#2b2118;font-family:var(--font-heading);font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;cursor:help">!</span>
+                  </sc-if>
+                </div>
+                <div style="font-size:14px;margin-top:6px">{{ fichaFormacion }}</div>
+                <div class="text-muted" style="font-size:12.5px;margin-top:3px">{{ fichaCedulas }}</div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+                  <span class="tag tag-outline">{{ fichaContratacion }}</span>
+                  <span class="tag tag-outline">{{ fichaTope }}</span>
+                  <sc-for list="{{ fichaProgramas }}" as="p" hint-placeholder-count="1">
+                    <span class="tag">{{ p.nombre }} · {{ p.horas }}</span>
+                  </sc-for>
+                </div>
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:0;margin-top:18px;border-top:2px solid var(--color-divider)">
+                  <div style="padding:12px 16px 0 0">
+                    <h6 style="margin:0 0 4px" class="text-muted">Ciclo de ingreso</h6>
+                    <div style="font-family:var(--font-heading);font-weight:800;font-size:17px">{{ fichaIngreso }}</div>
+                    <div class="text-muted" style="font-size:11.5px">{{ fichaIngresoPrograma }}</div>
+                  </div>
+                  <div style="padding:12px 16px 0">
+                    <h6 style="margin:0 0 4px" class="text-muted">Carga en curso</h6>
+                    <div style="font-family:var(--font-heading);font-weight:800;font-size:17px">{{ fichaCargaHoras }}</div>
+                    <div class="text-muted" style="font-size:11.5px">{{ fichaCargaCiclo }} · {{ fichaCargaMaterias }}</div>
+                  </div>
+                  <div style="padding:12px 0 0 16px">
+                    <h6 style="margin:0 0 4px" class="text-muted">Trayectoria</h6>
+                    <div style="font-family:var(--font-heading);font-weight:800;font-size:17px">{{ fichaCiclosTotal }}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <sc-if value="{{ expBloqueado }}" hint-placeholder-val="{{ true }}">
+              <div class="text-muted" style="margin-top:14px;border:1.5px solid var(--color-divider);padding:10px 14px;font-size:12px">{{ expLeyendaBloqueo }}</div>
+            </sc-if>
+
+            <div style="display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:22px;margin-top:22px;align-items:start">
+
+              <div style="border:2px solid var(--color-divider)">
+                <h5 style="margin:0;padding:12px 18px;border-bottom:2px solid var(--color-divider)">Ciclos en que ha dado clases</h5>
+                <sc-for list="{{ fichaCiclos }}" as="c" hint-placeholder-count="3">
+                  <div style="border-bottom:1.5px solid var(--color-divider)">
+                    <button onClick="{{ c.alternar }}" style="width:100%;text-align:left;border:0;background:none;cursor:pointer;padding:13px 18px;display:flex;align-items:center;gap:12px" style-hover="background:color-mix(in srgb, var(--color-accent) 8%, transparent)">
+                      <span style="flex:1;min-width:0;line-height:1.3">
+                        <span style="display:block;font-family:var(--font-heading);font-weight:800;font-size:14px">{{ c.periodo }}</span>
+                        <span class="text-muted" style="display:block;font-size:11.5px">{{ c.programa }} · {{ c.resumen }}</span>
+                      </span>
+                      <span class="text-muted" style="font-size:11px">ver materias</span>
+                    </button>
+                    <sc-if value="{{ c.abierta }}" hint-placeholder-val="{{ false }}">
+                      <div style="padding:0 18px 14px">
+                        <sc-for list="{{ c.materias }}" as="m" hint-placeholder-count="3">
+                          <div style="display:flex;align-items:baseline;gap:12px;padding:7px 0;border-top:1px dotted var(--color-divider)">
+                            <span style="flex:1;min-width:0;font-size:13px">{{ m.nombre }}</span>
+                            <span class="text-muted" style="font-size:11.5px">{{ m.grupos }}</span>
+                            <span style="font-family:var(--font-heading);font-weight:800;font-size:12.5px">{{ m.horas }}</span>
+                          </div>
+                        </sc-for>
+                        <sc-if value="{{ c.sinMaterias }}" hint-placeholder-val="{{ false }}">
+                          <div class="text-muted" style="font-size:12px;padding-top:8px">Ese ciclo no tiene materias pintadas para este docente.</div>
+                        </sc-if>
+                      </div>
+                    </sc-if>
+                  </div>
+                </sc-for>
+              </div>
+
+              <div style="border:2px solid var(--color-divider)">
+                <h5 style="margin:0;padding:12px 18px;border-bottom:2px solid var(--color-divider)">Ciclos trabajados</h5>
+                <div style="padding:16px 18px">
+                  <sc-for list="{{ fichaGrafica }}" as="b" hint-placeholder-count="4">
+                    <div style="display:flex;align-items:center;gap:10px;margin-bottom:9px">
+                      <span class="text-muted" style="flex:none;width:88px;font-size:11px;text-align:right">{{ b.periodo }}</span>
+                      <span style="flex:1;min-width:0;height:14px;background:var(--color-neutral-100);display:block">
+                        <span style="display:block;height:14px;width:{{ b.ancho }};background:var(--color-accent)"></span>
+                      </span>
+                      <span style="flex:none;font-family:var(--font-heading);font-weight:800;font-size:11.5px;width:38px">{{ b.horas }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+
+              <div style="border:2px solid var(--color-divider)">
+                <h5 style="margin:0;padding:12px 18px;border-bottom:2px solid var(--color-divider)">Datos personales y de contacto</h5>
+                <div style="padding:16px 18px;display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px">
+                  <sc-for list="{{ fichaCampos }}" as="f" hint-placeholder-count="8">
+                    <div class="field" style="margin:0">
+                      <label>{{ f.etiqueta }}</label>
+                      <input class="input" type="{{ f.tipo }}" value="{{ f.valor }}" onChange="{{ f.cambiar }}" disabled="{{ expBloqueado }}" style="width:100%">
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+
+              <div style="border:2px solid var(--color-divider)">
+                <h5 style="margin:0;padding:12px 18px;border-bottom:2px solid var(--color-divider)">Documentos entregados · {{ fichaDocsConteo }}</h5>
+                <div style="padding:10px 18px 16px">
+                  <sc-for list="{{ fichaDocumentos }}" as="doc" hint-placeholder-count="10">
+                    <button onClick="{{ doc.alternar }}" disabled="{{ expBloqueado }}" style="width:100%;text-align:left;border:0;border-bottom:1px dotted var(--color-divider);background:none;cursor:pointer;padding:8px 0;display:flex;align-items:center;gap:10px;font-size:13px" style-hover="background:color-mix(in srgb, var(--color-accent) 8%, transparent)">
+                      <sc-if value="{{ doc.marcado }}" hint-placeholder-val="{{ false }}">
+                        <span style="width:13px;height:13px;background:#1f9d55;flex:none"></span>
+                      </sc-if>
+                      <sc-if value="{{ doc.vacio }}" hint-placeholder-val="{{ true }}">
+                        <span style="width:13px;height:13px;border:1.5px solid var(--color-divider);flex:none"></span>
+                      </sc-if>
+                      <span>{{ doc.nombre }}</span>
+                    </button>
+                  </sc-for>
+                </div>
+              </div>
+
+              <div style="border:2px solid var(--color-divider)">
+                <h5 style="margin:0;padding:12px 18px;border-bottom:2px solid var(--color-divider)">Disponibilidad semanal</h5>
+                <div style="padding:14px 18px">
+                  <sc-for list="{{ fichaDisp }}" as="r" hint-placeholder-count="6">
+                    <div style="display:flex;gap:12px;padding:7px 0;border-bottom:1px dotted var(--color-divider);font-size:13px">
+                      <span class="text-muted" style="flex:none;width:140px">{{ r.etiqueta }}</span>
+                      <span style="flex:1;min-width:0">{{ r.valor }}</span>
+                    </div>
+                  </sc-for>
+                  <sc-if value="{{ fichaHayDispNota }}" hint-placeholder-val="{{ false }}">
+                    <div class="text-muted" style="font-size:12px;margin-top:10px">{{ fichaDispNota }}</div>
+                  </sc-if>
+                </div>
+              </div>
+
+              <div style="border:2px solid var(--color-divider)">
+                <h5 style="margin:0;padding:12px 18px;border-bottom:2px solid var(--color-divider)">Materias que puede impartir</h5>
+                <div style="padding:14px 18px">
+                  <div style="display:flex;gap:7px;flex-wrap:wrap">
+                    <sc-for list="{{ fichaImparte }}" as="m" hint-placeholder-count="4">
+                      <span class="tag tag-outline">{{ m }}</span>
+                    </sc-for>
+                  </div>
+                  <sc-if value="{{ fichaSinImparte }}" hint-placeholder-val="{{ false }}">
+                    <div class="text-muted" style="font-size:12px">Todavía no tiene materias registradas en ningún horario.</div>
+                  </sc-if>
+                  <div class="field" style="margin:14px 0 0">
+                    <label>Otras materias que puede impartir</label>
+                    <textarea class="input" value="{{ fichaImparteExtra }}" onChange="{{ setImparteExtra }}" disabled="{{ expBloqueado }}" rows="3" style="width:100%;resize:vertical"></textarea>
+                  </div>
+                </div>
+              </div>
+
+              <div style="border:2px solid var(--color-divider)">
+                <h5 style="margin:0;padding:12px 18px;border-bottom:2px solid var(--color-divider)">Evaluación docente</h5>
+                <div style="padding:14px 18px">
+                  <div class="field" style="margin:0 0 12px;max-width:160px">
+                    <label>Calificación</label>
+                    <input class="input" type="number" min="0" max="10" step="0.1" value="{{ fichaEval }}" onChange="{{ setEval }}" disabled="{{ expBloqueado }}" style="width:100%">
+                  </div>
+                  <div class="field" style="margin:0">
+                    <label>Observaciones del periodo</label>
+                    <textarea class="input" value="{{ fichaEvalNota }}" onChange="{{ setEvalNota }}" disabled="{{ expBloqueado }}" rows="3" style="width:100%;resize:vertical"></textarea>
+                  </div>
+                </div>
+              </div>
+
+              <div style="border:2px solid var(--color-divider);grid-column:1/-1">
+                <h5 style="margin:0;padding:12px 18px;border-bottom:2px solid var(--color-divider)">Trayectoria profesional</h5>
+                <div style="padding:16px 18px;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px">
+                  <sc-for list="{{ fichaTextos }}" as="t" hint-placeholder-count="4">
+                    <div class="field" style="margin:0">
+                      <label>{{ t.etiqueta }}</label>
+                      <textarea class="input" value="{{ t.valor }}" onChange="{{ t.cambiar }}" disabled="{{ expBloqueado }}" rows="4" style="width:100%;resize:vertical"></textarea>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </sc-if>
+
       </sc-if>
 
       <sc-if value="{{ esObra }}" hint-placeholder-val="{{ false }}">
@@ -1771,6 +2123,7 @@ const AREAS = [
     {id:'trayectoria', nombre:'Trayectoria escolar', listo:true},
     {id:'investigacion', nombre:'Comité de investigación'}]},
   {id:'doc', nombre:'Coordinación Docente', perfiles:['super','admin_inst','admin','direccion','docencia','docente'], modulos:[
+    {id:'expediente', nombre:'Expediente docente', listo:true},
     {id:'planeaciones', nombre:'Planeaciones'},
     {id:'evaldocente', nombre:'Evaluación docente'},
     {id:'nomina', nombre:'Nómina'}]},
@@ -1944,16 +2297,19 @@ class Component extends DCLogic {
     pinHash:'', pidiendoPin:false, pinIntento:'', pinIntento2:'', pinAviso:'',
     miPanel:false, mcClave1:'', mcClave2:'', mcPin1:'', mcPin2:'', mcAviso:'', nvPin:'',
     recuperando:false, clave1:'', clave2:'', avisoClave:'',
-    idNombre:'', idColores: COLORES_POR_DEFECTO.slice(), idLogo:'', idMembrete:'',
+    idNombre:'', idColores: COLORES_POR_DEFECTO.slice(), idLogo:'', idMembrete:'', idMembreteH:'',
     idProgramas:[], idNuevoPrograma:'', idAviso:'Sin capturar', idAvisoError:false,
     permisos:{}, permisoUsuario:'', avisoPermisos:'',
     instituciones:[], instActiva:'', miInstitucion:'', misProgramas:[], programaActivo:'',
+    instAlta:'', instProgNuevo:'', instAvisoFila:'', avisoProg:'',
     trayGens:[], trayGenSel:'', trayEtapaSel:'', trayAviso:'Sin capturar', trayAvisoError:false,
     trayPidiendoAnio:false, trayAnioNuevo:'', trayAvisoAnio:'', trayPrecargar:false, trayImportAviso:'',
     trayEditFila:null, trayEditMat:'', trayEditApellidos:'', trayEditNombres:'', trayEditGrupo:'', trayBusca:'',
     contCuentas:{}, contAviso:'Sin capturar', contAvisoError:false, contGrupoSel:'', contBusca:'',
     contPestana:'actual', contFiltroEstado:'', contConfirmaMarcar:false, cicloSel:'',
     menuVisible:true,
+    expDatos:{}, expCtx:[], expCargado:false, expSel:'', expBusca:'', expPrograma:'',
+    expCiclo:'', expCicloAbierto:'', expAviso:'', expGuardando:'',
     contImportAviso:'', contFormatoAviso:'',
     trayCargaAviso:'', trayGrupos:[], trayPorBorrar:'', trayVaciar:false,
     nvInstNombre:'', nvProgramas:[], avisoInst:'', creandoInst:false,
@@ -2388,6 +2744,439 @@ class Component extends DCLogic {
      Una generación por renglón y una base de datos por etapa. Lo que se guarda
      es el listado de alumnos de cada etapa; los indicadores se recalculan
      siempre a partir de esos listados, nunca se capturan a mano. */
+  /* =====================================================================
+     Expediente docente
+     Los docentes, su formación y las materias que dieron se leen de Carga
+     horaria: cada combinación de programa y periodo quedó guardada con su
+     propia lista de docentes y su calendario. Lo que el expediente agrega
+     —fotografía, contacto, documentos, evaluación— vive en una sola llave,
+     compartida con el Programador para que la foto sea la misma en los dos.
+     ===================================================================== */
+  CLAVE_EXPED = 'expediente:docentes';
+
+  DOCS_EXPED = ['Título profesional','Cédula profesional','Grado de posgrado','Acta de nacimiento',
+    'CURP','RFC','Identificación oficial','Comprobante de domicilio','Currículum vitae','Contrato firmado'];
+
+  // En Carga horaria algunos docentes se capturaron con el grupo pegado al
+  // nombre («Dr Eduardo Ramírez 3A»). Se quita ese sufijo para que todas sus
+  // filas sean una sola persona.
+  nombreDoc(nombre) {
+    return String(nombre || '').trim().replace(/[\s,;·-]+\d{1,2}\s*[A-Za-zÁÉÍÓÚÑáéíóúñ]?$/, '').trim() || String(nombre || '').trim();
+  }
+
+  slugDoc(nombre) {
+    return this.normalizaTexto(this.nombreDoc(nombre)).replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  }
+
+  // Los periodos se ordenan por año y por ciclo (A antes que B) para que la
+  // trayectoria del docente se lea en el orden en que ocurrió.
+  ordenPeriodo(p) {
+    const t = this.normalizaTexto(p);
+    const m = t.match(/(20\d{2})[^a-z0-9]*([ab])(?![a-z])/);
+    if (m) return parseInt(m[1], 10) * 10 + (m[2] === 'b' ? 2 : 1);
+    const y = t.match(/(20\d{2})/);
+    return y ? parseInt(y[1], 10) * 10 : 0;
+  }
+
+  async cargarExpedienteDocente() {
+    if (!this.cliente || !this.state.instActiva) return;
+    this.setState({expAviso:'Leyendo expedientes…'});
+    let datos = {};
+    const ctx = [];
+    try {
+      const {data} = await this.cliente.from('horarios_almacen').select('valor')
+        .eq('clave', this.CLAVE_EXPED).eq('institucion_id', this.state.instActiva).maybeSingle();
+      if (data && data.valor) datos = JSON.parse(data.valor) || {};
+    } catch (e) {}
+    try {
+      const {data} = await this.cliente.from('horarios_almacen').select('clave, valor')
+        .eq('institucion_id', this.state.instActiva)
+        .or('clave.like.horarios:ctx:%,clave.eq.horarios:auto');
+      (data || []).forEach(f => {
+        try {
+          const o = JSON.parse(f.valor);
+          if (!o || !Array.isArray(o.docentes) || !o.docentes.length) return;
+          ctx.push({clave:f.clave, programa:(o.programa || '').trim(), periodo:(o.periodo || '').trim(),
+                    docentes:o.docentes, grupos:o.grupos || []});
+        } catch (e) {}
+      });
+    } catch (e) {}
+    /* El calendario en curso y su copia por contexto son el mismo trabajo:
+       se cuenta una sola vez, y manda la copia con nombre propio. */
+    const mapa = {};
+    ctx.forEach(c => {
+      const k = this.normalizaTexto(c.programa) + '|' + this.normalizaTexto(c.periodo);
+      if (!mapa[k] || c.clave !== 'horarios:auto') mapa[k] = c;
+    });
+    const lista = Object.keys(mapa).map(k => mapa[k]);
+    this.setState({expDatos:datos, expCtx:lista, expCargado:true,
+      expAviso: lista.length ? '' : 'Todavía no hay horarios guardados en Carga horaria: el expediente se llena a partir de ellos.'});
+  }
+
+  recargarExpediente = () => { this.cargarExpedienteDocente(); };
+
+  // Un solo índice: cada docente con sus ciclos, sus materias y sus programas.
+  indiceDocentes() {
+    const s = this.state;
+    const idx = {};
+    (s.expCtx || []).forEach(c => {
+      const porId = {};
+      (c.docentes || []).forEach(d => { porId[d.id] = d; });
+      const acum = {};
+      (c.grupos || []).forEach(g => {
+        const celdas = g.celdas || {};
+        Object.keys(celdas).forEach(k => {
+          const cel = celdas[k];
+          if (!cel || cel.tipo !== 'clase' || !cel.docenteId) return;
+          const d = porId[cel.docenteId];
+          if (!d) return;
+          const sl = this.slugDoc(d.nombre);
+          if (!sl) return;
+          if (!acum[sl]) acum[sl] = {horas:0, materias:{}};
+          acum[sl].horas++;
+          const nm = (cel.materia || 'Sin materia').trim();
+          const gn = ((g.semestre || '') + (g.grupo || '')).trim();
+          if (!acum[sl].materias[nm]) acum[sl].materias[nm] = {horas:0, grupos:{}};
+          acum[sl].materias[nm].horas++;
+          if (gn) acum[sl].materias[nm].grupos[gn] = true;
+        });
+      });
+      const vistos = {};
+      (c.docentes || []).forEach(d => {
+        const sl = this.slugDoc(d.nombre);
+        if (!sl) return;
+        if (!idx[sl]) idx[sl] = {slug:sl, nombre:this.nombreDoc(d.nombre), formacion:'', cedulas:'', contratacion:'',
+                                 maxHoras:0, foto:'', disp:null, ciclos:[], programas:{}};
+        const r = idx[sl];
+        r.nombre = this.nombreDoc(d.nombre);
+        if (d.formacion) r.formacion = d.formacion;
+        if (d.cedulas) r.cedulas = d.cedulas;
+        if (d.contratacion) r.contratacion = d.contratacion;
+        if (d.maxHoras) r.maxHoras = d.maxHoras;
+        if (d.foto && !r.foto) r.foto = d.foto;
+        if (d.disp) r.disp = d.disp;
+        // Varias filas del mismo ciclo pueden ser la misma persona (una por
+        // grupo): sus datos se mezclan arriba, pero las horas se cuentan una vez.
+        if (vistos[sl]) return;
+        vistos[sl] = true;
+        const a = acum[sl];
+        const horas = a ? a.horas : 0;
+        const materias = a ? Object.keys(a.materias).map(m => ({
+          nombre:m, horas:a.materias[m].horas,
+          grupos:Object.keys(a.materias[m].grupos).sort().join(', ')
+        })).sort((x, y) => x.nombre.localeCompare(y.nombre, 'es')) : [];
+        r.ciclos.push({
+          id: sl + '::' + c.clave,
+          periodo: c.periodo || 'Sin periodo',
+          programa: c.programa || 'Sin programa',
+          horas, materias,
+          orden: this.ordenPeriodo(c.periodo)
+        });
+        const p = c.programa || 'Sin programa';
+        r.programas[p] = (r.programas[p] || 0) + horas;
+      });
+    });
+    Object.keys(idx).forEach(sl => {
+      const r = idx[sl];
+      r.ciclos.sort((a, b) => b.orden - a.orden || a.periodo.localeCompare(b.periodo, 'es'));
+      r.datos = (s.expDatos || {})[sl] || {};
+      if (r.datos.foto) r.foto = r.datos.foto;
+    });
+    return idx;
+  }
+
+  iniciales(nombre) {
+    return String(nombre || '').trim().split(/\s+/).slice(0, 2).map(w => w.charAt(0).toUpperCase()).join('');
+  }
+
+  /* ---------- Escritura ---------- */
+  async persistirExpediente(datos) {
+    this.setState({expDatos:datos, expGuardando:'Guardando…'});
+    if (!this.cliente || !this.state.instActiva) {
+      this.setState({expGuardando:'Sin conexión: el cambio no quedó en la base.'});
+      return;
+    }
+    const {error} = await this.cliente.from('horarios_almacen').upsert({
+      clave: this.CLAVE_EXPED, valor: JSON.stringify(datos),
+      institucion_id: this.state.instActiva,
+      actualizado_en: new Date().toISOString(), actualizado_por: this.usuarioId
+    }, {onConflict:'clave,institucion_id'});
+    if (error) { this.setState({expGuardando:'No se pudo guardar: ' + error.message}); return; }
+    // Se relee la fila: un «upsert» sin error no garantiza que quedara escrita
+    // bajo la institución activa, y una foto perdida no se nota hasta el Word.
+    const inst = this.state.instActiva;
+    const {data, error: errorLeer} = await this.cliente.from('horarios_almacen')
+      .select('valor').eq('clave', this.CLAVE_EXPED).eq('institucion_id', inst).maybeSingle();
+    if (errorLeer || !data || !data.valor) {
+      this.setState({expGuardando:'La base no devuelve el expediente guardado' +
+        (errorLeer ? ': ' + errorLeer.message : ' de esta institución. Vuelve a intentarlo.')});
+      return;
+    }
+    const nombreInst = ((this.institucionActual() || {}).nombre) || inst;
+    this.setState({expGuardando:'Guardado en ' + nombreInst + ' · ' +
+      new Date().toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit'})});
+  }
+
+  cambiarExpediente(slug, cambios) {
+    if (!this.puedeEditarAhora('expediente')) {
+      this.setState({expGuardando: this.motivoBloqueo('expediente')});
+      return;
+    }
+    const datos = Object.assign({}, this.state.expDatos);
+    datos[slug] = Object.assign({}, datos[slug], cambios);
+    clearTimeout(this.tempExped);
+    this.setState({expDatos:datos, expGuardando:'Guardando…'});
+    this.tempExped = setTimeout(() => this.persistirExpediente(datos), 600);
+  }
+
+  // La fotografía se reduce antes de guardarla: una foto de cámara pesa más
+  // que todo el expediente junto.
+  subirFotoDoc = (slug) => (ev) => {
+    const archivo = ev.target.files && ev.target.files[0];
+    ev.target.value = '';
+    if (!archivo) return;
+    if (!this.puedeEditarAhora('expediente')) {
+      this.setState({expGuardando: this.motivoBloqueo('expediente')});
+      return;
+    }
+    const fr = new FileReader();
+    fr.onload = e => {
+      const img = new Image();
+      img.onload = () => {
+        const ancho = 360;
+        const alto = Math.round(img.height * ancho / img.width);
+        const lienzo = document.createElement('canvas');
+        lienzo.width = ancho; lienzo.height = alto;
+        lienzo.getContext('2d').drawImage(img, 0, 0, ancho, alto);
+        this.cambiarExpediente(slug, {foto: lienzo.toDataURL('image/jpeg', 0.82)});
+      };
+      img.onerror = () => this.setState({expGuardando:'El archivo no es una imagen válida.'});
+      img.src = e.target.result;
+    };
+    fr.readAsDataURL(archivo);
+  };
+
+  quitarFotoDoc = (slug) => () => this.cambiarExpediente(slug, {foto:''});
+
+  /* ---------- Valores de pantalla ---------- */
+  valsExpediente() {
+    const s = this.state;
+    if (s.vista !== 'expediente') return {esExpediente:false};
+    const idx = this.indiceDocentes();
+    let todos = Object.keys(idx).map(k => idx[k]);
+    // Sólo cuentan los ciclos cuyo programa sigue dado de alta en la institución:
+    // un horario viejo con un programa ya borrado deja de aparecer aquí.
+    const vigentes = {};
+    (this.state.idProgramas || []).forEach(p => {
+      const n = this.normalizaTexto((p && p.nombre) || String(p || ''));
+      if (n) vigentes[n] = true;
+    });
+    if (Object.keys(vigentes).length) {
+      todos.forEach(d => {
+        d.ciclos = d.ciclos.filter(c => vigentes[this.normalizaTexto(c.programa)]);
+        Object.keys(d.programas).forEach(p => {
+          if (!vigentes[this.normalizaTexto(p)]) delete d.programas[p];
+        });
+      });
+      todos = todos.filter(d => d.ciclos.length);
+    }
+    const editable = this.puedeEditarAhora('expediente');
+
+    const programas = {};
+    const ciclos = {};
+    todos.forEach(d => {
+      Object.keys(d.programas).forEach(p => { programas[p] = true; });
+      d.ciclos.forEach(c => { ciclos[c.periodo] = c.orden; });
+    });
+    const opcProgramas = Object.keys(programas).sort((a, b) => a.localeCompare(b, 'es'));
+    const opcCiclos = Object.keys(ciclos).sort((a, b) => ciclos[b] - ciclos[a] || a.localeCompare(b, 'es'));
+
+    const busca = this.normalizaTexto((s.expBusca || '').trim());
+    const fPrograma = s.expPrograma || '';
+    const fCiclo = s.expCiclo || '';
+
+    let lista = todos.filter(d => {
+      if (fPrograma && !d.programas[fPrograma]) return false;
+      if (fCiclo && !d.ciclos.some(c => c.periodo === fCiclo)) return false;
+      if (!busca) return true;
+      const heno = [d.nombre, d.formacion, d.cedulas, d.contratacion]
+        .concat(d.ciclos.map(c => c.materias.map(m => m.nombre).join(' '))).join(' ');
+      return this.normalizaTexto(heno).indexOf(busca) !== -1;
+    });
+    lista.sort((a, b) => a.nombre.localeCompare(b.nombre, 'es'));
+
+    // Ciclo de la última columna: el del filtro; si no hay filtro, el ciclo más
+    // reciente que de verdad tenga horas cargadas (los periodos futuros están vacíos).
+    const horasPorCiclo = {};
+    todos.forEach(d => d.ciclos.forEach(c => {
+      horasPorCiclo[c.periodo] = (horasPorCiclo[c.periodo] || 0) + c.horas;
+    }));
+    const cicloColumna = fCiclo
+      || opcCiclos.find(p => horasPorCiclo[p] > 0)
+      || (opcCiclos.length ? opcCiclos[0] : '');
+
+    const sel = idx[s.expSel];
+    const comunes = {
+      esExpediente: true,
+      expEnLista: !sel,
+      expEnFicha: !!sel,
+      expBloqueado: !editable,
+      expEditable: editable,
+      expLeyendaBloqueo: editable ? '' : this.motivoBloqueo('expediente'),
+      expGuardando: s.expGuardando || (s.expAviso || ''),
+      recargarExpediente: this.recargarExpediente
+    };
+
+    if (!sel) {
+      return Object.assign(comunes, {
+        expConteo: lista.length + ' de ' + todos.length + ' docente(s)',
+        expVacio: !lista.length,
+        expMensajeVacio: todos.length
+          ? 'Ningún docente coincide con el filtro.'
+          : (s.expAviso || 'Todavía no hay docentes cargados en Carga horaria.'),
+        expPrograma: fPrograma,
+        expCiclo: fCiclo,
+        expBusca: s.expBusca || '',
+        expProgramas: opcProgramas,
+        expCiclosOpc: opcCiclos,
+        setExpPrograma: e => this.setState({expPrograma: e.target.value}),
+        setExpCiclo: e => this.setState({expCiclo: e.target.value}),
+        setExpBusca: e => this.setState({expBusca: e.target.value}),
+        expCicloColumna: cicloColumna || 'ciclo actual',
+        expTarjetas: lista.map(d => {
+          const props = Object.keys(d.programas);
+          const cicloCol = cicloColumna;
+          const delCiclo = d.ciclos.filter(c => c.periodo === cicloCol);
+          const horas = delCiclo.reduce((t, c) => t + c.horas, 0);
+          return {
+            slug: d.slug, nombre: d.nombre,
+            hayFoto: !!d.foto, sinFoto: !d.foto,
+            estiloFoto: {width:'44px', height:'56px', border:'1.5px solid var(--color-divider)',
+              backgroundImage: 'url(' + d.foto + ')', backgroundSize:'cover', backgroundPosition:'center'},
+            iniciales: this.iniciales(d.nombre),
+            formacion: d.formacion || 'Sin formación registrada',
+            listaProgramas: props.length ? props.join(' · ') : 'Sin programa asignado',
+            horasCiclo: d.maxHoras ? d.maxHoras + ' h/semana' : 'Sin contrato registrado',
+            horasAsignadas: delCiclo.length ? horas + ' h asignadas en ' + cicloCol : 'sin carga en ' + (cicloCol || 'el ciclo'),
+            resumen: props.join(' · ') + ' · ' + d.ciclos.length + ' ciclo(s)',
+            varios: props.length > 1,
+            avisoVarios: props.map(p => 'Docente de ' + p + ' con ' + d.programas[p] + ' hora(s) semanales').join('\n'),
+            abrir: () => this.setState({expSel: d.slug, expCicloAbierto: d.ciclos.length ? d.ciclos[0].id : ''})
+          };
+        })
+      });
+    }
+
+    const d = sel;
+    const dat = d.datos || {};
+    const props = Object.keys(d.programas);
+    const ingreso = d.ciclos.length ? d.ciclos[d.ciclos.length - 1] : null;
+    const actual = d.ciclos.length ? d.ciclos[0] : null;
+    const totalHoras = d.ciclos.reduce((t, c) => t + c.horas, 0);
+    const tope = d.ciclos.reduce((t, c) => Math.max(t, c.horas), 0) || 1;
+    const campo = (id, etiqueta, tipo) => ({
+      id, etiqueta, valor: dat[id] || '', tipo: tipo || 'text',
+      cambiar: e => this.cambiarExpediente(d.slug, {[id]: e.target.value})
+    });
+    const disp = d.disp || {};
+    const dichas = {};
+    d.ciclos.forEach(c => c.materias.forEach(m => { dichas[m.nombre] = true; }));
+
+    return Object.assign(comunes, {
+      fichaNombre: d.nombre,
+      fichaEstiloFoto: {width:'132px', height:'168px', border:'2px solid var(--color-divider)',
+        backgroundImage: 'url(' + d.foto + ')', backgroundSize:'cover', backgroundPosition:'center'},
+      fichaHayFoto: !!d.foto,
+      fichaSinFoto: !d.foto,
+      fichaIniciales: this.iniciales(d.nombre),
+      fichaFormacion: d.formacion || 'Sin formación registrada',
+      fichaCedulas: d.cedulas || 'Sin cédula registrada',
+      fichaContratacion: d.contratacion || 'Sin contratación registrada',
+      fichaTope: d.maxHoras ? d.maxHoras + ' h semanales de tope' : 'Sin tope de horas',
+      fichaProgramas: props.map(p => ({nombre:p, horas: d.programas[p] + ' h'})),
+      fichaVarios: props.length > 1,
+      fichaAvisoVarios: props.map(p => 'Docente de ' + p + ' con ' + d.programas[p] + ' hora(s) semanales').join('\n'),
+      fichaIngreso: ingreso ? ingreso.periodo : 'Sin ciclos registrados',
+      fichaIngresoPrograma: ingreso ? ingreso.programa : '',
+      fichaCiclosTotal: d.ciclos.length + ' ciclo(s) · ' + totalHoras + ' hora(s) semanales acumuladas',
+      cerrarFicha: () => this.setState({expSel:'', expCicloAbierto:''}),
+      subirFoto: this.subirFotoDoc(d.slug),
+      quitarFoto: this.quitarFotoDoc(d.slug),
+      fichaPuedeQuitarFoto: !!dat.foto,
+
+      fichaCampos: [
+        campo('correo', 'Correo electrónico'), campo('telefono', 'Teléfono'),
+        campo('grado', 'Grado máximo de estudios'), campo('alma', 'Institución donde estudió'),
+        campo('ingreso', 'Fecha de ingreso a la escuela', 'date'),
+        campo('rfc', 'RFC'), campo('curp', 'CURP'), campo('domicilio', 'Domicilio')
+      ],
+      fichaTextos: [
+        {id:'experiencia', etiqueta:'Experiencia profesional', valor: dat.experiencia || '',
+         cambiar: e => this.cambiarExpediente(d.slug, {experiencia: e.target.value})},
+        {id:'publicaciones', etiqueta:'Publicaciones o investigación', valor: dat.publicaciones || '',
+         cambiar: e => this.cambiarExpediente(d.slug, {publicaciones: e.target.value})},
+        {id:'cursos', etiqueta:'Cursos y actualizaciones', valor: dat.cursos || '',
+         cambiar: e => this.cambiarExpediente(d.slug, {cursos: e.target.value})},
+        {id:'notas', etiqueta:'Notas internas', valor: dat.notas || '',
+         cambiar: e => this.cambiarExpediente(d.slug, {notas: e.target.value})}
+      ],
+
+      fichaCargaHoras: actual ? actual.horas + ' h' : '0 h',
+      fichaCargaCiclo: actual ? actual.periodo + ' · ' + actual.programa : 'Sin carga en curso',
+      fichaCargaMaterias: actual ? actual.materias.length + ' materia(s)' : '—',
+
+      fichaDisp: [
+        {etiqueta:'Días', valor: disp.dias || '—'},
+        {etiqueta:'Horario', valor: disp.horario || '—'},
+        {etiqueta:'Días restringidos', valor: disp.restringidos || '—'},
+        {etiqueta:'Frente a grupo', valor: disp.frenteGrupo ? disp.frenteGrupo + ' h' : '—'},
+        {etiqueta:'Tutoría', valor: disp.tutoria ? disp.tutoria + ' h' : '—'},
+        {etiqueta:'Administrativo', valor: disp.administrativo ? disp.administrativo + ' h' : '—'}
+      ],
+      fichaDispNota: disp.observaciones || '',
+      fichaHayDispNota: !!disp.observaciones,
+
+      fichaDocumentos: this.DOCS_EXPED.map(nombre => ({
+        nombre,
+        marcado: !!((dat.docs || {})[nombre]),
+        vacio: !((dat.docs || {})[nombre]),
+        alternar: () => {
+          const docs = Object.assign({}, dat.docs);
+          if (docs[nombre]) delete docs[nombre]; else docs[nombre] = true;
+          this.cambiarExpediente(d.slug, {docs});
+        }
+      })),
+      fichaDocsConteo: this.DOCS_EXPED.filter(n => (dat.docs || {})[n]).length + ' de ' + this.DOCS_EXPED.length,
+
+      fichaImparte: Object.keys(dichas).sort((a, b) => a.localeCompare(b, 'es')),
+      fichaSinImparte: !Object.keys(dichas).length,
+      fichaImparteExtra: dat.imparte || '',
+      setImparteExtra: e => this.cambiarExpediente(d.slug, {imparte: e.target.value}),
+
+      fichaEval: dat.evaluacion || '',
+      setEval: e => this.cambiarExpediente(d.slug, {evaluacion: e.target.value}),
+      fichaEvalNota: dat.evalNota || '',
+      setEvalNota: e => this.cambiarExpediente(d.slug, {evalNota: e.target.value}),
+
+      fichaGrafica: d.ciclos.slice().reverse().map(c => ({
+        periodo: c.periodo, horas: c.horas + ' h',
+        ancho: Math.round(c.horas * 100 / tope) + '%'
+      })),
+
+      fichaCiclos: d.ciclos.map(c => ({
+        id: c.id, periodo: c.periodo, programa: c.programa,
+        resumen: c.horas + ' h semanales · ' + c.materias.length + ' materia(s)',
+        abierta: s.expCicloAbierto === c.id,
+        sinMaterias: s.expCicloAbierto === c.id && !c.materias.length,
+        materias: c.materias.map(m => ({
+          nombre: m.nombre, horas: m.horas + ' h',
+          grupos: m.grupos || 'sin grupo'
+        })),
+        alternar: () => this.setState({expCicloAbierto: s.expCicloAbierto === c.id ? '' : c.id})
+      }))
+    });
+  }
+
   CLAVE_TRAY = 'trayectoria:generaciones';
 
   async cargarTrayectoria() {
@@ -4042,6 +4831,22 @@ class Component extends DCLogic {
       instituciones: s.instituciones.map(i => ({
         nombre: i.nombre || 'Sin nombre',
         detalle: (i.programas || []).length + ' programa(s)',
+        programas: (i.programas || []).map(p => ({
+          nombre: (p && p.nombre) || String(p || ''),
+          puedeQuitar: this.puedeProgramasInst(i.id),
+          quitar: () => this.quitarProgramaInst(i.id, (p && p.id) || p)
+        })),
+        sinProgramas: !(i.programas || []).length,
+        puedeProgramas: this.puedeProgramasInst(i.id),
+        hayAvisoProg: s.instAvisoFila === i.id && !!s.avisoProg,
+        avisoProg: s.instAvisoFila === i.id ? (s.avisoProg || '') : '',
+        altaAbierta: s.instAlta === i.id,
+        nuevoPrograma: s.instAlta === i.id ? (s.instProgNuevo || '') : '',
+        setNuevoPrograma: e => this.setState({instProgNuevo: e.target.value}),
+        enterPrograma: e => { if (e.key === 'Enter') { e.preventDefault(); this.guardarProgramaInst(i.id); } },
+        guardarPrograma: () => this.guardarProgramaInst(i.id),
+        abrirAltaPrograma: () => this.setState({instAlta: i.id, instProgNuevo:''}),
+        cancelarAlta: () => this.setState({instAlta:'', instProgNuevo:''}),
         clase: i.id === s.instActiva ? 'btn-primary' : 'btn-secondary',
         claseTag: i.id === s.instActiva ? 'tag-accent' : 'tag-neutral',
         accion: i.id === s.instActiva ? 'Trabajando aquí' : 'Entrar',
@@ -4158,7 +4963,7 @@ class Component extends DCLogic {
     const lista = data.map(r => ({
       id: r.id, nombre: r.nombre || '',
       colores: this.leerJson(r.colores, ['#7a1f2b','#2C5F8A','#D9A441']),
-      logo: r.logo || '', membrete: r.membrete || '',
+      logo: r.logo || '', membrete: r.membrete || '', membreteH: r.membrete_h || '',
       programas: this.leerJson(r.programas, [])
     }));
     let activa = preferida || this.state.instActiva;
@@ -4179,7 +4984,7 @@ class Component extends DCLogic {
     this.setState({
       instActiva: id,
       idNombre: inst.nombre, idColores: inst.colores,
-      idLogo: inst.logo, idMembrete: inst.membrete, idProgramas: inst.programas,
+      idLogo: inst.logo, idMembrete: inst.membrete, idMembreteH: inst.membreteH || '', idProgramas: inst.programas,
       idAviso: 'Al día', idAvisoError: false,
       avisoInst: callado ? this.state.avisoInst : 'Trabajando en ' + inst.nombre
     }, () => {
@@ -4188,12 +4993,67 @@ class Component extends DCLogic {
       this.cargarPublicado();
       this.cargarTrayectoria();
       this.cargarContabilidad();
+      this.cargarExpedienteDocente();
         this.cargarExpedientes();
       this.cargarPadron();
       this.cargarCuentas();
       this.avisarCandado();
     });
   };
+
+  // Los programas viven en la fila de la institución: es la misma lista que lee
+  // el Programador de horarios al elegir programa.
+  // El supremo cambia los programas de cualquier institución; un administrador,
+  // sólo los de la institución en la que está trabajando.
+  puedeProgramasInst(id) {
+    const s = this.state;
+    if (s.perfil === 'super') return true;
+    return (s.perfil === 'admin_inst' || s.perfil === 'admin') && id === s.instActiva;
+  }
+
+  motivoProgramas(id) {
+    if (!this.puedeProgramasInst(id)) return 'Sólo el administrador supremo, o el administrador de esa institución, cambia sus programas.';
+    if (!this.state.edicionHorarios) return 'Abre el candado con tu PIN para poder cambiar los programas.';
+    return '';
+  }
+
+  async escribirProgramasInst(id, programas) {
+    if (!this.cliente) return;
+    const impedimento = this.motivoProgramas(id);
+    if (impedimento) { this.setState({instAvisoFila:id, avisoProg:impedimento}); return; }
+    this.setState({instAvisoFila:id, avisoProg:'Guardando programas…'});
+    const {error} = await this.cliente.from('instituciones')
+      .update({programas: JSON.stringify(programas)}).eq('id', id);
+    if (error) { this.setState({instAvisoFila:id, avisoProg:'No se pudo guardar: ' + error.message}); return; }
+    this.setState(est => ({
+      instituciones: est.instituciones.map(i => i.id === id ? Object.assign({}, i, {programas}) : i),
+      idProgramas: id === est.instActiva ? programas : est.idProgramas,
+      misProgramas: id === est.instActiva && est.perfil === 'super'
+        ? programas.map(p => p.nombre) : est.misProgramas,
+      instAvisoFila: id, avisoProg: 'Programas al día en esta institución.'
+    }));
+  }
+
+  guardarProgramaInst(id) {
+    const nombre = (this.state.instProgNuevo || '').trim();
+    if (!nombre) return;
+    const impedimento = this.motivoProgramas(id);
+    if (impedimento) { this.setState({instAvisoFila:id, avisoProg:impedimento}); return; }
+    const inst = this.state.instituciones.find(i => i.id === id);
+    const previos = (inst && inst.programas) || [];
+    if (previos.some(p => ((p && p.nombre) || String(p || '')).trim().toLowerCase() === nombre.toLowerCase())) {
+      this.setState({instAvisoFila:id, avisoProg:'Esa institución ya tiene ese programa.', instProgNuevo:''});
+      return;
+    }
+    this.setState({instAlta:'', instProgNuevo:''});
+    this.escribirProgramasInst(id, previos.concat([{id:'pg' + Date.now(), nombre}]));
+  }
+
+  quitarProgramaInst(id, pid) {
+    const inst = this.state.instituciones.find(i => i.id === id);
+    const previos = (inst && inst.programas) || [];
+    this.escribirProgramasInst(id, previos.filter(p => ((p && p.id) || p) !== pid));
+  }
 
   crearInstitucion = async () => {
     const nombre = (this.state.nvInstNombre || '').trim();
@@ -4259,15 +5119,31 @@ class Component extends DCLogic {
     const programas = s.idProgramas.map(p => ({id:p.id, nombre:(p.nombre || '').trim()}))
       .filter(p => p.nombre);
     this.setState({idAviso:'Guardando…', idAvisoError:false});
-    const {error} = await this.cliente.from('instituciones').update({
+    const campos = {
       nombre: s.idNombre.trim(), colores: JSON.stringify(s.idColores),
       logo: s.idLogo, membrete: s.idMembrete, programas: JSON.stringify(programas)
-    }).eq('id', s.instActiva);
+    };
+    let {error} = await this.cliente.from('instituciones')
+      .update(Object.assign({membrete_h: s.idMembreteH}, campos)).eq('id', s.instActiva);
+    let sinColumna = false;
+    // Si la base todavía no tiene la columna de la hoja horizontal, se guarda
+    // el resto para no bloquear la identidad completa y se dice qué falta.
+    if (error && /membrete_h/.test(error.message || '')) {
+      sinColumna = true;
+      const r = await this.cliente.from('instituciones').update(campos).eq('id', s.instActiva);
+      error = r.error;
+    }
     if (error) { this.setState({idAviso:'No se pudo guardar: ' + error.message, idAvisoError:true}); return; }
+    if (sinColumna) {
+      this.setState({idProgramas: programas,
+        idAviso:'Se guardó todo menos la hoja horizontal: ejecuta supabase-membrete-horizontal.sql en Supabase.',
+        idAvisoError:true});
+      return;
+    }
     this.setState({
       idProgramas: programas,
       instituciones: s.instituciones.map(i => i.id === s.instActiva
-        ? Object.assign({}, i, {nombre:s.idNombre.trim(), colores:s.idColores, logo:s.idLogo, membrete:s.idMembrete, programas})
+        ? Object.assign({}, i, {nombre:s.idNombre.trim(), colores:s.idColores, logo:s.idLogo, membrete:s.idMembrete, membreteH:s.idMembreteH, programas})
         : i),
       idAviso: 'Guardado ' + new Date().toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit'}),
       idAvisoError: false
@@ -4330,8 +5206,10 @@ class Component extends DCLogic {
 
   subirLogo = e => { this.leerImagen(e.target.files && e.target.files[0], 600, 'idLogo'); e.target.value = ''; };
   subirMembrete = e => { this.leerImagen(e.target.files && e.target.files[0], 1400, 'idMembrete'); e.target.value = ''; };
+  subirMembreteH = e => { this.leerImagen(e.target.files && e.target.files[0], 1800, 'idMembreteH'); e.target.value = ''; };
   quitarLogo = () => this.setState({idLogo:'', idAviso:'Sin guardar', idAvisoError:false});
   quitarMembrete = () => this.setState({idMembrete:'', idAviso:'Sin guardar', idAvisoError:false});
+  quitarMembreteH = () => this.setState({idMembreteH:'', idAviso:'Sin guardar', idAvisoError:false});
 
   valsIdentidad() {
     const s = this.state;
@@ -4352,6 +5230,13 @@ class Component extends DCLogic {
         backgroundSize:'cover', backgroundPosition:'center'},
       textoLogo: s.idLogo ? 'Cambiar logotipo' : 'Seleccionar logotipo',
       idMembrete: s.idMembrete, hayMembrete: !!s.idMembrete, sinMembrete: !s.idMembrete,
+      idMembreteH: s.idMembreteH, hayMembreteH: !!s.idMembreteH, sinMembreteH: !s.idMembreteH,
+      estiloMembreteH: {width:'100%', height:'100%', backgroundImage:'url("' + s.idMembreteH + '")',
+        backgroundSize:'contain', backgroundPosition:'center', backgroundRepeat:'no-repeat'},
+      estiloMembreteFondoH: {position:'absolute', inset:0, backgroundImage:'url("' + s.idMembreteH + '")',
+        backgroundSize:'cover', backgroundPosition:'center'},
+      textoMembreteH: s.idMembreteH ? 'Cambiar hoja horizontal' : 'Cargar hoja horizontal',
+      subirMembreteH: this.subirMembreteH, quitarMembreteH: this.quitarMembreteH,
       textoMembrete: s.idMembrete ? 'Cambiar hoja membretada' : 'Cargar hoja membretada',
       subirLogo: this.subirLogo, subirMembrete: this.subirMembrete,
       quitarLogo: this.quitarLogo, quitarMembrete: this.quitarMembrete,
@@ -5197,7 +6082,8 @@ class Component extends DCLogic {
       esReingreso: s.vista === 'reingreso',
       esPadron: s.vista === 'padron',
       esIdentidad: s.vista === 'identidad',
-      esObra: ['inicio','carga','usuarios','reingreso','padron','identidad','instituciones','trayectoria','contabilidad'].indexOf(s.vista) === -1,
+      esObra: ['inicio','carga','usuarios','reingreso','padron','identidad','instituciones','trayectoria','contabilidad','expediente'].indexOf(s.vista) === -1,
+      ...this.valsExpediente(),
       ...this.valsTrayectoria(),
       ...this.valsContabilidad(),
       ...this.valsInicio(),
