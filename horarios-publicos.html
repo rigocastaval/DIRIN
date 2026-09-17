@@ -192,8 +192,17 @@ function armarTarjetas(){
   const q = norm(filtro);
 
   if (modo === "grupo"){
+    /* Orden del listado: primero A, primero B, segundo A… hasta séptimo A.
+       Manda el número de semestre; a igualdad, la letra del grupo. */
+    const ordenGrupo = g => {
+      const n = parseInt(String(g.semestre || "").replace(/\D+/g, ""), 10);
+      return [isNaN(n) ? 99 : n, String(g.grupo || "").trim().toUpperCase()];
+    };
     (datos.grupos || []).slice()
-      .sort((a,b) => grupoNombre(a).localeCompare(grupoNombre(b), "es", {numeric:true}))
+      .sort((a,b) => {
+        const x = ordenGrupo(a), y = ordenGrupo(b);
+        return x[0] - y[0] || x[1].localeCompare(y[1], "es");
+      })
       .forEach(g => {
         if (q && !norm(grupoNombre(g)).includes(q)) return;
         const bloques = (g.bloques || []).slice().sort(compararBloques);
@@ -361,15 +370,48 @@ document.addEventListener("keydown", e => {
 document.getElementById("anterior").onclick  = () => irA(destino - 1);
 document.getElementById("siguiente").onclick = () => irA(destino + 1);
 
-// Deslizar con el dedo o arrastrando: mismo recorrido que la rueda.
-let x0 = null;
+/* Deslizar con el dedo: mismo recorrido que la rueda, en cualquiera de los dos
+   ejes. Hacia abajo o hacia la izquierda avanza; hacia arriba o a la derecha
+   regresa. Manda el eje en el que el dedo se movió más. */
+let x0 = null, y0 = null;
 const escena = document.getElementById("escena");
-escena.addEventListener("pointerdown", e => { x0 = e.clientX; });
+escena.addEventListener("pointerdown", e => { x0 = e.clientX; y0 = e.clientY; });
 escena.addEventListener("pointerup", e => {
   if (x0 === null) return;
-  const d = e.clientX - x0; x0 = null;
+  const dx = e.clientX - x0, dy = e.clientY - y0;
+  x0 = y0 = null;
+  const d = Math.abs(dy) > Math.abs(dx) ? dy : dx;
   if (Math.abs(d) > 45) irA(destino + (d < 0 ? 1 : -1));
 });
+escena.addEventListener("pointercancel", () => { x0 = y0 = null; });
+
+/* En un teléfono no hay rueda: el gesto de desplazar la página también hace
+   girar el carrusel, salvo cuando la tabla del frente todavía puede desplazarse
+   por dentro. */
+let tyPrev = null, acumTactil = 0;
+escena.addEventListener("touchstart", e => {
+  tyPrev = e.touches.length === 1 ? e.touches[0].clientY : null;
+  acumTactil = 0;
+}, {passive:true});
+escena.addEventListener("touchmove", e => {
+  if (tyPrev === null || tarjetas.length < 2) return;
+  const y = e.touches[0].clientY;
+  const dy = tyPrev - y;
+  tyPrev = y;
+  const cuerpo = e.target.closest && e.target.closest(".tarjeta.frente .tcuerpo");
+  if (cuerpo){
+    const abajo = cuerpo.scrollTop + cuerpo.clientHeight < cuerpo.scrollHeight - 1;
+    const arriba = cuerpo.scrollTop > 0;
+    if ((dy > 0 && abajo) || (dy < 0 && arriba)) return;
+  }
+  acumTactil += dy;
+  const umbral = 70;
+  while (Math.abs(acumTactil) >= umbral){
+    irA(destino + (acumTactil > 0 ? 1 : -1));
+    acumTactil -= (acumTactil > 0 ? umbral : -umbral);
+  }
+}, {passive:true});
+escena.addEventListener("touchend", () => { tyPrev = null; }, {passive:true});
 window.addEventListener("resize", colocar);
 
 /* ---------------------------------------------------------------
