@@ -15,6 +15,19 @@
 html,body{margin:0;padding:0;height:100%}
 a:hover{color:var(--color-accent-700)}
 @keyframes girar{to{transform:rotate(360deg)}}
+[data-solo-movil]{display:none}
+@media (max-width:880px){
+  [data-movil-ocultar]{display:none !important}
+  [data-barra-sup]{padding:8px 12px !important;gap:9px !important;row-gap:8px !important}
+  [data-rejilla]{grid-template-columns:minmax(0,1fr) !important}
+  [data-solo-movil]{display:block !important}
+  [data-nav-modulos]{position:fixed !important;top:var(--alto-barra,54px) !important;left:0;bottom:0;width:min(84vw,290px);background:var(--color-bg);z-index:55;min-height:0 !important;max-height:none !important;border-right:2px solid var(--color-text) !important;overflow:auto}
+  [data-velo]{display:block !important;position:fixed;inset:var(--alto-barra,54px) 0 0 0;background:rgba(0,0,0,.34);z-index:50;border:0;padding:0}
+  [data-nav-modulos] button{padding-top:12px !important;padding-bottom:12px !important}
+  main > div{padding-left:14px !important;padding-right:14px !important}
+  table{font-size:12px}
+  select,input,textarea{font-size:16px}
+}
 </style>
 </helmet>
 
@@ -191,7 +204,7 @@ a:hover{color:var(--color-accent-700)}
 <div style="min-height:100vh;display:flex;flex-direction:column;background:var(--color-bg)">
 
   <div style="background:var(--color-bg);border-bottom:2px solid var(--color-divider);position:sticky;top:0;z-index:40">
-    <div style="display:flex;align-items:center;flex-wrap:wrap;row-gap:10px;gap:16px;padding:12px 24px">
+    <div data-barra-sup style="display:flex;align-items:center;flex-wrap:wrap;row-gap:10px;gap:16px;padding:12px 24px">
       <button onClick="{{ alternarMenu }}" title="{{ tituloMenu }}" aria-label="{{ tituloMenu }}" style="border:1.5px solid var(--color-divider);background:none;cursor:pointer;color:var(--color-text);width:34px;height:34px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;flex:none;padding:0" style-hover="{{ hoverMenu }}">
         <span style="height:2px;width:16px;background:currentColor;display:block"></span>
         <span style="height:2px;width:16px;background:currentColor;display:block"></span>
@@ -201,7 +214,7 @@ a:hover{color:var(--color-accent-700)}
         <div style="width:34px;height:34px;background:var(--color-accent);color:var(--color-bg);display:flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-weight:800;font-size:12px;letter-spacing:.04em">DI</div>
         <div style="line-height:1.15">
           <div style="font-family:var(--font-heading);font-weight:800;font-size:15px;letter-spacing:.06em">DIRIN</div>
-          <div style="font-size:10px;text-transform:uppercase;letter-spacing:.1em" class="text-muted">Dirección Inteligente</div>
+          <div data-movil-ocultar style="font-size:10px;text-transform:uppercase;letter-spacing:.1em" class="text-muted">Dirección Inteligente</div>
         </div>
       </div>
 
@@ -247,13 +260,13 @@ a:hover{color:var(--color-accent-700)}
         </div>
       </div>
 
-      <div style="margin-left:auto;display:flex;align-items:center;gap:10px">
+      <div data-movil-ocultar style="margin-left:auto;display:flex;align-items:center;gap:10px">
         <span style="width:8px;height:8px;background:{{ colorConexion }};flex:none"></span>
         <span class="text-muted" style="font-size:11px;text-transform:uppercase;letter-spacing:.08em">{{ modoTexto }}</span>
       </div>
 
       <div style="display:flex;align-items:center;gap:10px">
-        <span style="font-size:11px;text-transform:uppercase;letter-spacing:.09em" class="text-muted">Ciclo</span>
+        <span data-movil-ocultar style="font-size:11px;text-transform:uppercase;letter-spacing:.09em" class="text-muted">Ciclo</span>
         <select class="input" value="{{ cicloSelGlobal }}" onChange="{{ setCicloGlobal }}" style="padding:6px 10px;font-size:13px">
           <sc-for list="{{ cicloOpciones }}" as="c" hint-placeholder-count="3">
             <option value="{{ c.valor }}">{{ c.nombre }}</option>
@@ -270,17 +283,17 @@ a:hover{color:var(--color-accent-700)}
             <svg width="14" height="17" viewBox="0 0 15 18" fill="none" aria-hidden="true"><path d="M3 8V5.5a4.5 4.5 0 0 1 9 0" stroke="currentColor" stroke-width="1.7"></path><rect x="1" y="8" width="13" height="9" fill="currentColor"></rect></svg>
           </sc-if>
         </button>
-        <span style="font-family:var(--font-heading);font-weight:800;font-size:10.5px;text-transform:uppercase;letter-spacing:.09em;color:{{ colorCandado }};white-space:nowrap;line-height:1.2;max-width:96px">{{ leyendaCandado }}</span>
+        <span data-movil-ocultar style="font-family:var(--font-heading);font-weight:800;font-size:10.5px;text-transform:uppercase;letter-spacing:.09em;color:{{ colorCandado }};white-space:nowrap;line-height:1.2;max-width:96px">{{ leyendaCandado }}</span>
       </div>
 
       <div style="display:flex;align-items:center;flex-wrap:wrap;row-gap:8px;gap:12px;padding-left:16px;border-left:2px solid var(--color-divider);margin-left:auto">
-        <div style="text-align:left;line-height:1.25;flex:none">
+        <div data-movil-ocultar style="text-align:left;line-height:1.25;flex:none">
           <div style="font-size:13px;font-family:var(--font-heading);font-weight:800">{{ nombreUsuario }}</div>
           <div style="font-size:10px;text-transform:uppercase;letter-spacing:.08em" class="text-muted">{{ nombrePerfil }}</div>
         </div>
         <div style="width:32px;height:32px;background:var(--color-text);color:var(--color-bg);display:flex;align-items:center;justify-content:center;font-size:12px;font-family:var(--font-heading);font-weight:800">{{ iniciales }}</div>
         <sc-if value="{{ puedeCambiarPerfil }}" hint-placeholder-val="{{ false }}">
-          <div style="position:relative;flex:none">
+          <div data-movil-ocultar style="position:relative;flex:none">
             <button class="btn btn-ghost" onClick="{{ alternarCambioPerfil }}" title="Ver el sistema como otro perfil, sin cerrar la sesión">Cambiar de perfil</button>
             <sc-if value="{{ cambioPerfilAbierto }}" hint-placeholder-val="{{ false }}">
               <div style="position:absolute;top:calc(100% + 8px);right:0;z-index:60;background:var(--color-bg);border:2px solid var(--color-text);min-width:250px;box-shadow:0 10px 26px rgba(0,0,0,.16)">
@@ -299,16 +312,38 @@ a:hover{color:var(--color-accent-700)}
         <sc-if value="{{ simulandoPerfil }}" hint-placeholder-val="{{ false }}">
           <button class="btn btn-secondary" onClick="{{ volverAMiPerfil }}" style="font-size:12px" title="Regresar a tu propio perfil">Volver a {{ nombrePerfilReal }}</button>
         </sc-if>
-        <button class="btn btn-ghost" onClick="{{ abrirMiCuenta }}" title="Cambiar tu contraseña o tu PIN">Mi cuenta</button>
+        <button data-movil-ocultar class="btn btn-ghost" onClick="{{ abrirMiCuenta }}" title="Cambiar tu contraseña o tu PIN">Mi cuenta</button>
         <button class="btn btn-secondary" onClick="{{ salir }}">Salir</button>
       </div>
     </div>
   </div>
 
-  <div style="display:grid;grid-template-columns:{{ columnasMenu }};align-items:start;flex:1">
+  <div data-rejilla style="display:grid;grid-template-columns:{{ columnasMenu }};align-items:start;flex:1">
 
     <sc-if value="{{ menuVisible }}" hint-placeholder-val="{{ true }}">
-    <nav style="border-right:2px solid var(--color-divider);min-height:calc(100vh - 60px);padding:8px 0 40px;position:sticky;top:60px;align-self:start;max-height:calc(100vh - 60px);overflow:auto">
+    <button data-velo data-solo-movil onClick="{{ alternarMenu }}" aria-label="Cerrar el menú de módulos" style="display:none"></button>
+    <nav data-nav-modulos style="border-right:2px solid var(--color-divider);min-height:calc(100vh - 60px);padding:8px 0 40px;position:sticky;top:60px;align-self:start;max-height:calc(100vh - 60px);overflow:auto">
+      <div data-solo-movil style="border-bottom:2px solid var(--color-divider);padding:6px 0">
+        <div class="text-muted" style="padding:4px 18px 8px;font-size:11px;line-height:1.35">{{ nombreUsuario }} · {{ nombrePerfil }}</div>
+        <button onClick="{{ abrirMiCuenta }}" style="width:100%;text-align:left;border:0;background:none;cursor:pointer;padding:11px 18px;font-size:13px;font-family:var(--font-heading);font-weight:800;color:var(--color-accent-700)">Mi cuenta</button>
+        <sc-if value="{{ puedeCambiarPerfil }}" hint-placeholder-val="{{ false }}">
+          <button onClick="{{ alternarCambioPerfil }}" style="width:100%;text-align:left;border:0;background:none;cursor:pointer;padding:11px 18px;font-size:13px;font-family:var(--font-heading);font-weight:800;color:var(--color-accent-700)">Cambiar de perfil</button>
+        </sc-if>
+        <sc-if value="{{ cambioPerfilAbierto }}" hint-placeholder-val="{{ false }}">
+          <div style="margin:2px 12px 8px;border:2px solid var(--color-text)">
+            <div style="padding:8px 12px;border-bottom:1.5px solid var(--color-divider);font-size:9.5px;text-transform:uppercase;letter-spacing:.09em;font-family:var(--font-heading);font-weight:800">Ver el sistema como</div>
+            <sc-for list="{{ perfilesVista }}" as="p" hint-placeholder-count="5">
+              <button onClick="{{ p.elegir }}" style="width:100%;text-align:left;border:0;border-bottom:1px solid var(--color-divider);background:{{ p.bg }};padding:11px 12px;cursor:pointer;font-size:13px;font-family:var(--font-heading);font-weight:{{ p.peso }};display:flex;align-items:center;gap:8px">
+                <span>{{ p.nombre }}</span>
+                <span class="text-muted" style="margin-left:auto;font-size:10px;text-transform:uppercase;letter-spacing:.08em;font-weight:500">{{ p.nota }}</span>
+              </button>
+            </sc-for>
+          </div>
+        </sc-if>
+        <sc-if value="{{ simulandoPerfil }}" hint-placeholder-val="{{ false }}">
+          <button onClick="{{ volverAMiPerfil }}" style="width:100%;text-align:left;border:0;background:none;cursor:pointer;padding:11px 18px;font-size:13px;font-family:var(--font-heading);font-weight:800;color:var(--color-accent-700)">Volver a {{ nombrePerfilReal }}</button>
+        </sc-if>
+      </div>
       <button onClick="{{ irInicio }}" style="width:100%;text-align:left;border:0;border-left:3px solid {{ barraInicio }};background:{{ bgInicio }};color:{{ colorInicio }};padding:10px 18px;cursor:pointer;font-family:var(--font-heading);font-weight:800;font-size:13px" style-hover="background:color-mix(in srgb, var(--color-accent) 10%, transparent)">Inicio</button>
 
       <sc-if value="{{ esSuperAdmin }}" hint-placeholder-val="{{ false }}">
@@ -2619,8 +2654,34 @@ class Component extends DCLogic {
 
   cliente = null;
 
+  esPantallaChica() {
+    return typeof window !== 'undefined' && window.innerWidth <= 880;
+  }
+
+  /* La barra superior envuelve en varias filas en un teléfono: su altura real se
+     publica como variable para que el cajón de módulos arranque debajo de ella. */
+  medirBarra = () => {
+    try {
+      const barra = document.querySelector('[data-barra-sup]');
+      if (!barra) { setTimeout(this.medirBarra, 400); return; }
+      const aplicar = () => {
+        const alto = Math.round(barra.getBoundingClientRect().height);
+        if (alto > 0) document.documentElement.style.setProperty('--alto-barra', alto + 'px');
+      };
+      aplicar();
+      if (window.ResizeObserver) {
+        this.obsBarra = new ResizeObserver(aplicar);
+        this.obsBarra.observe(barra);
+      }
+      window.addEventListener('resize', aplicar);
+      window.addEventListener('orientationchange', aplicar);
+    } catch (e) {}
+  };
+
   componentDidMount() {
     window.addEventListener('message', this.escucharCandado);
+    if (this.esPantallaChica() && this.state.menuVisible) this.setState({menuVisible:false});
+    this.medirBarra();
     try {
       const guardado = localStorage.getItem('ujm-reingreso-v1');
       if (guardado) {
@@ -5422,6 +5483,7 @@ class Component extends DCLogic {
   /* Cambiar de módulo cierra el candado: cada pantalla se desbloquea aparte,
      para que nadie deje la edición abierta al pasar de una cosa a otra. */
   navegar(cambios) {
+    if (this.esPantallaChica()) cambios = Object.assign({}, cambios, {menuVisible:false});
     const cerrar = this.state.edicionHorarios ? {edicionHorarios:false, pidiendoPin:false,
       pinIntento:'', pinIntento2:'', pinAviso:''} : null;
     this.setState(Object.assign({}, cambios, cerrar), cerrar ? this.avisarCandado : undefined);
