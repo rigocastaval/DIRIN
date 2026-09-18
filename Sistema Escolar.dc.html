@@ -6144,7 +6144,7 @@ class Component extends DCLogic {
       esReingreso: s.vista === 'reingreso',
       esPadron: s.vista === 'padron',
       esIdentidad: s.vista === 'identidad',
-      esObra: ['inicio','carga','usuarios','reingreso','padron','identidad','instituciones','trayectoria','contabilidad','expediente'].indexOf(s.vista) === -1,
+      esObra: ['inicio','carga','usuarios','reingreso','padron','identidad','instituciones','trayectoria','contabilidad','expediente','publicas'].indexOf(s.vista) === -1,
       ...this.valsExpediente(),
       ...this.valsTrayectoria(),
       ...this.valsContabilidad(),

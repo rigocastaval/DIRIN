@@ -41,7 +41,7 @@ select.filtro,input.filtro{border:1px solid var(--linea);border-radius:7px;paddi
 .escena{flex:1;position:relative;perspective:1500px;overflow:hidden;
   background:radial-gradient(ellipse at 50% 42%, #f7f6f5 0%, var(--lienzo) 62%, #ddd9d7 100%)}
 .pista{position:absolute;inset:0;transform-style:preserve-3d}
-.tarjeta{position:absolute;top:50%;left:50%;width:min(760px,86vw);
+.tarjeta{position:absolute;top:50%;left:50%;width:min(880px,90vw);
   transform-origin:50% 50%;will-change:transform,opacity;
   background:var(--papel);border:1px solid var(--linea);border-radius:12px;
   box-shadow:0 18px 44px rgba(0,0,0,.16);overflow:hidden;cursor:pointer}
@@ -51,7 +51,7 @@ select.filtro,input.filtro{border:1px solid var(--linea);border-radius:7px;paddi
 .tcab b{font-size:16px}
 .tcab span{font-size:11.5px;color:var(--gris);text-transform:uppercase;letter-spacing:.08em}
 .tcab .cuenta{margin-left:auto;font-size:11.5px;color:var(--gris)}
-.tcuerpo{max-height:min(58vh,520px);overflow:auto}
+.tcuerpo{max-height:min(66vh,640px);overflow:auto}
 table.rejilla{border-collapse:collapse;width:100%;font-size:11.5px;table-layout:fixed}
 table.rejilla th{position:sticky;top:0;z-index:2;background:#fbfaf9;color:var(--gris);
   font-size:10px;text-transform:uppercase;letter-spacing:.07em;font-weight:700;
@@ -81,6 +81,35 @@ table.rejilla td.hora{border-left:0;text-align:right;padding:5px 9px 0 4px;color
 .pista-vacia div{max-width:44ch;color:var(--gris);line-height:1.6}
 .pie{flex:none;background:var(--papel);border-top:1px solid var(--linea);padding:7px 20px;
   font-size:11px;color:var(--gris);display:flex;gap:14px;flex-wrap:wrap}
+
+.btn{border:1px solid var(--linea);background:var(--papel);color:var(--tinta);border-radius:7px;
+  padding:7px 12px;cursor:pointer;font-size:12.5px;font-weight:500;white-space:nowrap}
+.btn:hover{background:#f6f4f3}
+
+/* Visor: un solo horario a pantalla completa, con acercamiento */
+.visor{position:fixed;inset:0;z-index:200;background:var(--lienzo);display:none;
+  flex-direction:column}
+.visor.abierto{display:flex}
+.visor .vbarra{flex:none;display:flex;align-items:center;gap:10px;padding:10px 16px;
+  background:var(--papel);border-bottom:1px solid var(--linea);flex-wrap:wrap}
+.visor .vtit{display:flex;flex-direction:column;line-height:1.2;min-width:0}
+.visor .vtit b{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.visor .vtit span{font-size:11px;color:var(--gris);text-transform:uppercase;letter-spacing:.08em}
+.visor .vzoom{margin-left:auto;display:flex;align-items:center;gap:8px}
+.visor .vzoom .nivel{font-size:12px;color:var(--gris);min-width:46px;text-align:center}
+.visor .vlienzo{flex:1;overflow:auto;padding:18px;background:
+  radial-gradient(ellipse at 50% 30%, #f7f6f5 0%, var(--lienzo) 70%);
+  touch-action:pan-x pan-y;-webkit-overflow-scrolling:touch}
+.visor .vhoja{transform-origin:0 0;width:min(1100px,100%);margin:0 auto;
+  background:var(--papel);border:1px solid var(--linea);border-radius:10px;overflow:hidden;
+  box-shadow:0 18px 44px rgba(0,0,0,.14)}
+.visor .vhoja table.rejilla{font-size:13px}
+.visor .vhoja table.rejilla td{height:46px}
+@media (max-width:700px){
+  .visor .vbarra{padding:8px 12px;gap:8px}
+  .visor .vlienzo{padding:10px}
+  .barra .fila{padding:9px 12px;gap:10px}
+}
 </style>
 </head>
 <body>
@@ -100,6 +129,7 @@ table.rejilla td.hora{border-left:0;text-align:right;padding:5px 9px 0 4px;color
       </div>
       <select class="filtro" id="selInst" style="display:none"></select>
       <input class="filtro" id="buscar" placeholder="Buscar…" autocomplete="off">
+      <button class="btn" id="btnPantalla" title="Ver a pantalla completa">Pantalla completa</button>
     </div>
   </div>
 </div>
@@ -114,8 +144,24 @@ table.rejilla td.hora{border-left:0;text-align:right;padding:5px 9px 0 4px;color
   </div>
 </div>
 
+<div class="visor" id="visor">
+  <div class="vbarra">
+    <button class="btn" id="vAtras">‹ Atrás</button>
+    <div class="vtit"><b id="vTitulo"></b><span id="vSub"></span></div>
+    <div class="vzoom">
+      <button class="btn" id="vMenos" title="Alejar" aria-label="Alejar">−</button>
+      <span class="nivel" id="vNivel">100%</span>
+      <button class="btn" id="vMas" title="Acercar" aria-label="Acercar">+</button>
+      <button class="btn" id="vAjustar">Ajustar</button>
+    </div>
+  </div>
+  <div class="vlienzo" id="vLienzo">
+    <div class="vhoja" id="vHoja"></div>
+  </div>
+</div>
+
 <div class="pie">
-  <span>Gire la rueda del ratón o deslice para pasar de un horario a otro.</span>
+  <span>Gire la rueda del ratón o deslice para pasar de un horario a otro. Toque un horario para verlo completo.</span>
   <span id="pieFecha" style="margin-left:auto"></span>
 </div>
 
@@ -281,7 +327,12 @@ function pintarPista(){
       <div class="tcuerpo">${t.html}</div>
     </article>`).join("");
   pista.querySelectorAll(".tarjeta").forEach(el => {
-    el.onclick = () => { const i = Number(el.dataset.i); if (i !== Math.round(idx)) irA(i); };
+    el.onclick = () => {
+      if (huboArrastre) return;              // fue un deslizamiento, no un toque
+      const i = Number(el.dataset.i);
+      if (i !== Math.round(idx)) irA(i);
+      else abrirVisor(i);
+    };
   });
   document.getElementById("vacio").style.display = tarjetas.length ? "none" : "flex";
   if (!tarjetas.length){
@@ -362,6 +413,12 @@ document.getElementById("escena").addEventListener("wheel", e => {
 
 document.addEventListener("keydown", e => {
   if (e.target.matches("input,select")) return;
+  if (visorAbierto()){
+    if (e.key === "Escape") cerrarVisor();
+    if (e.key === "+" || e.key === "=") zoomA(zoom + 0.2);
+    if (e.key === "-") zoomA(zoom - 0.2);
+    return;
+  }
   if (e.key === "ArrowRight" || e.key === "PageDown") irA(destino + 1);
   if (e.key === "ArrowLeft"  || e.key === "PageUp")   irA(destino - 1);
   if (e.key === "Home") irA(0);
@@ -373,17 +430,100 @@ document.getElementById("siguiente").onclick = () => irA(destino + 1);
 /* Deslizar con el dedo: mismo recorrido que la rueda, en cualquiera de los dos
    ejes. Hacia abajo o hacia la izquierda avanza; hacia arriba o a la derecha
    regresa. Manda el eje en el que el dedo se movió más. */
-let x0 = null, y0 = null;
+let x0 = null, y0 = null, huboArrastre = false;
 const escena = document.getElementById("escena");
-escena.addEventListener("pointerdown", e => { x0 = e.clientX; y0 = e.clientY; });
+escena.addEventListener("pointerdown", e => { x0 = e.clientX; y0 = e.clientY; huboArrastre = false; });
 escena.addEventListener("pointerup", e => {
   if (x0 === null) return;
   const dx = e.clientX - x0, dy = e.clientY - y0;
   x0 = y0 = null;
+  huboArrastre = Math.abs(dx) > 10 || Math.abs(dy) > 10;
   const d = Math.abs(dy) > Math.abs(dx) ? dy : dx;
   if (Math.abs(d) > 45) irA(destino + (d < 0 ? 1 : -1));
 });
 escena.addEventListener("pointercancel", () => { x0 = y0 = null; });
+
+/* ---------------------------------------------------------------
+   Visor: el horario elegido, solo, a pantalla completa y con acercamiento
+   --------------------------------------------------------------- */
+const visor = document.getElementById("visor");
+const vLienzo = document.getElementById("vLienzo");
+const vHoja = document.getElementById("vHoja");
+let zoom = 1;
+const visorAbierto = () => visor.classList.contains("abierto");
+
+function zoomA(z){
+  zoom = Math.max(0.5, Math.min(4, z));
+  vHoja.style.transform = `scale(${zoom})`;
+  // El contenedor debe crecer con la hoja para que el desplazamiento alcance.
+  vHoja.style.marginBottom = ((zoom - 1) * vHoja.offsetHeight) + "px";
+  vHoja.style.marginRight = ((zoom - 1) * vHoja.offsetWidth) + "px";
+  document.getElementById("vNivel").textContent = Math.round(zoom * 100) + "%";
+}
+
+function abrirVisor(i){
+  const t = tarjetas[i];
+  if (!t) return;
+  document.getElementById("vTitulo").textContent = t.titulo;
+  document.getElementById("vSub").textContent = [t.sub, t.cuenta].filter(Boolean).join(" · ");
+  vHoja.innerHTML = t.html;
+  visor.classList.add("abierto");
+  vHoja.style.transformOrigin = "0 0";
+  zoomA(1);
+  vLienzo.scrollTop = vLienzo.scrollLeft = 0;
+  history.pushState({visor:true}, "");     // el botón «atrás» del teléfono cierra el visor
+}
+
+function cerrarVisor(){
+  if (!visorAbierto()) return;
+  visor.classList.remove("abierto");
+  vHoja.innerHTML = "";
+  if (history.state && history.state.visor) history.back();
+}
+
+document.getElementById("vAtras").onclick = cerrarVisor;
+document.getElementById("vMas").onclick = () => zoomA(zoom + 0.25);
+document.getElementById("vMenos").onclick = () => zoomA(zoom - 0.25);
+document.getElementById("vAjustar").onclick = () => { zoomA(1); vLienzo.scrollTop = vLienzo.scrollLeft = 0; };
+window.addEventListener("popstate", () => {
+  if (visorAbierto()){ visor.classList.remove("abierto"); vHoja.innerHTML = ""; }
+});
+
+// Rueda con Ctrl (o gesto de acercar del panel táctil): acerca y aleja.
+vLienzo.addEventListener("wheel", e => {
+  if (!e.ctrlKey) return;
+  e.preventDefault();
+  zoomA(zoom - e.deltaY * 0.003);
+}, {passive:false});
+
+// Pellizcar con dos dedos.
+let dist0 = null, zoom0 = 1;
+vLienzo.addEventListener("touchstart", e => {
+  if (e.touches.length !== 2) return;
+  const [a,b] = e.touches;
+  dist0 = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+  zoom0 = zoom;
+}, {passive:true});
+vLienzo.addEventListener("touchmove", e => {
+  if (dist0 === null || e.touches.length !== 2) return;
+  e.preventDefault();
+  const [a,b] = e.touches;
+  const d = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+  zoomA(zoom0 * (d / dist0));
+}, {passive:false});
+vLienzo.addEventListener("touchend", () => { dist0 = null; }, {passive:true});
+
+/* Pantalla completa del navegador para el carrusel. */
+const btnPantalla = document.getElementById("btnPantalla");
+btnPantalla.onclick = () => {
+  if (document.fullscreenElement) document.exitFullscreen();
+  else if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen();
+};
+document.addEventListener("fullscreenchange", () => {
+  btnPantalla.textContent = document.fullscreenElement ? "Salir de pantalla completa" : "Pantalla completa";
+  colocar();
+});
+if (!document.documentElement.requestFullscreen) btnPantalla.style.display = "none";
 
 /* En un teléfono no hay rueda: el gesto de desplazar la página también hace
    girar el carrusel, salvo cuando la tabla del frente todavía puede desplazarse
