@@ -468,52 +468,45 @@ a:hover{color:var(--color-accent-700)}
       </sc-if>
 
       <sc-if value="{{ esPublicas }}" hint-placeholder-val="{{ false }}">
-        <div style="min-height:calc(100vh - 60px);display:flex;flex-direction:column">
-          <div style="display:flex;align-items:center;gap:14px;padding:12px 24px;border-bottom:2px solid var(--color-divider);flex-wrap:wrap">
-            <div style="line-height:1.2;min-width:0">
-              <h6 style="margin:0 0 2px" class="text-muted">Páginas públicas</h6>
-              <div style="font-family:var(--font-heading);font-weight:800;font-size:16px">Horarios · consulta sin cuenta</div>
-            </div>
-            <div style="margin-left:auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-              <span style="font-family:var(--font-heading);font-weight:800;font-size:12.5px;text-transform:uppercase;letter-spacing:.1em;color:{{ colorPublicado }};border:2px solid currentColor;padding:5px 12px;white-space:nowrap">{{ leyendaPublicado }}</span>
-              <button class="btn btn-primary" onClick="{{ publicarHorarios }}">{{ textoPublicar }}</button>
-              <a class="btn btn-secondary" href="{{ ligaPublica }}" target="_blank">Abrir la página</a>
-            </div>
-          </div>
-          <div style="padding:14px 24px;border-bottom:1.5px solid var(--color-divider);display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap">
-            <p class="text-muted" style="margin:0;max-width:70ch;font-size:13px;line-height:1.55;text-wrap:pretty">Al publicar se copia el horario que está guardado en la base y queda a la vista de cualquiera con la liga, sin cuenta ni contraseña. Los estudiantes lo consultan por grupo, por docente o por materia, y pasan de uno a otro con la rueda del ratón. Nada más del sistema queda expuesto.</p>
-            <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
-              <input class="input" readonly value="{{ ligaPublicaCompleta }}" onFocus="{{ seleccionarLiga }}" style="min-width:min(320px,60vw);font-size:12px">
-              <button class="btn btn-secondary" onClick="{{ copiarLiga }}">Copiar liga</button>
-            </div>
-            <sc-if value="{{ hayAvisoPublicar }}" hint-placeholder-val="{{ false }}">
-              <div style="flex-basis:100%;border-left:3px solid var(--color-accent);background:var(--color-accent-100);padding:9px 14px;font-size:12.5px;color:var(--color-accent-800)">{{ avisoPublicar }}</div>
-            </sc-if>
-          </div>
-          <div style="padding:16px 24px;border-bottom:1.5px solid var(--color-divider)">
-            <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:12px">
-              <h5 style="margin:0">Qué ve el público</h5>
-              <span class="text-muted" style="font-size:12.5px">En este orden aparecen en el mural.</span>
-            </div>
-            <div style="display:flex;flex-direction:column;gap:10px;max-width:920px">
-              <sc-for list="{{ listaPaginas }}" as="p" hint-placeholder-count="2">
-                <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;border:2px solid var(--color-divider);padding:12px 16px">
+        <div style="padding:28px 28px 56px">
+          <h6 style="margin:0 0 4px" class="text-muted">Sistema</h6>
+          <h2 style="margin:0 0 10px">Páginas públicas</h2>
+          <p class="text-muted" style="margin:0;max-width:74ch;font-size:14px;line-height:1.55;text-wrap:pretty">Cada herramienta se publica por separado. Lo que está público se ve con la liga, sin cuenta ni contraseña; lo que está oculto desaparece del mural. Nada más del sistema queda expuesto.</p>
+          <hr class="hr">
+
+          <div style="display:flex;flex-direction:column;gap:16px;max-width:920px">
+            <sc-for list="{{ listaPaginas }}" as="p" hint-placeholder-count="2">
+              <div style="border:2px solid var(--color-divider)">
+                <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:14px 18px;border-bottom:1.5px solid var(--color-divider)">
                   <span class="text-muted" style="font-family:var(--font-heading);font-weight:800;font-size:13px;flex:none">{{ p.orden }}</span>
                   <div style="min-width:0;flex:1 1 280px;line-height:1.35">
-                    <div style="font-family:var(--font-heading);font-weight:800;font-size:14px">{{ p.nombre }}</div>
+                    <div style="font-family:var(--font-heading);font-weight:800;font-size:15px">{{ p.nombre }}</div>
                     <div class="text-muted" style="font-size:12.5px;text-wrap:pretty">{{ p.texto }}</div>
                   </div>
-                  <span class="tag tag-neutral" style="flex:none">{{ p.etiqueta }}</span>
+                  <span style="font-family:var(--font-heading);font-weight:800;font-size:11.5px;text-transform:uppercase;letter-spacing:.1em;color:{{ p.color }};border:2px solid currentColor;padding:5px 11px;white-space:nowrap;flex:none">{{ p.etiqueta }}</span>
                   <button class="btn {{ p.clase }}" style="font-size:12.5px;flex:none" onClick="{{ p.alternar }}">{{ p.accion }}</button>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 18px">
+                  <input class="input" readonly value="{{ p.ligaCompleta }}" onFocus="{{ seleccionarLiga }}" style="flex:1 1 300px;min-width:0;font-size:12px">
+                  <button class="btn btn-secondary" style="font-size:12.5px;flex:none" onClick="{{ p.copiar }}">Copiar liga</button>
                   <a class="btn btn-ghost" style="font-size:12.5px;flex:none" href="{{ p.liga }}" target="_blank">Abrir</a>
                 </div>
-              </sc-for>
-            </div>
-            <sc-if value="{{ hayAvisoPaginas }}" hint-placeholder-val="{{ false }}">
-              <div style="border-left:3px solid var(--color-accent);background:var(--color-accent-100);padding:9px 14px;margin-top:12px;font-size:12.5px;color:var(--color-accent-800);max-width:920px">{{ avisoPaginas }}</div>
-            </sc-if>
+                <sc-if value="{{ p.esHorarios }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 18px;border-top:1.5px solid var(--color-divider);background:var(--color-neutral-100)">
+                    <div class="text-muted" style="font-size:12.5px;flex:1 1 320px;line-height:1.5;text-wrap:pretty">El carrusel enseña una copia del horario guardado. Cada vez que cambies la programación, vuelve a publicarla para que el público vea la versión nueva. {{ notaPublicado }}</div>
+                    <button class="btn btn-primary" style="font-size:12.5px;flex:none" onClick="{{ publicarHorarios }}">{{ textoPublicar }}</button>
+                  </div>
+                </sc-if>
+              </div>
+            </sc-for>
           </div>
-          <iframe src="horarios-publicos.html" title="Carrusel de horarios" ref="{{ refPublicas }}" style="flex:1;min-height:340px;width:100%;border:0;background:var(--color-bg)"></iframe>
+
+          <sc-if value="{{ hayAvisoPaginas }}" hint-placeholder-val="{{ false }}">
+            <div style="border-left:3px solid var(--color-accent);background:var(--color-accent-100);padding:9px 14px;margin-top:16px;font-size:12.5px;color:var(--color-accent-800);max-width:920px">{{ avisoPaginas }}</div>
+          </sc-if>
+          <sc-if value="{{ hayAvisoPublicar }}" hint-placeholder-val="{{ false }}">
+            <div style="border-left:3px solid var(--color-accent);background:var(--color-accent-100);padding:9px 14px;margin-top:10px;font-size:12.5px;color:var(--color-accent-800);max-width:920px">{{ avisoPublicar }}</div>
+          </sc-if>
         </div>
       </sc-if>
 
@@ -747,8 +740,13 @@ a:hover{color:var(--color-accent-700)}
               <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,280px),1fr));gap:0;border-bottom:2px solid var(--color-divider)">
                 <div style="padding:18px;border-right:2px solid var(--color-divider)">
                   <h6 style="margin:0 0 10px">Contraseña</h6>
-                  <p class="text-muted" style="margin:0 0 12px;font-size:12.5px;line-height:1.5">No se puede fijar la contraseña de otra persona: se le envía el correo para que la reponga ella misma. La liga caduca en una hora.</p>
-                  <button class="btn btn-secondary" style="font-size:12.5px" onClick="{{ restablecerClavePerfil }}">Enviar correo de reposición</button>
+                  <div style="display:flex;flex-direction:column;gap:8px;max-width:220px">
+                    <input class="input" type="password" autocomplete="new-password" value="{{ edClave }}" onChange="{{ setEdClave }}" placeholder="mínimo 6 caracteres" style="width:100%">
+                    <input class="input" type="password" autocomplete="new-password" value="{{ edClave2 }}" onChange="{{ setEdClave2 }}" placeholder="repítela" style="width:100%">
+                    <button class="btn btn-secondary" style="font-size:12.5px" onClick="{{ guardarClaveCuenta }}">Guardar contraseña</button>
+                  </div>
+                  <p class="text-muted" style="margin:10px 0 0;font-size:12px;line-height:1.5">Queda activa de inmediato. Entrégasela en persona y pídele cambiarla en «Mi cuenta».</p>
+                  <button class="btn btn-ghost" style="font-size:12.5px;margin-top:10px;padding-left:0" onClick="{{ restablecerClavePerfil }}">o enviarle el correo de reposición</button>
                 </div>
                 <div style="padding:18px;border-right:2px solid var(--color-divider)">
                   <h6 style="margin:0 0 10px">PIN de edición</h6>
@@ -2215,10 +2213,9 @@ const AREAS = [
   {id:'img', nombre:'Administración de imagen', perfiles:['super','admin_inst','admin','direccion'], modulos:[
     {id:'identidad', nombre:'Identidad institucional', listo:true},
     {id:'plantillas', nombre:'Plantillas de documentos'}]},
-  {id:'pub', nombre:'Páginas públicas', perfiles:['super','admin_inst','admin','direccion','academica','control'], modulos:[
-    {id:'publicas', nombre:'Carrusel de horarios', listo:true}]},
   {id:'sis', nombre:'Sistema', perfiles:['super','admin_inst','admin'], modulos:[
     {id:'instituciones', nombre:'Instituciones', listo:true},
+    {id:'publicas', nombre:'Páginas públicas', listo:true},
     {id:'usuarios', nombre:'Usuarios y permisos', listo:true}]}
 ];
 
@@ -2370,7 +2367,7 @@ class Component extends DCLogic {
     recuperando:false, clave1:'', clave2:'', avisoClave:'',
     idNombre:'', idColores: COLORES_POR_DEFECTO.slice(), idLogo:'', idMembrete:'', idMembreteH:'',
     idProgramas:[], idNuevoPrograma:'', idAviso:'Sin capturar', idAvisoError:false,
-    permisos:{}, permisoUsuario:'', avisoPermisos:'',
+    permisos:{}, permisoUsuario:'', avisoPermisos:'', edClave:'', edClave2:'',
     instituciones:[], instActiva:'', miInstitucion:'', misProgramas:[], programaActivo:'',
     instAlta:'', instProgNuevo:'', instAvisoFila:'', avisoProg:'',
     trayGens:[], trayGenSel:'', trayEtapaSel:'', trayAviso:'Sin capturar', trayAvisoError:false,
@@ -5058,12 +5055,16 @@ class Component extends DCLogic {
       avisoPermisos: s.avisoPermisos,
       darTodos: () => cuenta && this.fijarTodos(cuenta.id, true),
       quitarTodos: () => cuenta && this.fijarTodos(cuenta.id, false),
-      cerrarPermisos: () => this.setState({permisoUsuario:'', avisoPermisos:'', edPin:'', edPin2:'', avisoAcceso:''}),
+      cerrarPermisos: () => this.setState({permisoUsuario:'', avisoPermisos:'', edPin:'', edPin2:'', edClave:'', edClave2:'', avisoAcceso:''}),
       // Acceso de la cuenta: contraseña, PIN y estado, dentro del mismo panel.
       rolPermisoUsuario: cuenta ? this.nombreRol(cuenta.rol) : '',
       estadoPermisoUsuario: cuenta ? (cuenta.rol === 'pendiente' ? 'En espera' : (cuenta.activo ? 'Activa' : 'Inactiva')) : '',
       claseEstadoPerfil: cuenta && cuenta.activo && cuenta.rol !== 'pendiente' ? 'tag-accent' : 'tag-neutral',
       edPin: s.edPin, edPin2: s.edPin2,
+      edClave: s.edClave, edClave2: s.edClave2,
+      setEdClave: e => this.setState({edClave: e.target.value}),
+      setEdClave2: e => this.setState({edClave2: e.target.value}),
+      guardarClaveCuenta: () => cuenta && this.fijarClaveCuenta(cuenta.id, cuenta.correo),
       setEdPin: e => this.setState({edPin: e.target.value.replace(/\D/g,'').slice(0,8)}),
       setEdPin2: e => this.setState({edPin2: e.target.value.replace(/\D/g,'').slice(0,8)}),
       guardarPinCuenta: () => cuenta && this.fijarPinCuenta(cuenta.id),
@@ -5507,11 +5508,24 @@ class Component extends DCLogic {
   };
   seleccionarLiga = e => { try { e.target.select(); } catch (err) {} };
 
-  ligaPublica() {
+  ligaPublica(archivo) {
     const base = location.href.replace(/[^/]*$/, '');
     const inst = this.state.instActiva;
-    return base + 'horarios-publicos.html' + (inst ? '?inst=' + encodeURIComponent(inst) : '');
+    const hoja = archivo || 'horarios-publicos.html';
+    // El mural es la portada: la misma para todos, sin institución en la liga.
+    if (hoja === 'portal.html') return base + hoja;
+    return base + hoja + (inst ? '?inst=' + encodeURIComponent(inst) : '');
   }
+
+  copiarLigaDe = (archivo) => {
+    const liga = this.ligaPublica(archivo);
+    try {
+      navigator.clipboard.writeText(liga);
+      this.setState({avisoPaginas:'Liga copiada: ' + liga});
+    } catch (e) {
+      this.setState({avisoPaginas:'Copia la liga a mano: ' + liga});
+    }
+  };
 
   avisarCandado = () => {
     const w = this.iframeHorarios && this.iframeHorarios.contentWindow;
@@ -5535,6 +5549,30 @@ class Component extends DCLogic {
 
   // El administrador puede reponerle el PIN a una cuenta: se guarda cifrado,
   // igual que el propio, y nadie lo puede leer después.
+  /* Cambiar la contraseña de otra cuenta no se puede desde el navegador con
+     la llave pública: lo hace una función en la base («admin_set_password»,
+     archivo supabase-cambiar-contrasena.sql) que comprueba que quien la llama
+     sea administrador con permiso de edición en Usuarios y permisos. */
+  fijarClaveCuenta = async (id, correo) => {
+    const {edClave, edClave2} = this.state;
+    if (!this.puedeEditarAhora('usuarios')) {
+      this.setState({avisoAcceso:'Necesitas permiso de edición en Usuarios y permisos, y el candado abierto, para cambiar contraseñas.'});
+      return;
+    }
+    if ((edClave || '').length < 6) { this.setState({avisoAcceso:'La contraseña nueva debe tener al menos 6 caracteres.'}); return; }
+    if (edClave !== edClave2) { this.setState({avisoAcceso:'Las dos contraseñas no coinciden.'}); return; }
+    this.setState({avisoAcceso:'Guardando…'});
+    const {error} = await this.cliente.rpc('admin_set_password', {uid: id, nueva: edClave});
+    if (error) {
+      this.setState({avisoAcceso: /function|does not exist|schema/i.test(error.message)
+        ? 'Falta instalar en la base la función «admin_set_password» (archivo supabase-cambiar-contrasena.sql). Mientras tanto, usa el correo de reposición.'
+        : 'No se pudo cambiar: ' + error.message});
+      return;
+    }
+    this.setState({edClave:'', edClave2:'',
+      avisoAcceso:'Contraseña cambiada' + (correo ? ' para ' + correo : '') + '. Ya puede entrar con ella.'});
+  };
+
   fijarPinCuenta = async (id) => {
     const {edPin, edPin2} = this.state;
     if (!this.state.edicionHorarios) { this.setState({avisoAcceso:'Abre el candado con tu PIN para poder cambiar éste.'}); return; }
@@ -6275,13 +6313,20 @@ class Component extends DCLogic {
       copiarLiga: this.copiarLiga, seleccionarLiga: this.seleccionarLiga,
       avisoPublicar: s.avisoPublicar, hayAvisoPublicar: !!s.avisoPublicar,
       avisoPaginas: s.avisoPaginas, hayAvisoPaginas: !!s.avisoPaginas,
+      notaPublicado: s.publicadoEn
+        ? 'Última publicación: ' + new Date(s.publicadoEn).toLocaleString('es-MX', {day:'numeric', month:'long', hour:'2-digit', minute:'2-digit'}) + '.'
+        : 'Todavía no se ha publicado ningún horario.',
       listaPaginas: this.PAGINAS.map((p, i) => {
         const activa = (s.paginasPublicas || {})[p.id] !== false;
         return {
           id: p.id, nombre: p.nombre, texto: p.texto, liga: p.liga,
           orden: (i + 1) + '.',
+          esHorarios: p.id === 'horarios',
+          ligaCompleta: this.ligaPublica(p.liga),
+          copiar: () => this.copiarLigaDe(p.liga),
           etiqueta: activa ? 'Pública' : 'Oculta',
-          clase: activa ? 'btn-primary' : 'btn-secondary',
+          color: activa ? '#1f7a4d' : '#2C5F8A',
+          clase: activa ? 'btn-secondary' : 'btn-primary',
           accion: activa ? 'Ocultar' : 'Hacer pública',
           alternar: () => this.alternarPaginaPublica(p.id)
         };
