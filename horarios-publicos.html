@@ -85,6 +85,28 @@ table.rejilla td.hora{border-left:0;text-align:right;padding:5px 9px 0 4px;color
 .btn{border:1px solid var(--linea);background:var(--papel);color:var(--tinta);border-radius:7px;
   padding:7px 12px;cursor:pointer;font-size:12.5px;font-weight:500;white-space:nowrap}
 .btn:hover{background:#f6f4f3}
+.acciones{display:flex;align-items:center;gap:8px}
+#btnFiltros{display:none}
+
+/* Pantallas chicas o bajas (teléfono, y sobre todo acostado): la barra se
+   reduce a lo indispensable y los filtros se muestran sólo si se piden. */
+@media (max-width:820px), (max-height:560px){
+  .barra .reglas{height:3px}
+  .barra .fila{padding:6px 10px;gap:8px}
+  .marca b{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .marca span{display:none}
+  .marca{max-width:46vw}
+  .acciones{margin-left:auto}
+  #btnFiltros{display:inline-block}
+  .controles{display:none;order:3;flex-basis:100%;margin-left:0;padding-top:2px}
+  .controles.abierta{display:flex}
+  .modos button{padding:6px 10px;font-size:12px}
+  .btn{padding:6px 10px;font-size:12px}
+  select.filtro,input.filtro{min-width:120px;flex:1;padding:6px 9px}
+  .pie{display:none}
+  .nav{bottom:8px}
+  .nav button{width:32px;height:32px}
+}
 
 /* Visor: un solo horario a pantalla completa, con acercamiento */
 .visor{position:fixed;inset:0;z-index:200;background:var(--lienzo);display:none;
@@ -129,7 +151,11 @@ table.rejilla td.hora{border-left:0;text-align:right;padding:5px 9px 0 4px;color
       </div>
       <select class="filtro" id="selInst" style="display:none"></select>
       <input class="filtro" id="buscar" placeholder="Buscar…" autocomplete="off">
+    </div>
+    <div class="acciones">
+      <button class="btn" id="btnFiltros" title="Mostrar u ocultar los filtros">Filtros</button>
       <button class="btn" id="btnPantalla" title="Ver a pantalla completa">Pantalla completa</button>
+    </div>
     </div>
   </div>
 </div>
@@ -342,10 +368,21 @@ function pintarPista(){
   document.getElementById("nav").style.display = tarjetas.length > 1 ? "flex" : "none";
   idx = destino = Math.min(Math.max(0, Math.round(idx)), Math.max(0, tarjetas.length - 1));
   colocar();
+  // La primera medición puede caer antes de que la escena tenga altura.
+  requestAnimationFrame(() => requestAnimationFrame(colocar));
 }
 
 function colocar(){
   const pista = document.getElementById("pista");
+  /* La tarjeta nunca debe salirse de la escena: si lo hace, su encabezado
+     (el nombre del grupo) queda tapado por la barra superior. */
+  const alto = pista.parentElement.clientHeight;
+  pista.querySelectorAll(".tarjeta").forEach(el => {
+    const cab = el.querySelector(".tcab");
+    const cuerpo = el.querySelector(".tcuerpo");
+    // Si la escena todavía no tiene altura resuelta, se deja el tope del CSS.
+    if (cuerpo && alto > 160) cuerpo.style.maxHeight = (alto - (cab ? cab.offsetHeight : 40) - 26) + "px";
+  });
   const anchoCarta = pista.querySelector(".tarjeta");
   const paso = anchoCarta ? Math.min(anchoCarta.offsetWidth * 0.52, 330) : 300;
   pista.querySelectorAll(".tarjeta").forEach(el => {
@@ -364,8 +401,7 @@ function colocar(){
     el.style.pointerEvents = a > 3.2 ? "none" : "auto";
     // Sólo la tarjeta del frente deja desplazar su tabla por dentro.
     const cuerpo = el.querySelector(".tcuerpo");
-    if (cuerpo) cuerpo.style.overflow = frente ? "auto" : "hidden";
-  });
+    if (cuerpo) cuerpo.style.overflow = frente ? "auto" : "hidden";  });
   const t = tarjetas[Math.round(idx)];
   const cual = document.getElementById("cual");
   if (cual) cual.textContent = t ? `${Math.round(idx)+1} de ${tarjetas.length} · ${t.titulo}` : "";
@@ -514,6 +550,11 @@ vLienzo.addEventListener("touchmove", e => {
 vLienzo.addEventListener("touchend", () => { dist0 = null; }, {passive:true});
 
 /* Pantalla completa del navegador para el carrusel. */
+const btnFiltros = document.getElementById("btnFiltros");
+btnFiltros.onclick = () => {
+  document.querySelector(".controles").classList.toggle("abierta");
+  colocar();
+};
 const btnPantalla = document.getElementById("btnPantalla");
 btnPantalla.onclick = () => {
   if (document.fullscreenElement) document.exitFullscreen();
@@ -553,6 +594,9 @@ escena.addEventListener("touchmove", e => {
 }, {passive:true});
 escena.addEventListener("touchend", () => { tyPrev = null; }, {passive:true});
 window.addEventListener("resize", colocar);
+/* Girar el teléfono, abrir «Filtros» o entrar a pantalla completa cambian la
+   altura de la escena sin disparar «resize»: se vigila la escena directamente. */
+if (window.ResizeObserver) new ResizeObserver(() => colocar()).observe(document.getElementById("escena"));
 
 /* ---------------------------------------------------------------
    Datos

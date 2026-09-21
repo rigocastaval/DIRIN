@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mural de avisos y herramientas</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --guinda:#2C5F8A; --gris:#555555; --dorado:#D9A441;
+  --tinta:#1d1d1f; --papel:#ffffff; --lienzo:#eceae9; --linea:#e2dedc;
+  --ui:"Inter","Segoe UI",system-ui,-apple-system,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:var(--ui);background:var(--lienzo);color:var(--tinta);font-size:14px;
+  min-height:100vh;display:flex;flex-direction:column}
+a{color:var(--guinda)}
+a:hover{color:#1f4667}
+
+.barra{background:var(--papel);border-bottom:1px solid var(--linea);flex:none}
+.barra .reglas{height:5px;display:flex}
+.barra .reglas i{display:block;height:100%}
+.barra .reglas i:first-child{width:22%;background:var(--guinda)}
+.barra .reglas i:last-child{flex:1;background:var(--gris)}
+.barra .fila{display:flex;align-items:center;gap:16px;padding:13px 20px;flex-wrap:wrap;
+  max-width:1060px;margin:0 auto;width:100%}
+.marca{display:flex;flex-direction:column;line-height:1.2;min-width:0}
+.marca b{font-size:15px}
+.marca span{font-size:11px;color:var(--gris);text-transform:uppercase;letter-spacing:.09em}
+.barra .fecha{margin-left:auto;font-size:11.5px;color:var(--gris)}
+
+main{flex:1;width:100%;max-width:1060px;margin:0 auto;padding:44px 20px 56px}
+h1{margin:0;font-size:clamp(26px,4.4vw,38px);line-height:1.12;letter-spacing:-.01em}
+.lista{margin-top:34px;display:flex;flex-direction:column;gap:20px}
+
+.ficha{display:grid;grid-template-columns:minmax(0,420px) minmax(0,1fr);gap:0;
+  text-decoration:none;color:inherit;background:var(--papel);border:1px solid var(--linea);
+  border-radius:12px;overflow:hidden;box-shadow:0 10px 26px rgba(0,0,0,.07);
+  transition:transform .14s ease,box-shadow .14s ease}
+.ficha:hover{transform:translateY(-2px);box-shadow:0 16px 36px rgba(0,0,0,.13);color:inherit}
+.ficha .previa{background:var(--lienzo);border-right:1px solid var(--linea);overflow:hidden;
+  aspect-ratio:16/10;display:flex;align-items:center;justify-content:center}
+.ficha .previa img{width:100%;height:100%;object-fit:cover;object-position:left top;display:block}
+.ficha .texto{padding:22px 24px;display:flex;flex-direction:column;gap:9px;justify-content:center}
+.ficha h2{margin:0;font-size:21px;line-height:1.25}
+.ficha p{margin:0;font-size:14px;line-height:1.6;color:#4a4a4a;text-wrap:pretty;max-width:52ch}
+.ficha .entrar{margin-top:3px;font-size:13px;font-weight:600;color:var(--guinda)}
+
+.vacio{margin-top:34px;background:var(--papel);border:1px solid var(--linea);border-radius:12px;
+  padding:34px 26px;color:var(--gris);line-height:1.6;max-width:52ch}
+
+.pie{flex:none;background:var(--papel);border-top:1px solid var(--linea);
+  padding:14px 20px;font-size:11.5px;color:var(--gris)}
+.pie div{max-width:1060px;margin:0 auto;display:flex;gap:16px;flex-wrap:wrap}
+
+@media (max-width:720px){
+  main{padding:30px 16px 40px}
+  .ficha{grid-template-columns:1fr}
+  .ficha .previa{border-right:0;border-bottom:1px solid var(--linea);aspect-ratio:16/9}
+  .ficha .texto{padding:18px 20px}
+}
+</style>
+</head>
+<body>
+
+<header class="barra">
+  <div class="reglas"><i></i><i></i></div>
+  <div class="fila">
+    <div class="marca">
+      <b id="nombreInst">Mural de avisos y herramientas</b>
+      <span>Consulta pública</span>
+    </div>
+    <div class="fecha" id="fecha"></div>
+  </div>
+</header>
+
+<main>
+  <h1>Mural de avisos y herramientas</h1>
+  <div class="lista" id="lista"></div>
+</main>
+
+<footer class="pie">
+  <div>
+    <span id="pieInst">Institución</span>
+    <span>Las páginas públicas se actualizan cuando control escolar publica desde DIRIN.</span>
+  </div>
+</footer>
+
+<script>
+const SUPABASE_URL = 'https://yjbvjprzfnetvrxqufwa.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlqYnZqcHJ6Zm5ldHZyeHF1ZndhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwNDE0NjQsImV4cCI6MjEwMTYxNzQ2NH0.jPhFqyuzaKkjJLvXwIHPnQ1hKZiBLpRXlfYqiEwmUKI';
+const CLAVE_PAGINAS = 'publico:paginas';
+
+/* El catálogo vive aquí; desde DIRIN sólo se prende o se apaga cada página.
+   El mural es esta misma página: se administra allá, no se lista aquí. */
+const HERRAMIENTAS = [
+  {id:'horarios', titulo:'Carrusel de horarios.',
+   texto:'Busca de manera rápida los horarios de la licenciatura, por grupo, por docente y por materias.',
+   liga:'horarios-publicos.html', imagen:'vistas/carrusel-horarios.png', accion:'Abrir el carrusel'}
+];
+
+document.getElementById('fecha').textContent = new Date().toLocaleDateString('es-MX',
+  {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+
+function pintar(activas){
+  const lista = document.getElementById('lista');
+  const visibles = HERRAMIENTAS.filter(h => activas[h.id] !== false);
+  if (!visibles.length){
+    lista.outerHTML = '<div class="vacio" id="lista">Todavía no hay herramientas publicadas. Vuelve más tarde.</div>';
+    return;
+  }
+  lista.innerHTML = visibles.map(h => `
+    <a class="ficha" href="${h.liga}">
+      <div class="previa"><img src="${h.imagen}" alt="Vista previa de ${h.titulo}" loading="lazy"></div>
+      <div class="texto">
+        <h2>${h.titulo}</h2>
+        <p>${h.texto}</p>
+        <div class="entrar">${h.accion} &rsaquo;</div>
+      </div>
+    </a>`).join('');
+}
+
+/* Sin conexión se muestra todo el catálogo: más vale de más que una página
+   en blanco. El nombre de la institución es un adorno. */
+(async function () {
+  let activas = {};
+  try {
+    if (window.supabase && window.supabase.createClient) {
+      const cliente = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+      const {data} = await cliente.from('horarios_almacen').select('valor').eq('clave', CLAVE_PAGINAS).limit(1);
+      const crudo = data && data[0] && data[0].valor;
+      if (crudo) activas = typeof crudo === 'string' ? JSON.parse(crudo) : crudo;
+      const inst = await cliente.from('instituciones').select('nombre').limit(1);
+      const nombre = inst.data && inst.data[0] && inst.data[0].nombre;
+      if (nombre) {
+        document.getElementById('nombreInst').textContent = nombre;
+        document.getElementById('pieInst').textContent = nombre;
+        document.title = nombre + ' · Mural de avisos y herramientas';
+      }
+    }
+  } catch (e) {}
+  pintar(activas || {});
+})();
+</script>
+</body>
+</html>

@@ -1625,6 +1625,16 @@ function conflictoDocenteExamen(docenteId, dia, bloque, grupoIdActual, tipo){
    calendario vuelve a quedar bloqueado y hay que abrirlo a propósito.
    ===================================================================== */
 let edicionPermitida = false;
+/* En teléfono o tableta el calendario es de sólo lectura: la captura es
+   delicada y en pantalla chica se cometen errores. */
+const SOLO_LECTURA_MOVIL = (() => {
+  let coarse = false;
+  try { coarse = matchMedia("(pointer: coarse)").matches && !matchMedia("(hover: hover)").matches; } catch(e){}
+  const ua = navigator.userAgent || "";
+  const uaMovil = /Android|iPhone|iPod|Windows Phone|IEMobile|Opera Mini/i.test(ua) ||
+    (/iPad|Macintosh/.test(ua) && (navigator.maxTouchPoints || 0) > 1);
+  return coarse || uaMovil;
+})();
 const CAND_CERRADO = `<svg width="13" height="15" viewBox="0 0 15 18" fill="none" aria-hidden="true"><path d="M3 8V5.5a4.5 4.5 0 0 1 9 0V8" stroke="currentColor" stroke-width="1.8"/><rect x="1" y="8" width="13" height="9" fill="currentColor"/></svg>`;
 const CAND_ABIERTO = `<svg width="13" height="15" viewBox="0 0 15 18" fill="none" aria-hidden="true"><path d="M3 8V5.5a4.5 4.5 0 0 1 9 0" stroke="currentColor" stroke-width="1.8"/><rect x="1" y="8" width="13" height="9" fill="currentColor"/></svg>`;
 
@@ -1632,6 +1642,12 @@ function pintarCandado(){
   const b = document.getElementById("btnCandado");
   if (!b) return;
   b.classList.toggle("abierto", edicionPermitida);
+  if (SOLO_LECTURA_MOVIL){
+    b.innerHTML = CAND_CERRADO + "<span>Sólo lectura</span>";
+    b.title = "Desde un celular o tableta el calendario es de sólo lectura. Para programar, ábrelo en una computadora.";
+    document.body.classList.add("bloqueado");
+    return;
+  }
   b.innerHTML = (edicionPermitida ? CAND_ABIERTO : CAND_CERRADO) +
     "<span>" + (edicionPermitida ? "Modo edición" : "Edición bloqueada") + "</span>";
   b.title = edicionPermitida
@@ -1641,7 +1657,7 @@ function pintarCandado(){
 }
 
 function fijarEdicion(activa, avisarPadre){
-  edicionPermitida = !!activa;
+  edicionPermitida = SOLO_LECTURA_MOVIL ? false : !!activa;
   pintarCandado();
   if (avisarPadre && window.parent !== window)
     window.parent.postMessage({tipo:"dirin-edicion-cambio", activa: edicionPermitida}, "*");
@@ -1751,6 +1767,10 @@ pintarCandado();
 
 // Puerta única de escritura: si el candado está cerrado, nada se pinta.
 function puedeEditar(){
+  if (SOLO_LECTURA_MOVIL){
+    toast("Desde un celular o tableta el calendario es de sólo lectura. Para programar, ábrelo en una computadora.", true);
+    return false;
+  }
   if (edicionPermitida) return true;
   toast("El calendario está bloqueado. Active «Editar horarios» con el candado para poder programar.", true);
   return false;

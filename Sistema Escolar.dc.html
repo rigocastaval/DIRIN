@@ -79,6 +79,8 @@ a:hover{color:var(--color-accent-700)}
       {{ textoBoton }}
     </button>
 
+    <button class="btn btn-ghost btn-block" onClick="{{ olvideClave }}" style="margin-top:10px;font-size:12.5px">Olvidé mi contraseña</button>
+
     <hr class="hr">
 
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
@@ -116,6 +118,10 @@ a:hover{color:var(--color-accent-700)}
       <button class="btn btn-primary" onClick="{{ seguirTrabajando }}" style="padding:10px 18px">Seguir trabajando</button>
     </div>
   </div>
+</sc-if>
+
+<sc-if value="{{ hayAvisoMovil }}" hint-placeholder-val="{{ false }}">
+  <div style="position:fixed;left:16px;right:16px;bottom:16px;z-index:330;max-width:520px;margin:0 auto;background:var(--color-text);color:var(--color-bg);padding:14px 18px;font-size:13px;line-height:1.5;box-shadow:0 10px 26px rgba(0,0,0,.2)">{{ avisoMovil }}</div>
 </sc-if>
 
 <sc-if value="{{ pidiendoPin }}" hint-placeholder-val="{{ false }}">
@@ -462,7 +468,7 @@ a:hover{color:var(--color-accent-700)}
       </sc-if>
 
       <sc-if value="{{ esPublicas }}" hint-placeholder-val="{{ false }}">
-        <div style="height:calc(100vh - 60px);display:flex;flex-direction:column">
+        <div style="min-height:calc(100vh - 60px);display:flex;flex-direction:column">
           <div style="display:flex;align-items:center;gap:14px;padding:12px 24px;border-bottom:2px solid var(--color-divider);flex-wrap:wrap">
             <div style="line-height:1.2;min-width:0">
               <h6 style="margin:0 0 2px" class="text-muted">Páginas públicas</h6>
@@ -484,7 +490,30 @@ a:hover{color:var(--color-accent-700)}
               <div style="flex-basis:100%;border-left:3px solid var(--color-accent);background:var(--color-accent-100);padding:9px 14px;font-size:12.5px;color:var(--color-accent-800)">{{ avisoPublicar }}</div>
             </sc-if>
           </div>
-          <iframe src="horarios-publicos.html" title="Carrusel de horarios" ref="{{ refPublicas }}" style="flex:1;width:100%;border:0;background:var(--color-bg)"></iframe>
+          <div style="padding:16px 24px;border-bottom:1.5px solid var(--color-divider)">
+            <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:12px">
+              <h5 style="margin:0">Qué ve el público</h5>
+              <span class="text-muted" style="font-size:12.5px">En este orden aparecen en el mural.</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px;max-width:920px">
+              <sc-for list="{{ listaPaginas }}" as="p" hint-placeholder-count="2">
+                <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;border:2px solid var(--color-divider);padding:12px 16px">
+                  <span class="text-muted" style="font-family:var(--font-heading);font-weight:800;font-size:13px;flex:none">{{ p.orden }}</span>
+                  <div style="min-width:0;flex:1 1 280px;line-height:1.35">
+                    <div style="font-family:var(--font-heading);font-weight:800;font-size:14px">{{ p.nombre }}</div>
+                    <div class="text-muted" style="font-size:12.5px;text-wrap:pretty">{{ p.texto }}</div>
+                  </div>
+                  <span class="tag tag-neutral" style="flex:none">{{ p.etiqueta }}</span>
+                  <button class="btn {{ p.clase }}" style="font-size:12.5px;flex:none" onClick="{{ p.alternar }}">{{ p.accion }}</button>
+                  <a class="btn btn-ghost" style="font-size:12.5px;flex:none" href="{{ p.liga }}" target="_blank">Abrir</a>
+                </div>
+              </sc-for>
+            </div>
+            <sc-if value="{{ hayAvisoPaginas }}" hint-placeholder-val="{{ false }}">
+              <div style="border-left:3px solid var(--color-accent);background:var(--color-accent-100);padding:9px 14px;margin-top:12px;font-size:12.5px;color:var(--color-accent-800);max-width:920px">{{ avisoPaginas }}</div>
+            </sc-if>
+          </div>
+          <iframe src="horarios-publicos.html" title="Carrusel de horarios" ref="{{ refPublicas }}" style="flex:1;min-height:340px;width:100%;border:0;background:var(--color-bg)"></iframe>
         </div>
       </sc-if>
 
@@ -642,27 +671,34 @@ a:hover{color:var(--color-accent-700)}
 
             <div style="border:2px solid var(--color-divider);min-width:0;max-width:400px">
               <h5 style="margin:0;padding:12px 18px;border-bottom:2px solid var(--color-divider)">Crear cuenta</h5>
-              <div style="padding:18px">
+              <sc-if value="{{ altaBloqueada }}" hint-placeholder-val="{{ true }}">
+                <div style="display:flex;align-items:flex-start;gap:10px;padding:12px 18px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-size:12.5px;line-height:1.5">
+                  <svg width="15" height="18" viewBox="0 0 15 18" fill="none" aria-hidden="true" style="flex:none;margin-top:1px"><path d="M3 8V5.5a4.5 4.5 0 0 1 9 0V8" stroke="currentColor" stroke-width="1.7"></path><rect x="1" y="8" width="13" height="9" fill="currentColor"></rect></svg>
+                  <span>{{ motivoAltaBloqueada }}</span>
+                </div>
+              </sc-if>
+              <div style="padding:18px;opacity:{{ opacidadAlta }}">
                 <div class="field" style="margin-bottom:12px">
                   <label>Nombre completo</label>
-                  <input class="input" value="{{ nvNombre }}" onChange="{{ setNvNombre }}" placeholder="Ana Ramírez Solís" style="width:100%">
+                  <input class="input" disabled="{{ altaBloqueada }}" value="{{ nvNombre }}" onChange="{{ setNvNombre }}" placeholder="Ana Ramírez Solís" style="width:100%">
                 </div>
                 <div class="field" style="margin-bottom:12px">
-                  <label>Correo</label>
-                  <input class="input" value="{{ nvCorreo }}" onChange="{{ setNvCorreo }}" placeholder="ana.ramirez@universidad.mx" style="width:100%">
+                  <label>Correo electrónico</label>
+                  <input class="input" type="email" inputmode="email" autocomplete="off" spellcheck="false" disabled="{{ altaBloqueada }}" value="{{ nvCorreo }}" onChange="{{ setNvCorreo }}" placeholder="ana.ramirez@universidad.mx" style="width:100%">
+                  <p class="text-muted" style="font-size:11.5px;margin:6px 0 0;line-height:1.45">Con este correo inicia sesión. Es obligatorio y no se puede repetir.</p>
                 </div>
                 <div class="field" style="margin-bottom:12px">
                   <label>Contraseña temporal</label>
-                  <input class="input" value="{{ nvClave }}" onChange="{{ setNvClave }}" placeholder="mínimo 6 caracteres" style="width:100%">
+                  <input class="input" disabled="{{ altaBloqueada }}" value="{{ nvClave }}" onChange="{{ setNvClave }}" placeholder="mínimo 6 caracteres" style="width:100%">
                 </div>
                 <div class="field" style="margin-bottom:12px">
                   <label>PIN de edición</label>
-                  <input class="input" inputmode="numeric" value="{{ nvPin }}" onChange="{{ setNvPin }}" placeholder="4 a 8 dígitos" style="width:100%">
+                  <input class="input" inputmode="numeric" disabled="{{ altaBloqueada }}" value="{{ nvPin }}" onChange="{{ setNvPin }}" placeholder="4 a 8 dígitos" style="width:100%">
                   <p class="text-muted" style="font-size:11.5px;margin:6px 0 0;line-height:1.45">Con este PIN la persona abre el candado para editar. Puede cambiarlo después en «Mi cuenta».</p>
                 </div>
                 <div class="field" style="margin-bottom:12px">
                   <label>Rol</label>
-                  <select class="input" value="{{ nvRol }}" onChange="{{ setNvRol }}" style="width:100%">
+                  <select class="input" disabled="{{ altaBloqueada }}" value="{{ nvRol }}" onChange="{{ setNvRol }}" style="width:100%">
                     <sc-for list="{{ perfilesAlta }}" as="p" hint-placeholder-count="4">
                       <option value="{{ p.id }}">{{ p.nombre }}</option>
                     </sc-for>
@@ -670,14 +706,14 @@ a:hover{color:var(--color-accent-700)}
                 </div>
                 <div class="field" style="margin-bottom:16px">
                   <label>Área</label>
-                  <input class="input" value="{{ nvArea }}" onChange="{{ setNvArea }}" placeholder="Coordinación Académica" style="width:100%">
+                  <input class="input" disabled="{{ altaBloqueada }}" value="{{ nvArea }}" onChange="{{ setNvArea }}" placeholder="Coordinación Académica" style="width:100%">
                 </div>
                 <div class="field" style="margin-bottom:16px">
                   <label>Programas académicos</label>
                   <sc-if value="{{ hayProgramasInst }}" hint-placeholder-val="{{ false }}">
                     <div style="display:flex;flex-wrap:wrap;gap:7px;margin-top:4px">
                       <sc-for list="{{ programasInstitucion }}" as="p" hint-placeholder-count="2">
-                        <button class="btn {{ p.clase }}" style="font-size:12px;padding:5px 11px" onClick="{{ p.alternar }}">{{ p.nombre }}</button>
+                        <button class="btn {{ p.clase }}" disabled="{{ altaBloqueada }}" style="font-size:12px;padding:5px 11px" onClick="{{ p.alternar }}">{{ p.nombre }}</button>
                       </sc-for>
                     </div>
                     <p class="text-muted" style="font-size:11.5px;margin:8px 0 0;line-height:1.45">Opcional y puede ser más de uno. Sin ninguno, la persona ve todo lo de la institución.</p>
@@ -686,7 +722,7 @@ a:hover{color:var(--color-accent-700)}
                     <p class="text-muted" style="font-size:11.5px;margin:4px 0 0;line-height:1.45">Esta institución todavía no tiene programas académicos. Cárgalos en Identidad institucional para poder asignarlos.</p>
                   </sc-if>
                 </div>
-                <button class="btn btn-primary btn-block" onClick="{{ crearCuenta }}" style="padding:11px var(--space-4)">{{ textoCrear }}</button>
+                <button class="btn btn-primary btn-block" disabled="{{ altaBloqueada }}" onClick="{{ crearCuenta }}" style="padding:11px var(--space-4)">{{ textoCrear }}</button>
                 <sc-if value="{{ hayAvisoAlta }}" hint-placeholder-val="{{ false }}">
                   <div style="border-left:3px solid {{ colorAviso }};background:var(--color-neutral-100);padding:10px 12px;margin-top:14px;font-size:12.5px">{{ avisoAlta }}</div>
                 </sc-if>
@@ -2329,7 +2365,7 @@ class Component extends DCLogic {
   state = {
     logged:false, entrando:false, demo:false, listoSDK:false, error:'',
     avisoInactividad:0, edicionHorarios:false,
-    pinHash:'', pidiendoPin:false, pinIntento:'', pinIntento2:'', pinAviso:'',
+    pinHash:'', pidiendoPin:false, pinIntento:'', pinIntento2:'', pinAviso:'', avisoMovil:'',
     miPanel:false, mcClave1:'', mcClave2:'', mcPin1:'', mcPin2:'', mcAviso:'', nvPin:'',
     recuperando:false, clave1:'', clave2:'', avisoClave:'',
     idNombre:'', idColores: COLORES_POR_DEFECTO.slice(), idLogo:'', idMembrete:'', idMembreteH:'',
@@ -2351,6 +2387,7 @@ class Component extends DCLogic {
     menuInst:false, instPorBorrar:'',
     modulosActivos:{}, avisoModulos:'',
     avisoPublicar:'', publicando:false, publicadoEn:'',
+    paginasPublicas:{}, avisoPaginas:'',
     edPin:'', edPin2:'', avisoAcceso:'',
     usuario:'', clave:'', perfil:'admin', perfilReal:'', cambioPerfil:false, nombre:'', area:'',
     descargaUrl:'', descargaNombre:'',
@@ -2701,9 +2738,11 @@ class Component extends DCLogic {
         this.cliente.auth.onAuthStateChange(ev => {
           if (ev === 'PASSWORD_RECOVERY') this.setState({recuperando:true, logged:false});
         });
+        /* Nunca se entra solo: aunque el navegador guarde la sesión anterior,
+           al abrir la página se cierra y hay que identificarse de nuevo. */
         this.cliente.auth.getSession().then(({data}) => {
           if (enRecuperacion || this.state.recuperando) return;
-          if (data && data.session) this.cargarPerfil(data.session.user);
+          if (data && data.session) this.cliente.auth.signOut().catch(() => {});
         });
       } else setTimeout(esperar, 200);
     };
@@ -2762,13 +2801,32 @@ class Component extends DCLogic {
     });
     if (error) {
       this.setState({entrando:false, error: error.message === 'Invalid login credentials'
-        ? 'Correo o contraseña incorrectos.' : error.message});
+        ? 'Correo o contraseña incorrectos. Revisa que el correo esté bien escrito y que la contraseña no traiga espacios ni mayúsculas de más. Si la cuenta es nueva y nunca has entrado, es probable que todavía no exista en el sistema: pulsa «Olvidé mi contraseña» para comprobarlo.'
+        : (/not confirmed/i.test(error.message)
+            ? 'La cuenta existe, pero falta confirmar el correo. Abre la liga que te llegó al correo y vuelve a entrar.'
+            : error.message)});
       return;
     }
     this.cargarPerfil(data.user);
   };
 
   enterEntrar = e => { if (e.key === 'Enter') this.entrar(); };
+
+  /* Reponer la contraseña sin depender del administrador: llega una liga al
+     correo. Por seguridad Supabase responde igual exista o no la cuenta. */
+  olvideClave = async () => {
+    const correo = (this.state.usuario || '').trim().toLowerCase();
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(correo)) {
+      this.setState({error:'Escribe arriba tu correo y vuelve a pulsar «Olvidé mi contraseña».'});
+      return;
+    }
+    if (!this.cliente) { this.setState({error:'Aún no carga la conexión con la base de datos. Espera un momento.'}); return; }
+    this.setState({error:'Enviando el correo…'});
+    const {error} = await this.cliente.auth.resetPasswordForEmail(correo, {redirectTo: window.location.href});
+    this.setState({error: error
+      ? 'No se pudo enviar: ' + error.message
+      : 'Si ' + correo + ' tiene cuenta, en un momento llegará la liga para poner una contraseña nueva. Revisa también la carpeta de correo no deseado. Si no llega, la cuenta no existe todavía: pídela al administrador.'});
+  };
 
   // ---- Permisos por módulo ----
   // Un mapa {usuario: {módulo: {ver, editar}}} guardado en una sola fila.
@@ -4862,8 +4920,31 @@ class Component extends DCLogic {
     });
   }
 
+  /* Desde un teléfono o tableta el sistema entra siempre en sólo lectura:
+     la captura es delicada y en pantalla chica se cometen errores. */
+  esMovil() {
+    if (this._movil != null) return this._movil;
+    let coarse = false;
+    try {
+      coarse = window.matchMedia('(pointer: coarse)').matches &&
+               !window.matchMedia('(hover: hover)').matches;
+    } catch (e) {}
+    const ua = (navigator.userAgent || '');
+    const uaMovil = /Android|iPhone|iPod|Windows Phone|IEMobile|Opera Mini/i.test(ua) ||
+      (/iPad|Macintosh/.test(ua) && (navigator.maxTouchPoints || 0) > 1);
+    this._movil = coarse || uaMovil;
+    return this._movil;
+  }
+
+  avisarSoloLectura = () => {
+    this.setState({avisoMovil:'Desde un celular o tableta DIRIN se abre en sólo lectura. Para editar, entra desde una computadora.'});
+    clearTimeout(this.relojAvisoMovil);
+    this.relojAvisoMovil = setTimeout(() => this.setState({avisoMovil:''}), 5000);
+  };
+
   // Tener permiso no basta: el candado tiene que estar abierto.
   puedeEditarAhora(moduloId) {
+    if (this.esMovil()) return false;
     return this.puedeEditarModulo(moduloId) && !!this.state.edicionHorarios;
   }
 
@@ -5369,7 +5450,51 @@ class Component extends DCLogic {
       .select('actualizado_en').eq('clave', this.CLAVE_PUBLICA)
       .eq('institucion_id', this.state.instActiva).maybeSingle();
     this.setState({publicadoEn: data ? data.actualizado_en : ''});
+    this.cargarPaginasPublicas();
   }
+
+  /* Catálogo de páginas públicas. El orden es el que ve el estudiantado:
+     primero el mural, y dentro de él las herramientas. */
+  CLAVE_PAGINAS = 'publico:paginas';
+  PAGINAS = [
+    {id:'mural', nombre:'Mural de avisos y herramientas',
+     texto:'La portada pública: reúne y enlista las herramientas disponibles.',
+     liga:'portal.html'},
+    {id:'horarios', nombre:'Carrusel de horarios',
+     texto:'Busca de manera rápida los horarios de la licenciatura, por grupo, por docente y por materias.',
+     liga:'horarios-publicos.html'}
+  ];
+
+  async cargarPaginasPublicas() {
+    if (!this.cliente || !this.state.instActiva) return;
+    const {data} = await this.cliente.from('horarios_almacen')
+      .select('valor').eq('clave', this.CLAVE_PAGINAS)
+      .eq('institucion_id', this.state.instActiva).maybeSingle();
+    this.setState({paginasPublicas: this.leerJson(data && data.valor, {}) || {}});
+  }
+
+  alternarPaginaPublica = async (id) => {
+    if (!this.cliente || this.state.demo) {
+      this.setState({avisoPaginas:'Sin conexión con la base: no se puede cambiar.'}); return;
+    }
+    if (!this.state.instActiva) {
+      this.setState({avisoPaginas:'Elige primero la institución con la que vas a trabajar.'}); return;
+    }
+    if (!this.state.edicionHorarios) {
+      this.setState({avisoPaginas:'Abre el candado con tu PIN para poder cambiar esto.'}); return;
+    }
+    const mapa = Object.assign({}, this.state.paginasPublicas || {});
+    mapa[id] = mapa[id] === false ? true : false;
+    this.setState({paginasPublicas: mapa, avisoPaginas:'Guardando…'});
+    const {error} = await this.cliente.from('horarios_almacen').upsert({
+      clave: this.CLAVE_PAGINAS, institucion_id: this.state.instActiva,
+      valor: JSON.stringify(mapa), actualizado_en: new Date().toISOString()
+    }, {onConflict:'clave,institucion_id'});
+    const pag = this.PAGINAS.find(p => p.id === id);
+    this.setState({avisoPaginas: error
+      ? 'No se pudo guardar: ' + error.message
+      : (pag ? pag.nombre : 'La página') + (mapa[id] === false ? ' quedó oculta al público.' : ' ya es pública.')});
+  };
 
   copiarLiga = () => {
     const liga = this.ligaPublica();
@@ -5436,6 +5561,7 @@ class Component extends DCLogic {
   }
 
   alternarCandado = () => {
+    if (this.esMovil()) { this.avisarSoloLectura(); return; }
     if (this.state.edicionHorarios) {
       this.setState({edicionHorarios:false, pidiendoPin:false, pinIntento:'', pinIntento2:'', pinAviso:''}, this.avisarCandado);
       return;
@@ -5647,7 +5773,8 @@ class Component extends DCLogic {
       this.setState({avisoAlta:'Estás en modo sin conexión: inicia sesión como administrador para crear cuentas reales.', altaOk:false});
       return;
     }
-    this.setState({creando:true, avisoAlta:''});
+    this.setState({creando:true, avisoAlta:'Creando la cuenta…', altaOk:true});
+    try {
     // Cliente aislado: da de alta al usuario sin tocar la sesión del administrador.
     const alta = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON, {
       auth:{persistSession:false, autoRefreshToken:false, storageKey:'alta-temporal'}
@@ -5684,6 +5811,13 @@ class Component extends DCLogic {
     }
     this.setState({creando:false, avisoAlta:aviso, altaOk:ok, nvNombre:'', nvCorreo:'', nvClave:'', nvPin:'', nvArea:'', nvProgramas:[]});
     this.cargarCuentas();
+    } catch (e) {
+      /* Si algo falla a media alta (red caída, permiso negado), se dice en
+         pantalla y el botón queda libre: antes se quedaba en «Creando…». */
+      this.setState({creando:false, altaOk:false,
+        avisoAlta:'No se pudo completar el alta: ' + (e && e.message ? e.message : e) +
+          '. Revisa la conexión y vuelve a intentarlo.'});
+    }
   };
 
   // No se puede fijar la contraseña de otra persona desde el navegador: lo que
@@ -6030,7 +6164,7 @@ class Component extends DCLogic {
       avisoClave: s.avisoClave, hayAvisoClave: !!s.avisoClave,
       noSesion: !s.logged && !s.recuperando, enSesion: s.logged && !s.recuperando, entrando: s.entrando,
       textoBoton: s.entrando ? 'Verificando credenciales…' : 'Entrar al sistema',
-      error: s.error, hayError: !!s.error,
+      error: s.error, hayError: !!s.error, olvideClave: this.olvideClave,
       estadoConexion: s.listoSDK ? 'Conectado a la base de datos' : 'Conectando con la base de datos…',
       colorConexion: s.demo ? 'var(--color-neutral-500)' : (s.listoSDK ? 'var(--color-accent)' : 'var(--color-neutral-400)'),
       modoTexto: s.demo ? 'Sin conexión' : 'En línea',
@@ -6039,10 +6173,13 @@ class Component extends DCLogic {
       edicionAbierta: !!s.edicionHorarios, edicionBloqueada: !s.edicionHorarios,
       colorCandado: s.edicionHorarios ? '#1f7a4d' : '#2C5F8A',
       hoverCandado: {background: s.edicionHorarios ? 'rgba(31,122,77,.10)' : 'rgba(44,95,138,.10)'},
-      ayudaCandado: s.edicionHorarios
-        ? 'El modo edición está abierto. Clic para volver a bloquear DIRIN.'
-        : 'Todo está bloqueado. Clic y escribe tu PIN para poder editar.',
-      leyendaCandado: s.edicionHorarios ? 'Modo edición' : 'Bloqueado',
+      ayudaCandado: this.esMovil()
+        ? 'Desde un celular o tableta DIRIN es de sólo lectura. Para editar, entra desde una computadora.'
+        : (s.edicionHorarios
+            ? 'El modo edición está abierto. Clic para volver a bloquear DIRIN.'
+            : 'Todo está bloqueado. Clic y escribe tu PIN para poder editar.'),
+      leyendaCandado: this.esMovil() ? 'Sólo lectura' : (s.edicionHorarios ? 'Modo edición' : 'Bloqueado'),
+      avisoMovil: s.avisoMovil, hayAvisoMovil: !!s.avisoMovil,
       avisoInactivo: !!s.avisoInactividad,
       segundosInactivo: s.avisoInactividad || 0,
       seguirTrabajando: this.seguirTrabajando,
@@ -6137,6 +6274,18 @@ class Component extends DCLogic {
       ligaPublicaCompleta: this.ligaPublica(),
       copiarLiga: this.copiarLiga, seleccionarLiga: this.seleccionarLiga,
       avisoPublicar: s.avisoPublicar, hayAvisoPublicar: !!s.avisoPublicar,
+      avisoPaginas: s.avisoPaginas, hayAvisoPaginas: !!s.avisoPaginas,
+      listaPaginas: this.PAGINAS.map((p, i) => {
+        const activa = (s.paginasPublicas || {})[p.id] !== false;
+        return {
+          id: p.id, nombre: p.nombre, texto: p.texto, liga: p.liga,
+          orden: (i + 1) + '.',
+          etiqueta: activa ? 'Pública' : 'Oculta',
+          clase: activa ? 'btn-primary' : 'btn-secondary',
+          accion: activa ? 'Ocultar' : 'Hacer pública',
+          alternar: () => this.alternarPaginaPublica(p.id)
+        };
+      }),
       esUsuarios: s.vista === 'usuarios',
       notaUsuarios: s.perfil === 'super'
         ? 'Como apoyo técnico ves las cuentas de la institución que estás visitando y las que todavía no tienen institución. Asígnales una y otórgale a alguien el rol de administrador de institución: de ahí en adelante él crea el resto de los perfiles.'
@@ -6183,6 +6332,11 @@ class Component extends DCLogic {
       mensajeCuentas: s.mensajeCuentas,
       totalCuentas: (s.cuentas || []).length + ' cuentas',
       recargarCuentas: this.cargarCuentas,
+      altaBloqueada: !s.edicionHorarios || this.esMovil(),
+      opacidadAlta: (!s.edicionHorarios || this.esMovil()) ? .55 : 1,
+      motivoAltaBloqueada: this.esMovil()
+        ? 'Desde un celular o tableta DIRIN es de sólo lectura: las cuentas se dan de alta desde una computadora.'
+        : 'Abre el candado de la barra superior con tu PIN para poder llenar este formulario.',
       nvNombre:s.nvNombre, nvCorreo:s.nvCorreo, nvClave:s.nvClave, nvRol:s.nvRol, nvArea:s.nvArea,
       setNvNombre: e => this.setState({nvNombre:e.target.value}),
       setNvCorreo: e => this.setState({nvCorreo:e.target.value}),
