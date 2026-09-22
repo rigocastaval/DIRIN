@@ -119,10 +119,11 @@ table.rejilla td.hora{border-left:0;text-align:right;padding:5px 9px 0 4px;color
 .visor .vtit span{font-size:11px;color:var(--gris);text-transform:uppercase;letter-spacing:.08em}
 .visor .vzoom{margin-left:auto;display:flex;align-items:center;gap:8px}
 .visor .vzoom .nivel{font-size:12px;color:var(--gris);min-width:46px;text-align:center}
-.visor .vlienzo{flex:1;overflow:auto;padding:18px;background:
+.visor .vlienzo{flex:1;min-height:0;display:flex;overflow:auto;padding:18px;background:
   radial-gradient(ellipse at 50% 30%, #f7f6f5 0%, var(--lienzo) 70%);
   touch-action:pan-x pan-y;-webkit-overflow-scrolling:touch}
-.visor .vhoja{transform-origin:0 0;width:min(1100px,100%);margin:0 auto;
+.visor .vmarco{flex:none;margin:auto;position:relative}
+.visor .vhoja{position:absolute;left:0;top:0;transform-origin:0 0;width:1100px;
   background:var(--papel);border:1px solid var(--linea);border-radius:10px;overflow:hidden;
   box-shadow:0 18px 44px rgba(0,0,0,.14)}
 .visor .vhoja table.rejilla{font-size:13px}
@@ -139,6 +140,7 @@ table.rejilla td.hora{border-left:0;text-align:right;padding:5px 9px 0 4px;color
 <div class="barra">
   <div class="reglas"><i></i><i></i></div>
   <div class="fila">
+    <a class="btn" id="btnPortal" href="portal.html" style="text-decoration:none" title="Volver al Mural de avisos y herramientas">‹ Atrás</a>
     <div class="marca">
       <b id="mInst">Horarios</b>
       <span id="mSub">Consulta pública</span>
@@ -182,7 +184,7 @@ table.rejilla td.hora{border-left:0;text-align:right;padding:5px 9px 0 4px;color
     </div>
   </div>
   <div class="vlienzo" id="vLienzo">
-    <div class="vhoja" id="vHoja"></div>
+    <div class="vmarco" id="vMarco"><div class="vhoja" id="vHoja"></div></div>
   </div>
 </div>
 
@@ -451,8 +453,9 @@ document.addEventListener("keydown", e => {
   if (e.target.matches("input,select")) return;
   if (visorAbierto()){
     if (e.key === "Escape") cerrarVisor();
-    if (e.key === "+" || e.key === "=") zoomA(zoom + 0.2);
-    if (e.key === "-") zoomA(zoom - 0.2);
+    if (e.key === "+" || e.key === "=") zoomA(zoom * 1.2);
+    if (e.key === "-") zoomA(zoom / 1.2);
+    if (e.key === "0") ajustarVisor();
     return;
   }
   if (e.key === "ArrowRight" || e.key === "PageDown") irA(destino + 1);
@@ -485,17 +488,41 @@ escena.addEventListener("pointercancel", () => { x0 = y0 = null; });
 const visor = document.getElementById("visor");
 const vLienzo = document.getElementById("vLienzo");
 const vHoja = document.getElementById("vHoja");
-let zoom = 1;
+const vMarco = document.getElementById("vMarco");
+let zoom = 1, ajuste = 1;
 const visorAbierto = () => visor.classList.contains("abierto");
 
-function zoomA(z){
-  zoom = Math.max(0.5, Math.min(4, z));
-  vHoja.style.transform = `scale(${zoom})`;
-  // El contenedor debe crecer con la hoja para que el desplazamiento alcance.
-  vHoja.style.marginBottom = ((zoom - 1) * vHoja.offsetHeight) + "px";
-  vHoja.style.marginRight = ((zoom - 1) * vHoja.offsetWidth) + "px";
-  document.getElementById("vNivel").textContent = Math.round(zoom * 100) + "%";
+/* Escala que hace caber el horario completo en la pantalla. */
+function calcularAjuste(){
+  const cs = getComputedStyle(vLienzo);
+  const w = vLienzo.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+  const h = vLienzo.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+  return Math.max(0.05, Math.min(w / vHoja.offsetWidth, h / vHoja.offsetHeight));
 }
+
+/* Cambia el acercamiento conservando el punto (fx,fy) del lienzo bajo el dedo o en el centro. */
+function zoomA(z, fx, fy){
+  const antes = zoom;
+  zoom = Math.max(ajuste * 0.5, Math.min(Math.max(4, ajuste * 4), z));
+  if (fx == null){ fx = vLienzo.clientWidth / 2; fy = vLienzo.clientHeight / 2; }
+  const r0 = vMarco.getBoundingClientRect(), rl = vLienzo.getBoundingClientRect();
+  const px = (rl.left + fx - r0.left) / antes, py = (rl.top + fy - r0.top) / antes;
+  vHoja.style.transform = `scale(${zoom})`;
+  vMarco.style.width = (vHoja.offsetWidth * zoom) + "px";
+  vMarco.style.height = (vHoja.offsetHeight * zoom) + "px";
+  const r1 = vMarco.getBoundingClientRect();
+  vLienzo.scrollLeft += (r1.left + px * zoom) - (rl.left + fx);
+  vLienzo.scrollTop  += (r1.top  + py * zoom) - (rl.top  + fy);
+  document.getElementById("vNivel").textContent = Math.round(zoom / ajuste * 100) + "%";
+}
+
+function ajustarVisor(){
+  ajuste = calcularAjuste();
+  zoom = ajuste;
+  zoomA(ajuste);
+  vLienzo.scrollTop = vLienzo.scrollLeft = 0;
+}
+window.addEventListener("resize", () => { if (visorAbierto() && Math.abs(zoom - ajuste) < 1e-3) ajustarVisor(); });
 
 function abrirVisor(i){
   const t = tarjetas[i];
@@ -505,8 +532,7 @@ function abrirVisor(i){
   vHoja.innerHTML = t.html;
   visor.classList.add("abierto");
   vHoja.style.transformOrigin = "0 0";
-  zoomA(1);
-  vLienzo.scrollTop = vLienzo.scrollLeft = 0;
+  ajustarVisor();
   history.pushState({visor:true}, "");     // el botón «atrás» del teléfono cierra el visor
 }
 
@@ -518,9 +544,9 @@ function cerrarVisor(){
 }
 
 document.getElementById("vAtras").onclick = cerrarVisor;
-document.getElementById("vMas").onclick = () => zoomA(zoom + 0.25);
-document.getElementById("vMenos").onclick = () => zoomA(zoom - 0.25);
-document.getElementById("vAjustar").onclick = () => { zoomA(1); vLienzo.scrollTop = vLienzo.scrollLeft = 0; };
+document.getElementById("vMas").onclick = () => zoomA(zoom * 1.25);
+document.getElementById("vMenos").onclick = () => zoomA(zoom / 1.25);
+document.getElementById("vAjustar").onclick = ajustarVisor;
 window.addEventListener("popstate", () => {
   if (visorAbierto()){ visor.classList.remove("abierto"); vHoja.innerHTML = ""; }
 });
@@ -529,7 +555,8 @@ window.addEventListener("popstate", () => {
 vLienzo.addEventListener("wheel", e => {
   if (!e.ctrlKey) return;
   e.preventDefault();
-  zoomA(zoom - e.deltaY * 0.003);
+  const rl = vLienzo.getBoundingClientRect();
+  zoomA(zoom * Math.exp(-e.deltaY * 0.004), e.clientX - rl.left, e.clientY - rl.top);
 }, {passive:false});
 
 // Pellizcar con dos dedos.
@@ -545,7 +572,8 @@ vLienzo.addEventListener("touchmove", e => {
   e.preventDefault();
   const [a,b] = e.touches;
   const d = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
-  zoomA(zoom0 * (d / dist0));
+  const rl = vLienzo.getBoundingClientRect();
+  zoomA(zoom0 * (d / dist0), (a.clientX + b.clientX) / 2 - rl.left, (a.clientY + b.clientY) / 2 - rl.top);
 }, {passive:false});
 vLienzo.addEventListener("touchend", () => { dist0 = null; }, {passive:true});
 
