@@ -3019,11 +3019,13 @@ const nube = (() => {
   } catch(e){ return null; }
 })();
 let nubeSesion = null;
-if (nube){
-  nube.auth.getSession().then(({data}) => {
+// Promesa de la sesión: el arranque la espera antes de leer la base, para no
+// caer en la copia vieja del navegador sólo porque la sesión tardó en llegar.
+const sesionLista = nube ? nube.auth.getSession().then(({data}) => {
     nubeSesion = (data && data.session) || null;
     if (typeof pintarEstado === "function") pintarEstado();
-  }).catch(() => {});
+  }).catch(() => {}) : Promise.resolve();
+if (nube){
   nube.auth.onAuthStateChange((_e, s) => { nubeSesion = s || null; });
 }
 
@@ -3399,19 +3401,19 @@ function programarAutoguardado(){
   if (almacen.guardarYa(K_AUTO, ya)){
     if (contextoCompleto()) almacen.guardarYa(claveContextoActual(), ya);
   }
-  almacen.set(K_AUTO, ya);
-  if (contextoCompleto()) almacen.set(claveContextoActual(), ya);
+  // Sólo a los almacenes locales: a la base se escribe únicamente con «Guardar cambios».
+  almacenes.filter(a => !a.esNube).forEach(a => {
+    a.set(K_AUTO, ya);
+    if (contextoCompleto()) a.set(claveContextoActual(), ya);
+  });
   pintarEstado();
 }
 
 function guardarInmediato(){
   if (!listo || !almacen.hay || vacio()) return;
   const txt = instantanea();
-  if (almacen.guardarYa(K_AUTO, txt)) almacen.set(K_AUTO, txt);
-  if (contextoCompleto()){
-    almacen.guardarYa(claveContextoActual(), txt);
-    almacen.set(claveContextoActual(), txt);
-  }
+  almacen.guardarYa(K_AUTO, txt);
+  if (contextoCompleto()) almacen.guardarYa(claveContextoActual(), txt);
 }
 window.addEventListener("beforeunload", e => {
   guardarInmediato();
@@ -3593,10 +3595,11 @@ async function sincronizarConBase(){
         const v = await a.get(k);
         if (v && fechaDe(v) >= tL){ local = v; tL = fechaDe(v); }
       }
-      const tAqui = sinGuardar ? Date.now() : Math.max(tL, tCargado);
-      // Sólo se BAJA la versión de la base, y nada más si aquí no hay
-      // cambios sin guardar. Subir es tarea exclusiva de «Guardar cambios».
-      if (k === K_AUTO && tR > tAqui + 2000 && !sinGuardar && remoto){
+      /* Se compara contra la versión de la base que se cargó (tCargado), no
+         contra la copia local: esa copia se re-fecha en cada render y siempre
+         parecía más nueva, así que los cambios de otro usuario no bajaban. */
+      const distinto = remoto && sinTiempo(remoto) !== sinTiempo(ultimaVista || "");
+      if (k === K_AUTO && !sinGuardar && distinto && tR > tCargado){
         try{
           restaurar(remoto);
           tCargado = tR;
@@ -5020,15 +5023,20 @@ function agregarFilaEditor(){
   let previo = null;
   const almNube = almacenes.find(a => a.esNube);
   if (almNube){
+    try{ await sesionLista; } catch(e){}
     try{ previo = await almNube.get(K_AUTO); } catch(e){}
     if (previo){
       almacenes.filter(a => !a.esNube).forEach(a => { try{ a.set(K_AUTO, previo); } catch(e){} });
       if (typeof sinGuardar !== "undefined") sinGuardar = false;
     }
   }
+  let deLaBase = !!previo;
   if (!previo) previo = await almacen.get(K_AUTO);
   if (previo){
-    tCargado = fechaDe(previo);
+    // Una copia local no cuenta como versión de la base: cualquier versión
+    // guardada en la base la reemplaza en cuanto se pueda leer.
+    tCargado = deLaBase ? fechaDe(previo) : 0;
+    if (deLaBase) ultimaSubida = previo;
     ultimaVista = previo;
     try { fecha = restaurar(previo); recuperado = "el guardado automático"; }
     catch(e){ recuperado = null; }
