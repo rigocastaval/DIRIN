@@ -467,6 +467,30 @@ a:hover{color:var(--color-accent-700)}
         </div>
       </sc-if>
 
+      <sc-if value="{{ esCalendario }}" hint-placeholder-val="{{ false }}">
+        <div style="height:calc(100vh - 60px);display:flex;flex-direction:column">
+          <div style="display:flex;align-items:center;gap:12px;padding:12px 24px;border-bottom:2px solid var(--color-divider)">
+            <button onClick="{{ alternarCandado }}" title="{{ ayudaCandado }}" style="border:1.5px solid currentColor;background:none;cursor:pointer;color:{{ colorCandado }};width:34px;height:34px;display:flex;align-items:center;justify-content:center;flex:none;padding:0" style-hover="{{ hoverCandado }}">
+              <sc-if value="{{ edicionBloqueada }}" hint-placeholder-val="{{ true }}">
+                <svg width="15" height="18" viewBox="0 0 15 18" fill="none" aria-hidden="true"><path d="M3 8V5.5a4.5 4.5 0 0 1 9 0V8" stroke="currentColor" stroke-width="1.7"></path><rect x="1" y="8" width="13" height="9" fill="currentColor"></rect></svg>
+              </sc-if>
+              <sc-if value="{{ edicionAbierta }}" hint-placeholder-val="{{ false }}">
+                <svg width="15" height="18" viewBox="0 0 15 18" fill="none" aria-hidden="true"><path d="M3 8V5.5a4.5 4.5 0 0 1 9 0" stroke="currentColor" stroke-width="1.7"></path><rect x="1" y="8" width="13" height="9" fill="currentColor"></rect></svg>
+              </sc-if>
+            </button>
+            <div style="line-height:1.2">
+              <h6 style="margin:0 0 2px" class="text-muted">Coordinación Académica</h6>
+              <div style="font-family:var(--font-heading);font-weight:800;font-size:16px">Calendario académico</div>
+            </div>
+            <div style="margin-left:auto;display:flex;align-items:center;gap:12px">
+              <span style="font-family:var(--font-heading);font-weight:800;font-size:12.5px;text-transform:uppercase;letter-spacing:.1em;color:{{ colorCandado }};border:2px solid currentColor;padding:5px 12px;white-space:nowrap">{{ leyendaCandado }}</span>
+              <a class="btn btn-secondary" href="calendario-academico.html?publico" target="_blank">Ver versión pública</a>
+            </div>
+          </div>
+          <iframe src="calendario-academico.html" title="Calendario académico" ref="{{ refCalendario }}" onLoad="{{ avisarCandado }}" style="flex:1;width:100%;border:0;background:var(--color-bg)"></iframe>
+        </div>
+      </sc-if>
+
       <sc-if value="{{ esPublicas }}" hint-placeholder-val="{{ false }}">
         <div style="padding:28px 28px 56px">
           <h6 style="margin:0 0 4px" class="text-muted">Sistema</h6>
@@ -2190,6 +2214,7 @@ const AREAS = [
   {id:'aca', nombre:'Coordinación Académica', perfiles:['super','admin_inst','admin','direccion','academica','docente'], modulos:[
     {id:'carga', nombre:'Carga horaria', listo:true},
     {id:'trayectoria', nombre:'Trayectoria escolar', listo:true},
+    {id:'calendario', nombre:'Calendario académico', listo:true},
     {id:'investigacion', nombre:'Comité de investigación'}]},
   {id:'doc', nombre:'Coordinación Docente', perfiles:['super','admin_inst','admin','direccion','docencia','docente'], modulos:[
     {id:'expediente', nombre:'Expediente docente', listo:true},
@@ -5404,6 +5429,7 @@ class Component extends DCLogic {
   // Nace cerrado en cada sesión y se cierra solo al salir. El iframe también
   // arranca bloqueado por su cuenta, así que el estado seguro es el de partida.
   refHorarios = el => { this.iframeHorarios = el; };
+  refCalendario = el => { this.iframeCalendario = el; };
   refPublicas = el => { this.iframePublicas = el; };
 
   CLAVE_HORARIO = 'horarios:auto';
@@ -5463,7 +5489,10 @@ class Component extends DCLogic {
      liga:'portal.html'},
     {id:'horarios', nombre:'Carrusel de horarios',
      texto:'Busca de manera rápida los horarios de la licenciatura, por grupo, por docente y por materias.',
-     liga:'horarios-publicos.html'}
+     liga:'horarios-publicos.html'},
+    {id:'calendario', nombre:'Calendario académico',
+     texto:'Fechas del semestre con buscador y marcas por actividad. Se carga y se publica desde Coordinación Académica › Calendario académico.',
+     liga:'calendario-academico.html?publico'}
   ];
 
   async cargarPaginasPublicas() {
@@ -5528,6 +5557,12 @@ class Component extends DCLogic {
   };
 
   avisarCandado = () => {
+    const c = this.iframeCalendario && this.iframeCalendario.contentWindow;
+    if (c) {
+      const i = this.institucionActual();
+      c.postMessage({tipo:'dirin-edicion', activa: !!this.state.edicionHorarios && this.puedeEditarModulo('calendario')}, '*');
+      c.postMessage({tipo:'dirin-institucion', id: this.state.instActiva, nombre: i ? i.nombre : ''}, '*');
+    }
     const w = this.iframeHorarios && this.iframeHorarios.contentWindow;
     if (!w) return;
     w.postMessage({tipo:'dirin-edicion', activa: !!this.state.edicionHorarios}, '*');
@@ -5564,8 +5599,8 @@ class Component extends DCLogic {
     this.setState({avisoAcceso:'Guardando…'});
     const {error} = await this.cliente.rpc('admin_set_password', {uid: id, nueva: edClave});
     if (error) {
-      this.setState({avisoAcceso: /function|does not exist|schema/i.test(error.message)
-        ? 'Falta instalar en la base la función «admin_set_password» (archivo supabase-cambiar-contrasena.sql). Mientras tanto, usa el correo de reposición.'
+      this.setState({avisoAcceso: /could not find the function|does not exist|schema cache/i.test(error.message)
+        ? 'La base todavía no reconoce la función «admin_set_password». Ejecuta supabase-cambiar-contrasena.sql en el SQL Editor de Supabase y vuelve a intentar. (Detalle: ' + error.message + ')'
         : 'No se pudo cambiar: ' + error.message});
       return;
     }
@@ -6302,6 +6337,7 @@ class Component extends DCLogic {
       barraInicio: s.vista === 'inicio' ? 'var(--color-accent)' : 'transparent',
       esInicio: s.vista === 'inicio',
       esCarga: s.vista === 'carga',
+      esCalendario: s.vista === 'calendario', refCalendario: this.refCalendario,
       esPublicas: s.vista === 'publicas',
       refPublicas: this.refPublicas,
       publicarHorarios: this.publicarHorarios,
@@ -6338,7 +6374,7 @@ class Component extends DCLogic {
       esReingreso: s.vista === 'reingreso',
       esPadron: s.vista === 'padron',
       esIdentidad: s.vista === 'identidad',
-      esObra: ['inicio','carga','usuarios','reingreso','padron','identidad','instituciones','trayectoria','contabilidad','expediente','publicas'].indexOf(s.vista) === -1,
+      esObra: ['inicio','carga','calendario','usuarios','reingreso','padron','identidad','instituciones','trayectoria','contabilidad','expediente','publicas'].indexOf(s.vista) === -1,
       ...this.valsExpediente(),
       ...this.valsTrayectoria(),
       ...this.valsContabilidad(),

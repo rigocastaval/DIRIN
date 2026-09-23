@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Calendario académico</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --guinda:#2C5F8A; --gris:#555555; --dorado:#D9A441;
+  --tinta:#1d1d1f; --papel:#ffffff; --lienzo:#f4f2f1; --linea:#e2dedc;
+  --ok:#1e7a4b; --error:#c00000;
+  --ui:"Inter","Segoe UI",system-ui,-apple-system,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+[hidden]{display:none !important}
+html,body{margin:0;padding:0;height:100%}
+body{font-family:var(--ui);background:var(--lienzo);color:var(--tinta);font-size:14px;display:flex;flex-direction:column}
+a{color:var(--guinda)} a:hover{color:#1F4A6E}
+button,input{font-family:inherit;font-size:inherit}
+
+.barra{background:var(--papel);border-bottom:1px solid var(--linea);flex:none}
+.barra .reglas{height:5px;display:flex}
+.barra .reglas i{display:block;height:100%}
+.barra .reglas i:first-child{width:22%;background:var(--guinda)}
+.barra .reglas i:last-child{flex:1;background:var(--gris)}
+.barra .fila{display:flex;align-items:center;gap:16px;padding:11px 20px;flex-wrap:wrap}
+.marca{display:flex;flex-direction:column;line-height:1.2;min-width:0}
+.marca b{font-size:15px}
+.marca span{font-size:11px;color:var(--gris);text-transform:uppercase;letter-spacing:.09em}
+.modos{margin-left:auto;display:flex;border:1px solid var(--linea);border-radius:7px;overflow:hidden}
+.modos button{border:0;background:var(--papel);padding:7px 14px;cursor:pointer;color:var(--gris);font-size:12.5px;font-weight:500;white-space:nowrap}
+.modos button+button{border-left:1px solid var(--linea)}
+.modos button.on{background:var(--guinda);color:#fff}
+
+.btn{border:1px solid var(--linea);background:var(--papel);border-radius:7px;padding:7px 12px;cursor:pointer;color:var(--tinta);
+  font-size:12.5px;font-weight:500;white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.btn:hover{border-color:#bdb7b3;color:var(--tinta)}
+.btn.pri{background:var(--guinda);border-color:var(--guinda);color:#fff}
+.btn.pri:hover{background:#1F4A6E}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.chico{padding:4px 9px;font-size:11.5px}
+
+.cuerpo{flex:1;min-height:0;display:grid;grid-template-columns:330px minmax(0,1fr)}
+.lado{background:var(--papel);border-right:1px solid var(--linea);display:flex;flex-direction:column;min-height:0}
+.bloque{padding:14px 16px;border-bottom:1px solid var(--linea);display:flex;flex-direction:column;gap:10px}
+.bloque h4{margin:0;font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:var(--gris);font-weight:600}
+.botones{display:flex;gap:8px;flex-wrap:wrap}
+.botones .btn{flex:1 1 auto}
+.estado{font-size:12px;line-height:1.5;color:var(--gris);text-wrap:pretty}
+.estado.ok{color:var(--ok)} .estado.mal{color:var(--error)}
+.buscar{width:100%;border:1px solid var(--linea);border-radius:7px;padding:9px 11px;background:var(--papel);color:var(--tinta)}
+.buscar:focus{outline:2px solid rgba(44,95,138,.25);border-color:var(--guinda)}
+.resumen{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px;color:var(--gris)}
+.resumen span{flex:1 1 auto}
+.lista{flex:1;min-height:0;overflow:auto;padding:6px 8px 18px}
+.item{display:grid;grid-template-columns:18px minmax(0,1fr) auto;gap:10px;padding:8px;border-radius:7px;cursor:pointer;align-items:start}
+.item:hover{background:#f6f4f3}
+.item.on{background:#edf2f7}
+.caja{width:18px;height:18px;border-radius:4px;border:2px solid var(--c);margin-top:1px;position:relative;background:color-mix(in srgb,var(--c) 30%,#fff)}
+.item.on .caja{background:var(--c);border-color:color-mix(in srgb,var(--c) 70%,#000)}
+.item.on .caja::after{content:"";position:absolute;left:4px;top:0;width:5px;height:10px;border:solid #1d1d1f;border-width:0 2px 2px 0;transform:rotate(45deg)}
+.item b{font-weight:500;font-size:13px;line-height:1.35;display:block;text-wrap:pretty}
+.item small{color:var(--gris);font-size:11.5px}
+.item.sinfecha{cursor:default}
+.item.sinfecha .caja{border-style:dashed;background:transparent}
+.item input[type=color]{width:24px;height:24px;border:1px solid var(--linea);border-radius:5px;padding:0;background:none;cursor:pointer}
+.item input[type=color]::-webkit-color-swatch-wrapper{padding:2px}
+.item input[type=color]::-webkit-color-swatch{border:0;border-radius:3px}
+.sep{font-size:10.5px;text-transform:uppercase;letter-spacing:.09em;color:var(--gris);font-weight:600;padding:14px 8px 4px}
+
+.lienzo{min-height:0;overflow:auto;padding:16px 22px 30px}
+.cabeza{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.cabeza h2{margin:0 6px 0 4px;font-size:19px;letter-spacing:-.005em}
+.cabeza .filtro{margin-left:auto;font-size:12px;color:var(--gris)}
+.flecha{width:32px;height:32px;padding:0;font-size:16px}
+
+.cal{background:var(--papel);border:1px solid var(--linea);border-radius:10px;overflow:hidden}
+.dsem{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--gris);font-weight:600;background:#fbfaf9;border-bottom:1px solid var(--linea)}
+.dsem div{padding:8px 9px}
+.sem{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));row-gap:3px;min-height:112px;padding-bottom:6px}
+.sem+.sem{border-top:1px solid var(--linea)}
+.dia{border-left:1px solid #eeebe9;min-width:0}
+.dia:first-child{border-left:0}
+.dia .num{display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;margin:4px 5px;font-size:12px;font-weight:600;border-radius:999px}
+.dia.finde{background:#fbfaf9}
+.dia.fuera{background:#f8f7f6}
+.dia.fuera .num{color:#b3aeab}
+.dia.hoy .num{background:var(--guinda);color:#fff}
+.ev{position:relative;z-index:1;margin:0 4px;min-width:0;background:var(--c);border-radius:4px;padding:2px 7px;font-size:11.5px;line-height:1.4;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;color:#1d1d1f;box-shadow:inset 0 -2px 0 rgba(0,0,0,.07)}
+.ev:hover{filter:brightness(.95)}
+.ev.izq{margin-left:0;border-top-left-radius:0;border-bottom-left-radius:0}
+.ev.der{margin-right:0;border-top-right-radius:0;border-bottom-right-radius:0}
+
+.semana-v .sem{min-height:min(62vh,560px);row-gap:5px}
+.semana-v .dia{padding:8px 10px}
+.semana-v .dia .dn{display:block;font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--gris);font-weight:600}
+.semana-v .dia .num{margin:4px 0 0;min-width:30px;height:30px;font-size:16px}
+.semana-v .ev{white-space:normal;padding:6px 9px;font-size:12.5px;font-weight:500;margin:0 6px}
+.semana-v .ev.izq{margin-left:0} .semana-v .ev.der{margin-right:0}
+.semana-v .ev small{display:block;font-weight:400;font-size:11px;color:#3d3d3f;margin-top:2px}
+
+.semestre{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:16px}
+.mini{background:var(--papel);border:1px solid var(--linea);border-radius:10px;padding:12px 12px 10px}
+.mini h3{margin:0 0 8px 4px;font-size:14px;cursor:pointer;display:inline-block}
+.mini h3:hover{color:var(--guinda)}
+.mini .dsem{background:none;border:0;font-size:9.5px;text-align:center}
+.mini .dsem div{padding:0 0 4px}
+.mini .sem{min-height:0;row-gap:2px;padding-bottom:3px;border-top:0}
+.mini .sem+.sem{border-top:0}
+.mini .dia{border-left:0;text-align:center;cursor:pointer;border-radius:5px}
+.mini .dia:hover{background:#f1efee}
+.mini .dia.fuera{background:none;cursor:default}
+.mini .dia.finde{background:none}
+.mini .dia.finde .num{color:#8a8583}
+.mini .dia .num{font-size:11px;font-weight:500;min-width:22px;height:22px;margin:1px 0}
+.mini .dia.hoy .num{color:#fff}
+.mini .ev{height:6px;padding:0;margin:0 2px;border-radius:3px;box-shadow:none}
+.mini .ev.izq{margin-left:0} .mini .ev.der{margin-right:0}
+
+.vacio{background:var(--papel);border:1px solid var(--linea);border-radius:10px;padding:34px 28px;color:var(--gris);line-height:1.6;max-width:56ch}
+.vacio b{color:var(--tinta);display:block;font-size:16px;margin-bottom:6px}
+
+.pop{position:fixed;z-index:50;width:300px;max-width:calc(100vw - 24px);background:var(--papel);border:1px solid var(--linea);border-radius:10px;
+  box-shadow:0 18px 44px rgba(0,0,0,.18);padding:14px 16px;display:none}
+.pop.on{display:block}
+.pop .tira{height:8px;border-radius:4px;background:var(--c);margin-bottom:10px}
+.pop b{display:block;font-size:14px;line-height:1.4;text-wrap:pretty}
+.pop .fe{font-size:12.5px;color:var(--gris);margin:4px 0 12px}
+
+@media (max-width:860px){
+  html,body{height:auto}
+  .cuerpo{display:block}
+  .lado{border-right:0;border-bottom:1px solid var(--linea)}
+  .lista{max-height:42vh}
+  .lienzo{padding:14px 12px 26px}
+  .sem{min-height:88px}
+  .ev{font-size:10.5px;padding:1px 4px;margin:0 2px}
+  .semana-v .cal{overflow-x:auto}
+  .semana-v .sem{min-width:640px}
+  .semana-v .dsem{min-width:640px}
+}
+</style>
+</head>
+<body>
+
+<header class="barra">
+  <div class="reglas"><i></i><i></i></div>
+  <div class="fila">
+    <a class="btn" id="btnAtras" href="portal.html" title="Volver al Mural de avisos y herramientas" hidden>‹ Atrás</a>
+    <div class="marca">
+      <b id="marcaNombre">Calendario académico</b>
+      <span id="marcaSub">Coordinación Académica</span>
+    </div>
+    <div class="modos" id="modos">
+      <button data-vista="semestre" class="on">Semestral</button>
+      <button data-vista="mes">Mensual</button>
+      <button data-vista="semana">Semanal</button>
+    </div>
+  </div>
+</header>
+
+<div class="cuerpo">
+  <aside class="lado">
+    <div class="bloque" id="bloqueEdicion" hidden>
+      <h4>Base de datos</h4>
+      <div class="botones">
+        <button class="btn pri" id="bCargar">Cargar base de datos</button>
+        <button class="btn" id="bFormato" title="Libro de Excel con las columnas que se necesitan">Formato</button>
+      </div>
+      <div class="botones">
+        <button class="btn" id="bPublicar">Publicar en páginas públicas</button>
+        <button class="btn" id="bAuto" title="Quita los colores elegidos a mano">Colores automáticos</button>
+      </div>
+      <input type="file" id="archivo" accept=".xlsx,.xls,.csv" hidden>
+      <div class="estado" id="estado"></div>
+    </div>
+    <div class="bloque">
+      <input class="buscar" id="buscar" type="search" placeholder="Buscar actividad, por ejemplo «examen»" autocomplete="off">
+      <div class="resumen" id="resumen"></div>
+    </div>
+    <div class="lista" id="lista"></div>
+  </aside>
+
+  <main class="lienzo" id="lienzo">
+    <div class="cabeza">
+      <button class="btn flecha" id="bAnt" title="Anterior">‹</button>
+      <button class="btn flecha" id="bSig" title="Siguiente">›</button>
+      <button class="btn" id="bHoy">Hoy</button>
+      <h2 id="periodo"></h2>
+      <div class="filtro" id="filtro"></div>
+    </div>
+    <div id="vista"></div>
+  </main>
+</div>
+
+<div class="pop" id="pop">
+  <div class="tira" id="popTira"></div>
+  <b id="popNombre"></b>
+  <div class="fe" id="popFecha"></div>
+  <div class="botones">
+    <button class="btn pri chico" id="popMarcar"></button>
+    <button class="btn chico" id="popIr"></button>
+    <button class="btn chico" id="popCerrar">Cerrar</button>
+  </div>
+</div>
+
+<script>
+const Q = new URLSearchParams(location.search);
+const PUBLICO = Q.has('publico');
+const EMBEBIDO = window.parent !== window;
+const MOVIL = (matchMedia('(pointer: coarse)').matches || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent))
+  && Math.min(screen.width, screen.height) < 900;
+
+const SUPABASE_URL = 'https://yjbvjprzfnetvrxqufwa.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlqYnZqcHJ6Zm5ldHZyeHF1ZndhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwNDE0NjQsImV4cCI6MjEwMTYxNzQ2NH0.jPhFqyuzaKkjKvIA8XRlZOM3CT6Pkv_P3DwsRGa0nUI';
+const CLAVE = 'calendario:auto';
+const CLAVE_PUB = 'publico:calendario';
+const CLAVE_PAG = 'publico:paginas';
+
+// Colores de marca textos: claros para que el texto oscuro se lea encima.
+const PALETA = ['#FFE27A','#A8E6B8','#9FD3FF','#FFB8CB','#CDBBFF','#FFC894','#8FE3DA',
+  '#DCE67A','#F5B0E6','#B3C9FF','#FFA99A','#C6EFA0','#FFD6A5','#A0E7E5'];
+const MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+const MES_C = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+const DIAS = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+const DIA = 864e5;
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const norm = s => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/\s+/g, ' ').trim();
+
+const aFecha = s => { const [y, m, d] = s.split('-').map(Number); return new Date(Date.UTC(y, m - 1, d)); };
+const aTexto = d => d.toISOString().slice(0, 10);
+const mas = (d, n) => new Date(d.getTime() + n * DIA);
+const lunesDe = d => mas(d, -((d.getUTCDay() + 6) % 7));
+const inicioMes = d => new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), 1));
+const sumaMes = (d, n) => new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + n, 1));
+const finMes = d => mas(sumaMes(d, 1), -1);
+const HOY = (() => { const t = new Date(); return new Date(Date.UTC(t.getFullYear(), t.getMonth(), t.getDate())); })();
+
+function fmtRango(e){
+  if (!e.inicio) return 'Fecha pendiente';
+  const a = aFecha(e.inicio), b = aFecha(e.fin);
+  const f = (d, conAnio) => d.getUTCDate() + ' ' + MES_C[d.getUTCMonth()] + (conAnio ? ' ' + d.getUTCFullYear() : '');
+  if (e.inicio === e.fin) return f(a, true);
+  if (a.getUTCFullYear() === b.getUTCFullYear()){
+    if (a.getUTCMonth() === b.getUTCMonth()) return a.getUTCDate() + '–' + f(b, true);
+    return f(a) + ' – ' + f(b, true);
+  }
+  return f(a, true) + ' – ' + f(b, true);
+}
+const duracion = e => e.inicio ? Math.round((aFecha(e.fin) - aFecha(e.inicio)) / DIA) + 1 : 0;
+
+/* ---------------- Estado ---------------- */
+let datos = {titulo:'', eventos:[], colores:{}};
+let autoColor = {};
+let edicion = false, inst = '', nombreInst = '', sesion = null;
+let vista = 'semestre', ancla = inicioMes(HOY), anclaSem = inicioMes(HOY);
+let sel = new Set(), consulta = '';
+
+const nube = (() => {
+  try { return window.supabase && window.supabase.createClient ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON) : null; }
+  catch(e){ return null; }
+})();
+
+const puedeEditar = () => !PUBLICO && !MOVIL && edicion;
+
+function recalcAuto(){
+  autoColor = {}; let i = 0;
+  datos.eventos.forEach(e => { if (!(e.k in autoColor)) autoColor[e.k] = PALETA[i++ % PALETA.length]; });
+}
+const colorDe = e => datos.colores[e.k] || autoColor[e.k] || PALETA[0];
+
+function usarDatos(d){
+  d = d || {};
+  datos = {
+    titulo: d.titulo || '',
+    colores: Object.assign({}, d.colores || {}),
+    guardadoEn: d.guardadoEn || '', publicadoEn: d.publicadoEn || '',
+    eventos: (d.eventos || []).map((e, i) => {
+      const nombre = String(e.nombre || '').trim();
+      let inicio = e.inicio || null, fin = e.fin || e.inicio || null;
+      if (!inicio && fin) inicio = fin;
+      if (inicio && fin && fin < inicio){ const t = inicio; inicio = fin; fin = t; }
+      return {id: e.id || ('e' + i), nombre, inicio, fin, k: norm(nombre), n: norm(nombre)};
+    }).filter(e => e.nombre)
+  };
+  recalcAuto();
+  sel = new Set([...sel].filter(id => datos.eventos.some(e => e.id === id)));
+  const fechas = datos.eventos.filter(e => e.inicio);
+  if (fechas.length){
+    const min = fechas.reduce((m, e) => e.inicio < m ? e.inicio : m, fechas[0].inicio);
+    const max = fechas.reduce((m, e) => e.fin > m ? e.fin : m, fechas[0].fin);
+    anclaSem = inicioMes(aFecha(min));
+    const h = aTexto(HOY);
+    ancla = (h >= min && h <= max) ? HOY : aFecha(min);
+  }
+  pintar();
+}
+
+/* ---------------- Calendario ---------------- */
+const visibles = () => datos.eventos.filter(e => e.inicio && (!sel.size || sel.has(e.id)));
+
+// Tramos de cada actividad dentro de una semana, repartidos en carriles sin encimarse.
+function tramos(ws, desde, hasta, evs){
+  const a = aTexto(desde), b = aTexto(hasta), t = [];
+  evs.forEach(e => {
+    if (e.fin < a || e.inicio > b) return;
+    const s = e.inicio < a ? desde : aFecha(e.inicio), f = e.fin > b ? hasta : aFecha(e.fin);
+    t.push({e, c0: Math.round((s - ws) / DIA), c1: Math.round((f - ws) / DIA), izq: e.inicio < a, der: e.fin > b});
+  });
+  t.sort((x, y) => x.c0 - y.c0 || (y.c1 - y.c0) - (x.c1 - x.c0));
+  const carriles = [];
+  t.forEach(x => {
+    let i = carriles.findIndex(fin => fin < x.c0);
+    if (i < 0){ i = carriles.length; carriles.push(-1); }
+    carriles[i] = x.c1; x.l = i;
+  });
+  return {t, n: carriles.length};
+}
+
+function semanaHTML(ws, mes, modo){
+  let desde = ws, hasta = mas(ws, 6);
+  if (modo === 'mini'){ const m0 = inicioMes(mes), m1 = finMes(mes); if (desde < m0) desde = m0; if (hasta > m1) hasta = m1; }
+  const {t, n} = tramos(ws, desde, hasta, visibles());
+  const filas = modo === 'mini' ? `24px repeat(${n},6px) 2px`
+    : modo === 'semana' ? `58px repeat(${n},auto) 1fr` : `32px repeat(${n},auto) 1fr`;
+  let h = `<div class="sem" style="grid-template-rows:${filas}">`;
+  for (let i = 0; i < 7; i++){
+    const d = mas(ws, i);
+    const fuera = mes && d.getUTCMonth() !== mes.getUTCMonth();
+    const cls = ['dia', fuera ? 'fuera' : '', i > 4 ? 'finde' : '', (!fuera && d.getTime() === HOY.getTime()) ? 'hoy' : ''].join(' ');
+    const num = (modo === 'mini' && fuera) ? '' : `<span class="num">${d.getUTCDate()}</span>`;
+    const dn = modo === 'semana' ? `<span class="dn">${DIAS[i]}</span>` : '';
+    h += `<div class="${cls}" style="grid-column:${i + 1};grid-row:1 / span ${n + 2}"${modo === 'mini' && !fuera ? ` data-dia="${aTexto(d)}"` : ''}>${dn}${num}</div>`;
+  }
+  t.forEach(x => {
+    const texto = modo === 'mini' ? '' : esc(x.e.nombre) + (modo === 'semana' ? `<small>${fmtRango(x.e)}</small>` : '');
+    h += `<div class="ev${x.izq ? ' izq' : ''}${x.der ? ' der' : ''}" data-ev="${x.e.id}" title="${esc(x.e.nombre)} · ${fmtRango(x.e)}"
+      style="grid-column:${x.c0 + 1} / ${x.c1 + 2};grid-row:${x.l + 2};--c:${colorDe(x.e)}">${texto}</div>`;
+  });
+  return h + '</div>';
+}
+
+const cabDias = () => '<div class="dsem">' + DIAS.map(d => `<div>${d}</div>`).join('') + '</div>';
+
+function vistaMes(m){
+  const m0 = inicioMes(m), m1 = finMes(m);
+  let h = '<div class="cal">' + cabDias();
+  for (let ws = lunesDe(m0); ws <= m1; ws = mas(ws, 7)) h += semanaHTML(ws, m0, 'mes');
+  return h + '</div>';
+}
+function vistaMini(m){
+  const m0 = inicioMes(m), m1 = finMes(m);
+  let h = `<div class="mini"><h3 data-mes="${aTexto(m0)}" title="Ver el mes completo">${MESES[m0.getUTCMonth()]} ${m0.getUTCFullYear()}</h3>` + cabDias();
+  for (let ws = lunesDe(m0); ws <= m1; ws = mas(ws, 7)) h += semanaHTML(ws, m0, 'mini');
+  return h + '</div>';
+}
+
+function tituloPeriodo(){
+  if (vista === 'semestre'){
+    const a = anclaSem, b = sumaMes(anclaSem, 5);
+    return MESES[a.getUTCMonth()] + (a.getUTCFullYear() !== b.getUTCFullYear() ? ' ' + a.getUTCFullYear() : '')
+      + ' – ' + MESES[b.getUTCMonth()] + ' ' + b.getUTCFullYear();
+  }
+  if (vista === 'mes') return MESES[ancla.getUTCMonth()] + ' ' + ancla.getUTCFullYear();
+  const ws = lunesDe(ancla);
+  return 'Semana del ' + fmtRango({inicio: aTexto(ws), fin: aTexto(mas(ws, 6))});
+}
+
+function pintarVista(){
+  document.querySelectorAll('#modos button').forEach(b => b.classList.toggle('on', b.dataset.vista === vista));
+  const p = tituloPeriodo();
+  $('periodo').textContent = p.charAt(0).toUpperCase() + p.slice(1);
+  const conFecha = datos.eventos.filter(e => e.inicio).length;
+  $('filtro').textContent = !datos.eventos.length ? ''
+    : sel.size ? `Mostrando ${visibles().length} actividad(es) marcada(s)` : `Mostrando las ${conFecha} actividades con fecha`;
+  const cont = $('vista');
+  if (!datos.eventos.length){
+    cont.innerHTML = PUBLICO
+      ? `<div class="vacio"><b>Todavía no hay un calendario publicado.</b>Vuelve más tarde.</div>`
+      : `<div class="vacio"><b>Carga la base de datos para trazar el calendario.</b>Usa un libro de Excel con tres columnas: «Descripción de la actividad», «Fecha de inicio» y «Fecha de término». Las fechas que digan «Pendiente» quedan en la lista, sin marca en el calendario.</div>`;
+    return;
+  }
+  if (vista === 'semestre'){
+    let h = '<div class="semestre">';
+    for (let i = 0; i < 6; i++) h += vistaMini(sumaMes(anclaSem, i));
+    cont.innerHTML = h + '</div>';
+  } else if (vista === 'mes') cont.innerHTML = vistaMes(ancla);
+  else cont.innerHTML = '<div class="cal semana-v">' + semanaHTML(lunesDe(ancla), null, 'semana') + '</div>';
+}
+
+/* ---------------- Lista y buscador ---------------- */
+function coincide(e, q){ return !q || q.split(' ').every(w => e.n.includes(w)); }
+
+function pintarLista(){
+  const q = norm(consulta);
+  const evs = datos.eventos.filter(e => coincide(e, q))
+    .sort((a, b) => (a.inicio || '9999') < (b.inicio || '9999') ? -1 : (a.inicio || '9999') > (b.inicio || '9999') ? 1 : 0);
+  const conFecha = evs.filter(e => e.inicio);
+  const todas = conFecha.length && conFecha.every(e => sel.has(e.id));
+  let r = `<span>${q ? evs.length + ' resultado(s)' : evs.length + ' actividades'}</span>`;
+  if (q && conFecha.length) r += `<button class="btn chico" id="bTodos">${todas ? 'Desmarcar resultados' : 'Marcar todos'}</button>`;
+  if (sel.size) r += `<button class="btn chico" id="bLimpiar">Mostrar todas (${sel.size} marcada${sel.size > 1 ? 's' : ''})</button>`;
+  $('resumen').innerHTML = datos.eventos.length ? r : '';
+  const editable = puedeEditar();
+  const fila = e => `<div class="item${sel.has(e.id) ? ' on' : ''}${e.inicio ? '' : ' sinfecha'}" data-item="${e.id}" style="--c:${colorDe(e)}"
+      title="${e.inicio ? (sel.has(e.id) ? 'Quitar la marca' : 'Marcar en el calendario') : 'Sin fecha: no se puede marcar'}">
+      <span class="caja"></span>
+      <span><b>${esc(e.nombre)}</b><small>${fmtRango(e)}${duracion(e) > 1 ? ' · ' + duracion(e) + ' días' : ''}</small></span>
+      ${editable ? `<input type="color" value="${colorDe(e)}" data-color="${esc(e.k)}" title="Cambiar el color">` : '<span></span>'}
+    </div>`;
+  const pend = evs.filter(e => !e.inicio);
+  let h = conFecha.map(fila).join('');
+  if (pend.length) h += `<div class="sep">Fecha pendiente</div>` + pend.map(fila).join('');
+  if (!evs.length && datos.eventos.length) h = `<div class="estado" style="padding:10px 8px">Ninguna actividad contiene «${esc(consulta)}».</div>`;
+  $('lista').innerHTML = h;
+}
+
+function pintarEdicion(){
+  if (PUBLICO) return;
+  $('bloqueEdicion').hidden = false;
+  const ok = puedeEditar();
+  ['bCargar','bPublicar','bAuto'].forEach(id => $(id).disabled = !ok);
+  $('bAuto').disabled = !ok || !Object.keys(datos.colores).length;
+  $('bPublicar').disabled = !ok || !datos.eventos.length;
+  if (!ok){
+    avisar(MOVIL ? 'En el teléfono el calendario sólo se consulta.'
+      : !EMBEBIDO ? 'Para cargar la base o cambiar colores, abre esta herramienta desde DIRIN › Coordinación Académica con el candado abierto.'
+      : 'El candado está cerrado: sólo lectura. Ábrelo con tu PIN para cargar la base, cambiar colores o publicar.');
+  } else if (!$('estado').dataset.fijo) avisar(resumenGuardado());
+}
+function resumenGuardado(){
+  const f = s => s ? new Date(s).toLocaleString('es-MX', {day:'numeric', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit'}) : '';
+  const partes = [];
+  if (datos.titulo) partes.push('Base: ' + datos.titulo + '.');
+  if (datos.guardadoEn) partes.push('Guardado ' + f(datos.guardadoEn) + '.');
+  partes.push(datos.publicadoEn ? 'Publicado ' + f(datos.publicadoEn) + '.' : 'Sin publicar.');
+  return datos.eventos.length ? partes.join(' ') : 'Aún no se ha cargado ninguna base.';
+}
+function avisar(txt, tipo){
+  const el = $('estado');
+  el.textContent = txt; el.className = 'estado' + (tipo ? ' ' + tipo : '');
+  if (tipo){ el.dataset.fijo = '1'; clearTimeout(avisar.t); avisar.t = setTimeout(() => { delete el.dataset.fijo; pintarEdicion(); }, 6000); }
+}
+
+function pintar(){ pintarVista(); pintarLista(); pintarEdicion(); }
+
+/* ---------------- Interacción ---------------- */
+function alternar(id){
+  const e = datos.eventos.find(x => x.id === id);
+  if (!e || !e.inicio) return;
+  if (sel.has(id)) sel.delete(id);
+  else { sel.add(id); llevarA(e); }
+  pintar();
+}
+function llevarA(e){
+  const d = aFecha(e.inicio);
+  ancla = d;
+  if (d < anclaSem || d >= sumaMes(anclaSem, 6)) anclaSem = inicioMes(d);
+}
+
+$('modos').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  const antes = vista; vista = b.dataset.vista;
+  if (vista === 'semestre' && antes !== 'semestre'){
+    const fin = sumaMes(anclaSem, 6);
+    if (ancla < anclaSem || ancla >= fin) anclaSem = inicioMes(ancla);
+  }
+  cerrarPop(); pintarVista();
+});
+$('bAnt').onclick = () => mover(-1);
+$('bSig').onclick = () => mover(1);
+$('bHoy').onclick = () => { ancla = HOY; if (vista === 'semestre') anclaSem = inicioMes(HOY); pintarVista(); };
+function mover(s){
+  if (vista === 'semestre') anclaSem = sumaMes(anclaSem, 6 * s);
+  else if (vista === 'mes') ancla = sumaMes(ancla, s);
+  else ancla = mas(ancla, 7 * s);
+  cerrarPop(); pintarVista();
+}
+
+$('buscar').addEventListener('input', e => { consulta = e.target.value; pintarLista(); });
+$('buscar').addEventListener('keydown', e => {
+  if (e.key === 'Escape'){ e.target.value = ''; consulta = ''; pintarLista(); }
+});
+
+$('lista').addEventListener('click', e => {
+  if (e.target.matches('input[type=color]')) return;
+  const it = e.target.closest('[data-item]'); if (it) alternar(it.dataset.item);
+});
+$('lista').addEventListener('input', e => {
+  if (!e.target.matches('input[type=color]') || !puedeEditar()) return;
+  datos.colores[e.target.dataset.color] = e.target.value;
+  const k = e.target.dataset.color;
+  document.querySelectorAll('#lista .item').forEach(it => {
+    const ev = datos.eventos.find(x => x.id === it.dataset.item);
+    if (ev && ev.k === k) it.style.setProperty('--c', e.target.value);
+  });
+  pintarVista();
+  clearTimeout(guardar.t); guardar.t = setTimeout(guardar, 700);
+});
+$('resumen').addEventListener('click', e => {
+  if (e.target.id === 'bLimpiar'){ sel.clear(); pintar(); }
+  if (e.target.id === 'bTodos'){
+    const q = norm(consulta);
+    const evs = datos.eventos.filter(x => x.inicio && coincide(x, q));
+    const todas = evs.every(x => sel.has(x.id));
+    evs.forEach(x => todas ? sel.delete(x.id) : sel.add(x.id));
+    if (!todas && evs.length) llevarA(evs.slice().sort((a, b) => a.inicio < b.inicio ? -1 : 1)[0]);
+    pintar();
+  }
+});
+
+$('vista').addEventListener('click', e => {
+  const b = e.target.closest('[data-ev]');
+  if (b){ abrirPop(b.dataset.ev, e); return; }
+  const m = e.target.closest('[data-mes]');
+  if (m){ vista = 'mes'; ancla = aFecha(m.dataset.mes); cerrarPop(); pintarVista(); return; }
+  const d = e.target.closest('[data-dia]');
+  if (d){ vista = 'semana'; ancla = aFecha(d.dataset.dia); cerrarPop(); pintarVista(); }
+});
+
+let popId = null;
+function abrirPop(id, ev){
+  const e = datos.eventos.find(x => x.id === id); if (!e) return;
+  popId = id;
+  const pop = $('pop');
+  pop.style.setProperty('--c', colorDe(e));
+  $('popNombre').textContent = e.nombre;
+  $('popFecha').textContent = fmtRango(e) + (duracion(e) > 1 ? ' · ' + duracion(e) + ' días' : '');
+  $('popMarcar').textContent = sel.has(id) ? 'Quitar la marca' : 'Marcar sólo ésta';
+  $('popIr').textContent = vista === 'semana' ? 'Ver el mes' : 'Ver la semana';
+  pop.classList.add('on');
+  const w = pop.offsetWidth, h = pop.offsetHeight;
+  pop.style.left = Math.max(12, Math.min(innerWidth - w - 12, ev.clientX - w / 2)) + 'px';
+  pop.style.top = (ev.clientY + 14 + h > innerHeight - 12 ? Math.max(12, ev.clientY - h - 14) : ev.clientY + 14) + 'px';
+}
+function cerrarPop(){ $('pop').classList.remove('on'); popId = null; }
+$('popCerrar').onclick = cerrarPop;
+$('popMarcar').onclick = () => {
+  if (sel.has(popId)) sel.delete(popId); else { sel.clear(); sel.add(popId); }
+  cerrarPop(); pintar();
+};
+$('popIr').onclick = () => {
+  const e = datos.eventos.find(x => x.id === popId); if (!e) return;
+  vista = vista === 'semana' ? 'mes' : 'semana'; ancla = aFecha(e.inicio);
+  cerrarPop(); pintarVista();
+};
+document.addEventListener('click', e => {
+  if (popId && !e.target.closest('#pop') && !e.target.closest('[data-ev]')) cerrarPop();
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') cerrarPop(); });
+
+/* ---------------- Carga de la base ---------------- */
+function cargarXLSX(){
+  if (window.XLSX) return Promise.resolve();
+  return new Promise((ok, mal) => {
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+    s.onload = ok; s.onerror = () => mal(new Error('No se pudo cargar el lector de Excel.'));
+    document.head.appendChild(s);
+  });
+}
+function aISO(v){
+  if (v == null || v === '') return null;
+  if (v instanceof Date && !isNaN(v)) return aTexto(new Date(Date.UTC(v.getFullYear(), v.getMonth(), v.getDate())));
+  if (typeof v === 'number') return v > 20000 && v < 80000 ? aTexto(new Date(Date.UTC(1899, 11, 30) + Math.round(v) * DIA)) : null;
+  const s = String(v).trim();
+  if (!s || /pendiente|definir|^-+$/i.test(s)) return null;
+  if (/^\d+(\.\d+)?$/.test(s)) return aISO(Number(s));
+  let m = s.match(/^(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})/);
+  if (m) return aTexto(new Date(Date.UTC(+m[1], +m[2] - 1, +m[3])));
+  m = s.match(/^(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{2,4})$/);
+  if (m){ const y = +m[3] < 100 ? 2000 + +m[3] : +m[3]; return aTexto(new Date(Date.UTC(y, +m[2] - 1, +m[1]))); }
+  return null;
+}
+
+async function importar(file){
+  try{
+    avisar('Leyendo ' + file.name + '…');
+    await cargarXLSX();
+    const csv = /\.csv$/i.test(file.name);
+    const wb = csv ? XLSX.read(await file.text(), {type:'string', raw:true}) : XLSX.read(await file.arrayBuffer(), {type:'array'});
+    const hoja = wb.Sheets[wb.SheetNames[0]];
+    const filas = XLSX.utils.sheet_to_json(hoja, {header:1, raw:true, defval:''});
+    let hi = -1, cN = -1, cI = -1, cF = -1, cC = -1;
+    for (let r = 0; r < Math.min(12, filas.length); r++){
+      const f = filas[r].map(x => norm(x));
+      const n = f.findIndex(x => /descripcion|actividad|evento|nombre/.test(x));
+      const i = f.findIndex(x => /inicio|desde/.test(x));
+      if (n >= 0 && i >= 0){
+        hi = r; cN = n; cI = i;
+        cF = f.findIndex(x => /termino|final|\bfin\b|hasta|conclusion/.test(x));
+        cC = f.findIndex(x => /^color/.test(x));
+        break;
+      }
+    }
+    if (hi < 0){ avisar('No encontré las columnas «Descripción de la actividad» y «Fecha de inicio». Descarga el formato para ver cómo deben ir.', 'mal'); return; }
+    const colores = {}; const eventos = [];
+    filas.slice(hi + 1).forEach((f, i) => {
+      const nombre = String(f[cN] || '').trim(); if (!nombre) return;
+      const inicio = aISO(f[cI]), fin = cF >= 0 ? aISO(f[cF]) : null;
+      eventos.push({id: 'e' + i, nombre, inicio, fin: fin || inicio});
+      const c = cC >= 0 ? String(f[cC] || '').trim() : '';
+      if (/^#?[0-9a-f]{6}$/i.test(c)) colores[norm(nombre)] = c.charAt(0) === '#' ? c : '#' + c;
+    });
+    if (!eventos.length){ avisar('El archivo no trae actividades debajo de los encabezados.', 'mal'); return; }
+    if (datos.eventos.length && !confirm('Esto reemplaza las ' + datos.eventos.length + ' actividades actuales por las ' + eventos.length + ' del archivo. ¿Continuar?')) { avisar(resumenGuardado()); return; }
+    sel.clear(); consulta = ''; $('buscar').value = '';
+    usarDatos({titulo: file.name.replace(/\.[^.]+$/, '').replace(/_/g, ' '), eventos, colores,
+      publicadoEn: datos.publicadoEn});
+    const pend = eventos.filter(e => !e.inicio).length;
+    await guardar();
+    avisar(eventos.length + ' actividades cargadas' + (pend ? ', ' + pend + ' con fecha pendiente' : '') + '. ' + $('estado').textContent, 'ok');
+  } catch(err){ avisar('No se pudo leer el archivo: ' + err.message, 'mal'); }
+}
+$('bCargar').onclick = () => { if (puedeEditar()) $('archivo').click(); };
+$('archivo').onchange = e => { const f = e.target.files[0]; e.target.value = ''; if (f) importar(f); };
+$('bFormato').onclick = async () => {
+  try{
+    await cargarXLSX();
+    const hoja = XLSX.utils.aoa_to_sheet([
+      ['Descripción de la actividad', 'Fecha de inicio', 'Fecha de término', 'Color (opcional)'],
+      ['Primera parcial – Aplicación de exámenes', new Date(2025, 8, 22), new Date(2025, 8, 27), ''],
+      ['Día Mundial del Fisioterapeuta', new Date(2025, 8, 8), new Date(2025, 8, 8), '#FFB8CB'],
+      ['Publicación de convocatoria de becas', 'Pendiente', 'Pendiente', '']
+    ], {cellDates:true});
+    hoja['!cols'] = [{wch:60}, {wch:16}, {wch:16}, {wch:16}];
+    const libro = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(libro, hoja, 'Calendario');
+    XLSX.writeFile(libro, 'Formato calendario académico.xlsx');
+  } catch(err){ avisar('No se pudo preparar el formato: ' + err.message, 'mal'); }
+};
+$('bAuto').onclick = () => {
+  if (!puedeEditar() || !confirm('¿Quitar los colores elegidos a mano y volver a los automáticos?')) return;
+  datos.colores = {}; pintar(); guardar();
+};
+
+/* ---------------- Guardado y publicación ---------------- */
+const paraGuardar = extra => JSON.stringify(Object.assign({
+  titulo: datos.titulo, colores: datos.colores, guardadoEn: datos.guardadoEn, publicadoEn: datos.publicadoEn,
+  eventos: datos.eventos.map(e => ({id:e.id, nombre:e.nombre, inicio:e.inicio, fin:e.fin}))
+}, extra || {}));
+const claveLocal = () => 'dirin-calendario:' + (inst || 'sin-institucion');
+
+async function subir(clave, valor){
+  if (!nube || !sesion) return 'No hay sesión de DIRIN.';
+  if (!inst) return 'No se sabe con qué institución se está trabajando.';
+  const {error} = await nube.from('horarios_almacen').upsert({
+    clave, valor, institucion_id: inst, actualizado_en: new Date().toISOString(), actualizado_por: sesion.user.id
+  }, {onConflict:'clave,institucion_id'});
+  return error ? error.message : '';
+}
+async function guardar(){
+  if (!puedeEditar()) return;
+  datos.guardadoEn = new Date().toISOString();
+  const valor = paraGuardar();
+  try{ localStorage.setItem(claveLocal(), valor); } catch(e){}
+  const falla = await subir(CLAVE, valor);
+  if (falla) avisar('Quedó guardado sólo en este navegador. No se guardó en la nube: ' + falla, 'mal');
+  else avisar(resumenGuardado());
+}
+$('bPublicar').onclick = async () => {
+  if (!puedeEditar() || !datos.eventos.length) return;
+  avisar('Publicando…');
+  const ahora = new Date().toISOString();
+  // La copia pública lleva los colores ya resueltos: lo que se ve aquí es lo que se ve allá.
+  const resueltos = {}; datos.eventos.forEach(e => resueltos[e.k] = colorDe(e));
+  const falla = await subir(CLAVE_PUB, paraGuardar({colores: resueltos, publicadoEn: ahora}));
+  if (falla){ avisar('No se pudo publicar: ' + falla, 'mal'); return; }
+  datos.publicadoEn = ahora;
+  await guardar();
+  avisar('Publicado. La página pública ya muestra esta versión.', 'ok');
+};
+
+function leer(v){ if (!v) return null; if (typeof v === 'object') return v; try { return JSON.parse(v); } catch(e){ return null; } }
+
+async function cargarGuardado(){
+  let d = null;
+  if (nube && sesion && inst){
+    try{
+      const {data} = await nube.from('horarios_almacen').select('valor').eq('clave', CLAVE).eq('institucion_id', inst).maybeSingle();
+      d = leer(data && data.valor);
+    } catch(e){}
+  }
+  if (!d){ try{ d = leer(localStorage.getItem(claveLocal())); } catch(e){} }
+  if (d) usarDatos(d); else pintar();
+}
+
+async function resolverInstitucion(){
+  if (inst || !nube || !sesion) return;
+  try{
+    const {data} = await nube.from('perfiles').select('institucion_id').eq('id', sesion.user.id).maybeSingle();
+    if (data && data.institucion_id) inst = data.institucion_id;
+  } catch(e){}
+}
+
+window.addEventListener('message', e => {
+  const d = e && e.data; if (!d || PUBLICO) return;
+  if (d.tipo === 'dirin-edicion'){ edicion = !!d.activa; pintarLista(); pintarEdicion(); }
+  if (d.tipo === 'dirin-institucion'){
+    const nuevo = d.id || '';
+    if (d.nombre){ nombreInst = d.nombre; $('marcaSub').textContent = d.nombre; }
+    if (nuevo && nuevo !== inst){ inst = nuevo; cargarGuardado(); }
+  }
+});
+
+/* ---------------- Página pública ---------------- */
+async function cargarPublico(){
+  $('btnAtras').hidden = false;
+  $('marcaSub').textContent = 'Consulta pública';
+  document.title = 'Calendario académico · Consulta pública';
+  if (!nube){ pintar(); return; }
+  const {data, error} = await nube.from('horarios_almacen').select('institucion_id, valor, actualizado_en')
+    .eq('clave', CLAVE_PUB).order('actualizado_en', {ascending:false}).limit(1);
+  if (error){ $('vista').innerHTML = `<div class="vacio"><b>No fue posible leer el calendario publicado.</b>${esc(error.message)}</div>`; return; }
+  const fila = data && data[0];
+  if (!fila){ pintar(); return; }
+  try{
+    const pag = await nube.from('horarios_almacen').select('valor').eq('clave', CLAVE_PAG).eq('institucion_id', fila.institucion_id).maybeSingle();
+    const mapa = leer(pag.data && pag.data.valor) || {};
+    if (mapa.calendario === false){ $('vista').innerHTML = `<div class="vacio"><b>El calendario no está disponible por ahora.</b>Vuelve más tarde.</div>`; pintarLista(); return; }
+    const i = await nube.from('instituciones').select('nombre').eq('id', fila.institucion_id).maybeSingle();
+    if (i.data && i.data.nombre){ $('marcaNombre').textContent = i.data.nombre; document.title = i.data.nombre + ' · Calendario académico'; $('marcaSub').textContent = 'Calendario académico · Consulta pública'; }
+  } catch(e){}
+  usarDatos(leer(fila.valor));
+}
+
+(async function iniciar(){
+  pintar();
+  if (PUBLICO){ cargarPublico(); return; }
+  if (nube){
+    try{ const {data} = await nube.auth.getSession(); sesion = (data && data.session) || null; } catch(e){}
+    nube.auth.onAuthStateChange((_e, s) => { sesion = s || null; });
+  }
+  // Dentro de DIRIN la institución llega por aviso; fuera, se toma del perfil.
+  setTimeout(async () => { if (!inst){ await resolverInstitucion(); cargarGuardado(); } }, EMBEBIDO ? 1200 : 0);
+})();
+
+window.calendarioAcademico = {usarDatos};
+</script>
+</body>
+</html>
