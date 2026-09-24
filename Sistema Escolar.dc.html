@@ -1961,7 +1961,7 @@ Vázquez Ledesma, Iván	MG-25-0092" style="width:100%;font-family:var(--font-bod
               <div>
                 <input class="input" type="file" accept=".csv,.xlsx,.xls" onChange="{{ importarPorGeneracion }}" style="width:100%;font-size:12px">
                 <button class="btn btn-secondary" onClick="{{ descargarFormatoMasivo }}" style="width:100%;margin-top:8px;font-size:12px" title="Libro de Excel con las columnas que necesita esta carga y una hoja de instrucciones">Descargar formato</button>
-                <div class="text-muted" style="font-size:11.5px;margin-top:8px">{{ trayImportAviso }}</div>
+                <div style="font-size:12px;margin-top:8px;font-weight:600;color:{{ colorTrayImport }}">{{ trayImportAviso }}</div>
               </div>
             </div>
             <div style="border:2px solid var(--color-divider);overflow-x:auto">
@@ -3480,7 +3480,17 @@ class Component extends DCLogic {
     const archivo = e.target.files && e.target.files[0];
     e.target.value = '';
     if (!archivo) return;
-    if (!this.puedeEditarAhora('trayectoria')) { this.setState({trayImportAviso:'Edición bloqueada: abre el candado con tu PIN.'}); return; }
+    try { await this.importarPorGeneracionArchivo(archivo); }
+    catch (err) {
+      console.error(err);
+      this.setState({trayImportAviso:'Error al repartir el archivo: ' + (err && err.message || err), trayImportError:true});
+    }
+  };
+
+  importarPorGeneracionArchivo = async (archivo) => {
+    this.setState({trayImportError:false});
+    if (this.esMovil()) { this.setState({trayImportAviso:'En el celular sólo se consulta: haga la carga desde una computadora.', trayImportError:true}); return; }
+    if (!this.puedeEditarAhora('trayectoria')) { this.setState({trayImportAviso:'Edición bloqueada: abre el candado con tu PIN y vuelve a elegir el archivo.', trayImportError:true}); return; }
     this.setState({trayImportAviso:'Leyendo ' + archivo.name + '…'});
     let filas = [];
     try {
@@ -3489,21 +3499,23 @@ class Component extends DCLogic {
       } else {
         const XLSX = await this.cargarLectorXLSX();
         const libro = XLSX.read(await archivo.arrayBuffer(), {type:'array'});
-        filas = XLSX.utils.sheet_to_json(libro.Sheets[libro.SheetNames[0]], {header:1, defval:''});
+        // Se prefiere la hoja «Alumnos» del formato; si no existe, la primera.
+        const hoja = libro.SheetNames.filter(n => this.normalizaTexto(n) === 'alumnos')[0] || libro.SheetNames[0];
+        filas = XLSX.utils.sheet_to_json(libro.Sheets[hoja], {header:1, defval:''});
       }
     } catch (err) {
-      this.setState({trayImportAviso:'No se pudo leer el archivo: ' + (err.message || 'formato no reconocido') + '.'});
+      this.setState({trayImportAviso:'No se pudo leer el archivo: ' + (err.message || 'formato no reconocido') + '.', trayImportError:true});
       return;
     }
-    if (!filas.length) { this.setState({trayImportAviso:'El archivo llegó vacío.'}); return; }
+    if (!filas.length) { this.setState({trayImportAviso:'El archivo llegó vacío.', trayImportError:true}); return; }
 
-    const cab = filas[0].map(c => this.normalizaTexto(c));
+    const cab = filas[0].map(c => this.normalizaTexto(String(c == null ? '' : c)));
     const buscar = (...claves) => {
       for (let i = 0; i < cab.length; i++) for (const k of claves) if (cab[i].indexOf(k) !== -1) return i;
       return -1;
     };
     const iGen = buscar('generacion','ingreso','cohorte');
-    if (iGen === -1) { this.setState({trayImportAviso:'El archivo no trae la columna de generación de ingreso. Use la carga por etapa.'}); return; }
+    if (iGen === -1) { this.setState({trayImportAviso:'El archivo no trae la columna de generación de ingreso. Use la carga por etapa.', trayImportError:true}); return; }
     const iMat = buscar('matr','no. control','no control','num control','control','cuenta','folio','expediente');
     const iApe = buscar('apellid');
     const iNom = buscar('nombre');
@@ -3530,16 +3542,16 @@ class Component extends DCLogic {
       (cubos[clave] = cubos[clave] || []).push(a);
     });
     const claves = Object.keys(cubos);
-    if (!claves.length) { this.setState({trayImportAviso:'Ningún renglón traía generación y grupo reconocibles.'}); return; }
+    if (!claves.length) { this.setState({trayImportAviso:'Ningún renglón traía generación y grupo reconocibles.', trayImportError:true}); return; }
 
     let gens = this.generacionesTray().slice();
-    const grupos = {};
+    const grupos = {}, cerradas = [];
     claves.forEach(clave => {
       const partes = clave.split('|');
       const anio = parseInt(partes[0], 10), etapaId = partes[1];
       let gen = gens.filter(g => g.anio === anio)[0];
       if (!gen) { gen = {id:'gen' + anio, anio, cerrada:false, etapas:{}}; gens.push(gen); }
-      if (gen.cerrada) return;
+      if (gen.cerrada) { if (cerradas.indexOf(anio) === -1) cerradas.push(anio); return; }
       const etapas = Object.assign({}, gen.etapas || {});
       const previos = (etapas[etapaId] && etapas[etapaId].alumnos) || [];
       const nuevas = cubos[clave].map(a => this.normalizaTexto(a.mat)).filter(Boolean);
@@ -3549,9 +3561,14 @@ class Component extends DCLogic {
       grupos[anio] = (grupos[anio] || 0) + cubos[clave].length;
     });
     gens.sort((a, b) => b.anio - a.anio);
-    const resumen = Object.keys(grupos).sort().reverse().map(a => a + ': ' + grupos[a]).join(' · ');
-    this.setState({trayImportAviso: 'Repartidos ' + resumen + (sinDestino ? ' · ' + sinDestino + ' sin generación o grupo válido' : '') + '.'});
-    this.guardarTrayectoria(gens, 'Generaciones actualizadas');
+    const resumen = Object.keys(grupos).sort().reverse().map(a => 'Generación ' + a + ': ' + grupos[a]).join(' · ');
+    if (!resumen) { this.setState({trayImportAviso:'No se cargó nada: la(s) generación(es) ' + cerradas.join(', ') + ' están cerradas. Reábralas y vuelva a cargar.', trayImportError:true}); return; }
+    const primera = Object.keys(grupos).sort().reverse()[0];
+    this.setState({trayGenSel:'gen' + primera, trayImportAviso: 'Listo. ' + resumen
+      + (sinDestino ? ' · ' + sinDestino + ' sin generación o grupo válido' : '')
+      + (cerradas.length ? ' · no se tocaron las cerradas: ' + cerradas.join(', ') : '') + '.'});
+    await this.guardarTrayectoria(gens, 'Generaciones actualizadas');
+    if (this.state.trayAvisoError) this.setState({trayImportAviso:this.state.trayAviso, trayImportError:true});
   };
 
   cancelarGeneracion = () => this.setState({trayPidiendoAnio:false, trayAvisoAnio:''});
@@ -4805,6 +4822,7 @@ class Component extends DCLogic {
       precargarGeneraciones: this.precargarGeneraciones,
       importarPorGeneracion: this.importarPorGeneracion,
       trayImportAviso: s.trayImportAviso || 'Ningún archivo repartido en esta sesión.',
+      colorTrayImport: s.trayImportError ? '#b3261e' : (s.trayImportAviso ? '#2e7d32' : 'var(--color-neutral-500, #777)'),
       textoPrecargar: s.trayPrecargar ? 'Confirmar: crear todas' : 'Precargar desde 2017',
       trayPidiendoAnio: !!s.trayPidiendoAnio,
       trayAnioNuevo: s.trayAnioNuevo || '',
