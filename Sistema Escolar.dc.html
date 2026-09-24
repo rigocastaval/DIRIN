@@ -1018,6 +1018,16 @@ a:hover{color:var(--color-accent-700)}
           </div>
           <hr class="hr">
 
+          <sc-if value="{{ admHaySiglasDesc }}" hint-placeholder-val="{{ false }}">
+            <div style="border:2px solid #b3261e;padding:12px 16px;margin-bottom:18px">
+              <div style="font-family:var(--font-heading);font-weight:800;text-transform:uppercase;letter-spacing:.08em;font-size:11px;color:#b3261e;margin-bottom:6px">Siglas de matrícula sin licenciatura</div>
+              <sc-for list="{{ admSiglasDesc }}" as="x" hint-placeholder-count="1">
+                <div style="font-size:12.5px;line-height:1.5;margin-bottom:4px"><b>{{ x.sigla }}</b> · {{ x.texto }}</div>
+              </sc-for>
+              <p class="text-muted" style="margin:6px 0 0;font-size:12px">Agregue la licenciatura en «Licenciaturas por siglas» o corrija la matrícula con el botón «Editar» del aspirante.</p>
+            </div>
+          </sc-if>
+
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:18px;margin-bottom:20px;align-items:start">
             <div style="border:2px solid var(--color-divider);padding:14px 16px;min-width:0">
               <h6 style="margin:0 0 5px">{{ admCargaTitulo }}</h6>
@@ -1035,8 +1045,29 @@ a:hover{color:var(--color-accent-700)}
                 <div class="field" style="margin:0"><label>EXANI máximo</label><input class="input" inputmode="numeric" value="{{ admExMax }}" onChange="{{ setAdmExMax }}" disabled="{{ admBloqueado }}" style="width:100%"></div>
               </div>
             </div>
+            <div style="border:2px solid var(--color-divider);padding:14px 16px;min-width:0">
+              <h6 style="margin:0 0 5px">Licenciaturas por siglas</h6>
+              <p class="text-muted" style="margin:0 0 10px;font-size:12.5px;line-height:1.55">Las letras iniciales de la matrícula indican la licenciatura del aspirante.</p>
+              <sc-for list="{{ admSiglas }}" as="x" hint-placeholder-count="3">
+                <div style="display:flex;align-items:center;gap:10px;padding:5px 0;border-bottom:1px solid var(--color-divider);font-size:12.5px">
+                  <span style="font-family:var(--font-mono, monospace);font-weight:700;min-width:44px">{{ x.sigla }}</span>
+                  <span style="flex:1;min-width:0">{{ x.nombre }}</span>
+                  <span class="text-muted" style="font-size:11px">{{ x.cuenta }}</span>
+                  <sc-if value="{{ x.puedeQuitar }}" hint-placeholder-val="{{ false }}">
+                    <button class="btn btn-ghost" style="font-size:11px;padding:2px 8px" onClick="{{ x.quitar }}">{{ x.textoQuitar }}</button>
+                  </sc-if>
+                </div>
+              </sc-for>
+              <div style="display:grid;grid-template-columns:80px minmax(0,1fr) auto;gap:8px;margin-top:10px;align-items:end">
+                <div class="field" style="margin:0"><label>Siglas</label><input class="input" value="{{ admSiglaNueva }}" onChange="{{ setAdmSiglaNueva }}" disabled="{{ admBloqueado }}" placeholder="LN" style="width:100%"></div>
+                <div class="field" style="margin:0"><label>Licenciatura</label><input class="input" value="{{ admLicNueva }}" onChange="{{ setAdmLicNueva }}" disabled="{{ admBloqueado }}" placeholder="Licenciatura en Nutrición" style="width:100%"></div>
+                <button class="btn btn-primary" onClick="{{ agregarSigla }}" disabled="{{ admBloqueado }}">Agregar</button>
+              </div>
+              <div style="font-size:12px;margin-top:8px;font-weight:600;color:{{ admSiglaColor }}">{{ admSiglaAviso }}</div>
+            </div>
           </div>
 
+          <sc-if value="{{ admNoIndic }}" hint-placeholder-val="{{ true }}">
           <div style="display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:12px">
             <div class="field" style="flex:1;min-width:240px;margin:0">
               <label>Buscar por folio, nombre, correo o licenciatura</label>
@@ -1075,6 +1106,57 @@ a:hover{color:var(--color-accent-700)}
               <p class="text-muted" style="margin:0;font-size:13px">Todavía no hay aspirantes. Cargue el libro de admisión o use «Agregar aspirante».</p>
             </div>
           </sc-if>
+          </sc-if>
+
+          <sc-if value="{{ admTabIndic }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:14px">
+              <div class="field" style="margin:0;min-width:280px">
+                <label>Licenciatura</label>
+                <select class="input" value="{{ indLic }}" onChange="{{ setIndLic }}" style="width:100%">
+                  <sc-for list="{{ indLicOpc }}" as="o" hint-placeholder-count="4"><option value="{{ o.id }}">{{ o.nombre }}</option></sc-for>
+                </select>
+              </div>
+              <div class="text-muted" style="font-size:12px;padding-bottom:8px;max-width:70ch;text-wrap:pretty">{{ indNota }}</div>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));border:2px solid var(--color-divider);margin-bottom:20px">
+              <sc-for list="{{ indConteos }}" as="k" hint-placeholder-count="3">
+                <div style="padding:18px 20px;border-right:2px solid var(--color-divider)">
+                  <h6 style="margin:0" class="text-muted">{{ k.etiqueta }}</h6>
+                  <div style="font-family:var(--font-heading);font-weight:800;font-size:38px;line-height:1.05;letter-spacing:-.02em;margin:10px 0 6px">{{ k.valor }}</div>
+                  <div style="font-size:12px" class="text-muted">{{ k.nota }}</div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="border:2px solid var(--color-divider);overflow-x:auto;margin-bottom:20px">
+              <table style="border-collapse:collapse;width:100%;min-width:760px;font-size:13px">
+                <thead><tr><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Indicador</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Cálculo</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Diferencia</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Valor</th></tr></thead>
+                <tbody>
+                  <sc-for list="{{ indFilas }}" as="f" hint-placeholder-count="3">
+                    <tr>
+                      <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider);padding:10px;font-weight:600">{{ f.nombre }}<div class="text-muted" style="font-size:11.5px;font-weight:400;margin-top:3px;max-width:48ch;text-wrap:pretty">{{ f.lectura }}</div></td>
+                      <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider);padding:10px" class="text-muted">{{ f.formula }}</td>
+                      <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider);padding:10px;white-space:nowrap">{{ f.diferencia }}</td>
+                      <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider);padding:10px;font-family:var(--font-heading);font-weight:800;font-size:18px;white-space:nowrap;color:var(--color-accent-700)">{{ f.valor }}</td>
+                    </tr>
+                  </sc-for>
+                </tbody>
+              </table>
+            </div>
+            <h6 style="margin:0 0 8px">Por licenciatura</h6>
+            <div style="border:2px solid var(--color-divider);overflow-x:auto">
+              <table style="border-collapse:collapse;width:100%;min-width:760px;font-size:12.5px">
+                <thead><tr><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Licenciatura</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Solicitaron</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Admitidos</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Activos en 1.º</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Absorción</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Captación</th></tr></thead>
+                <tbody>
+                  <sc-for list="{{ indPorLic }}" as="f" hint-placeholder-count="3">
+                    <tr>
+                      <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider);font-weight:600">{{ f.nombre }}</td><td style="padding:6px 10px;border-bottom:1px solid var(--color-divider)">{{ f.sol }}</td><td style="padding:6px 10px;border-bottom:1px solid var(--color-divider)">{{ f.adm }}</td>
+                      <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider)">{{ f.act }}</td><td style="padding:6px 10px;border-bottom:1px solid var(--color-divider)">{{ f.abs }}</td><td style="padding:6px 10px;border-bottom:1px solid var(--color-divider)">{{ f.cap }}</td>
+                    </tr>
+                  </sc-for>
+                </tbody>
+              </table>
+            </div>
+          </sc-if>
 
           <sc-if value="{{ admTabEval }}" hint-placeholder-val="{{ true }}">
             <div style="border:2px solid var(--color-divider);overflow-x:auto;display:{{ admDispTabla }}">
@@ -1094,8 +1176,8 @@ a:hover{color:var(--color-accent-700)}
                       </td>
                       <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider)"><button class="btn {{ a.clasePago }}" style="font-size:11px;padding:3px 10px;min-width:46px" onClick="{{ a.altPago }}" disabled="{{ admBloqueado }}">{{ a.textoPago }}</button></td>
                       <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider)"><input class="input" inputmode="numeric" value="{{ a.exani }}" onChange="{{ a.setExani }}" disabled="{{ admBloqueado }}" placeholder="—" style="padding:3px 6px;font-size:12px;width:72px"></td>
-                      <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider);white-space:nowrap"><input class="input" inputmode="numeric" value="{{ a.asistencias }}" onChange="{{ a.setAsistencias }}" disabled="{{ admBloqueado }}" placeholder="—" style="padding:3px 6px;font-size:12px;width:52px"> <span class="text-muted" style="font-size:11px">/ {{ admSesiones }}</span></td>
-                      <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider)"><input class="input" inputmode="decimal" value="{{ a.califProp }}" onChange="{{ a.setCalifProp }}" disabled="{{ admBloqueado }}" placeholder="0–10" style="padding:3px 6px;font-size:12px;width:62px"></td>
+                      <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider);white-space:nowrap" title="Se captura en la pestaña Curso propedéutico">{{ a.vistaAsistencias }}</td>
+                      <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider);white-space:nowrap" title="Se captura en la pestaña Curso propedéutico">{{ a.vistaCalif }}</td>
                       <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider)"><button class="btn {{ a.clasePsico }}" style="font-size:11px;padding:3px 10px;min-width:46px" onClick="{{ a.altPsico }}" disabled="{{ admBloqueado }}">{{ a.textoPsico }}</button></td>
                       <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider)"><button class="btn {{ a.claseEntrevista }}" style="font-size:11px;padding:3px 10px;min-width:46px" onClick="{{ a.altEntrevista }}" disabled="{{ admBloqueado }}">{{ a.textoEntrevista }}</button></td>
                       <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider);min-width:180px"><input class="input" value="{{ a.comentarios }}" onChange="{{ a.setComentarios }}" disabled="{{ admBloqueado }}" style="padding:3px 6px;font-size:12px;width:100%"></td>
@@ -1117,7 +1199,7 @@ a:hover{color:var(--color-accent-700)}
                 <thead><tr>
                   <th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Folio</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Aspirante</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Teléfono</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Correo</th>
                   <th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Tutor</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Tel. tutor</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Estatus EXANI-II</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Fecha</th>
-                  <th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Entrevista</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Psicométrico</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Nota</th>
+                  <th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Entrevista</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Psicométrico</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Nota</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap"></th>
                 </tr></thead>
                 <tbody>
                   <sc-for list="{{ admFilas }}" as="a" hint-placeholder-count="8">
@@ -1133,6 +1215,7 @@ a:hover{color:var(--color-accent-700)}
                       <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider);white-space:nowrap">{{ a.horaEntrevista }}</td>
                       <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider);white-space:nowrap">{{ a.horaPsico }}</td>
                       <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider)">{{ a.nota }}</td>
+                      <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider);text-align:right;white-space:nowrap"><button class="btn btn-secondary" style="font-size:11px;padding:3px 10px" onClick="{{ a.verFicha }}">{{ a.textoEditar }}</button></td>
                     </tr>
                   </sc-for>
                 </tbody>
@@ -1169,7 +1252,7 @@ a:hover{color:var(--color-accent-700)}
               <table style="border-collapse:collapse;width:100%;min-width:1100px;font-size:12.5px">
                 <thead><tr>
                   <th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Aspirante</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Licenciatura</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Edad</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Preparatoria</th>
-                  <th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Promedio</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Vive con</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Se enteró por</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Estudio</th>
+                  <th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Promedio</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Vive con</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Se enteró por</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Estudio</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap"></th>
                 </tr></thead>
                 <tbody>
                   <sc-for list="{{ admFilas }}" as="a" hint-placeholder-count="8">
@@ -1182,6 +1265,7 @@ a:hover{color:var(--color-accent-700)}
                       <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider)">{{ a.tsVive }}</td>
                       <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider)">{{ a.tsMedio }}</td>
                       <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider);white-space:nowrap"><span class="tag {{ a.claseTs }}" style="font-size:9.5px">{{ a.textoTs }}</span></td>
+                      <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider);text-align:right;white-space:nowrap"><button class="btn btn-secondary" style="font-size:11px;padding:3px 10px" onClick="{{ a.verFicha }}">{{ a.textoEditar }}</button></td>
                     </tr>
                   </sc-for>
                 </tbody>
@@ -1213,8 +1297,9 @@ a:hover{color:var(--color-accent-700)}
                 </sc-if>
                 <div style="border:2px solid var(--color-divider);margin-bottom:22px;display:{{ fichaDispTs }}">
                   <sc-for list="{{ fichaTs }}" as="t" hint-placeholder-count="10">
-                    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:12px;padding:7px 12px;border-bottom:1px solid var(--color-divider);font-size:12.5px">
-                      <span class="text-muted">{{ t.k }}</span><span>{{ t.v }}</span>
+                    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:12px;align-items:center;padding:5px 12px;border-bottom:1px solid var(--color-divider);font-size:12.5px">
+                      <span class="text-muted">{{ t.k }}</span>
+                      <input class="input" value="{{ t.v }}" onChange="{{ t.set }}" disabled="{{ admBloqueado }}" style="padding:3px 6px;font-size:12px;width:100%">
                     </div>
                   </sc-for>
                 </div>
@@ -5018,6 +5103,83 @@ class Component extends DCLogic {
      Trayectoria escolar (etapa Admisión de la generación) con grupo «Aspirante». */
   CLAVE_ADM = 'admision:aspirantes';
   PROCESOS_ADM = ['Pago','EXANI-II','Asistencias','Calif. propedéutico','Psicométrico','Entrevista'];
+  SIGLAS_DEF = {LMG:'Licenciatura en Medicina General', LED:'Licenciatura en Entrenamiento Deportivo', LF:'Licenciatura en Fisioterapia'};
+
+  siglaDe(folio) { const m = /^\s*([A-Za-zÑñ]+)/.exec(String(folio || '')); return m ? m[1].toUpperCase() : ''; }
+
+  // La licenciatura sale de las siglas de la matrícula; si no se conocen, de lo que traiga el archivo.
+  licAsp(a, siglas) { return (siglas || this.admDatos().siglas)[this.siglaDe(a.folio)] || a.area || ''; }
+
+  agregarSigla = () => {
+    const sg = String(this.state.admSiglaNueva || '').replace(/[^A-Za-zÑñ]/g, '').toUpperCase();
+    const lic = String(this.state.admLicNueva || '').trim();
+    if (!sg || !lic) { this.setState({admSiglaAviso:'Escriba las siglas y el nombre de la licenciatura.', admSiglaError:true}); return; }
+    const ok = this.cambiarAdm(d => Object.assign({}, d, {siglas: Object.assign({}, d.siglas, {[sg]: lic})}), 'Licenciatura agregada');
+    if (ok) this.setState({admSiglaNueva:'', admLicNueva:'', admSiglaAviso: sg + ' = ' + lic + ' agregada.', admSiglaError:false});
+  };
+
+  quitarSigla = sg => () => {
+    if (this.state.admQuitarSigla !== sg) { this.setState({admQuitarSigla: sg}); return; }
+    this.cambiarAdm(d => { const x = Object.assign({}, d.siglas); delete x[sg]; return Object.assign({}, d, {siglas: x}); }, 'Licenciatura quitada');
+    this.setState({admQuitarSigla:''});
+  };
+
+  valsExtraAdm(d, editable, tab) {
+    const s = this.state, sig = d.siglas;
+    const desc = {};
+    d.aspirantes.forEach(a => { const sg = this.siglaDe(a.folio); if (sg && !sig[sg]) (desc[sg] = desc[sg] || []).push(a.folio); });
+    const cuenta = sg => d.aspirantes.filter(a => this.siglaDe(a.folio) === sg).length;
+    const gen = this.generacionesTray().filter(g => g.anio === d.anio)[0];
+    const sem1 = gen ? this.etapaDe(gen, 'sem1').alumnos.filter(a => (a.estatus || 'activo') === 'activo' || a.estatus === 'rezago') : [];
+    const licMat = m => sig[this.siglaDe(m)] || '';
+    const pct = (a, b) => b ? (a / b * 100).toFixed(1) + ' %' : 'sin datos';
+    const calc = lic => {
+      const asp = d.aspirantes.filter(a => !lic || this.licAsp(a, sig) === lic);
+      const adm = asp.filter(a => this.puntajeAdm(a, d).hechos === this.PROCESOS_ADM.length);
+      const act = sem1.filter(a => !lic || licMat(a.mat) === lic);
+      const comoAsp = act.map(x => ({folio: x.mat, nombres: x.nombres, apellidos: x.apellidos, nombre: ((x.nombres || '') + ' ' + (x.apellidos || '')).trim()}));
+      const admAct = adm.filter(a => this.hallarAsp(comoAsp, a.folio, this.nombreAsp(a)) !== -1).length;
+      return {asp: asp.length, adm: adm.length, act: act.length, admAct};
+    };
+    const lics = Object.keys(sig).map(k => sig[k]).filter((v, i, arr) => arr.indexOf(v) === i);
+    const indLic = s.indLic != null ? s.indLic : (sig.LMG || '');
+    const c = calc(indLic);
+    return {
+      admTabIndic: tab === 'indicadores', admNoIndic: tab !== 'indicadores',
+      admHaySiglasDesc: Object.keys(desc).length > 0,
+      admSiglasDesc: Object.keys(desc).map(sg => ({sigla: sg,
+        texto: desc[sg].length + ' aspirante(s) con siglas que el sistema no conoce: ' + desc[sg].slice(0, 8).join(', ') + (desc[sg].length > 8 ? '…' : '') + '. Actualice el listado de licenciaturas o corrija la matrícula.'})),
+      admSiglas: Object.keys(sig).sort().map(sg => ({sigla: sg, nombre: sig[sg], cuenta: cuenta(sg) + ' asp.',
+        puedeQuitar: editable, quitar: this.quitarSigla(sg), textoQuitar: s.admQuitarSigla === sg ? 'Confirmar' : 'Quitar'})),
+      admSiglaNueva: s.admSiglaNueva || '', admLicNueva: s.admLicNueva || '',
+      setAdmSiglaNueva: e => this.setState({admSiglaNueva: e.target.value.toUpperCase()}),
+      setAdmLicNueva: e => this.setState({admLicNueva: e.target.value}),
+      agregarSigla: this.agregarSigla,
+      admSiglaAviso: s.admSiglaAviso || '',
+      admSiglaColor: s.admSiglaError ? '#b3261e' : '#2e7d32',
+      indLic, setIndLic: e => this.setState({indLic: e.target.value}),
+      indLicOpc: lics.map(l => ({id: l, nombre: l})).concat([{id: '', nombre: 'Todas las licenciaturas'}]),
+      indNota: 'Generación ' + d.anio + '. Admitido es quien concluyó los ' + this.PROCESOS_ADM.length + ' procesos. Los activos se leen de Trayectoria escolar (1.º semestre, estatus activo o rezago) y su licenciatura sale de las siglas de la matrícula.'
+        + (sem1.length ? '' : ' Esta generación todavía no tiene lista de 1.º semestre en Trayectoria escolar.'),
+      indConteos: [
+        {etiqueta:'Solicitaron admisión', valor: String(c.asp), nota:'aspirantes registrados en Admisión'},
+        {etiqueta:'Admitidos', valor: String(c.adm), nota:'concluyeron satisfactoriamente los ' + this.PROCESOS_ADM.length + ' procesos'},
+        {etiqueta:'Inscritos y activos', valor: String(c.act), nota:'1.º semestre · generación ' + d.anio}
+      ],
+      indFilas: [
+        {nombre:'Índice de absorción de la demanda', formula:'activos en 1.º semestre ÷ solicitantes',
+         lectura:'Proporción de quienes solicitaron admisión que quedó inscrita y activa. La diferencia es la demanda no absorbida.',
+         diferencia: Math.max(0, c.asp - c.act) + ' no absorbidos', valor: pct(c.act, c.asp)},
+        {nombre:'Índice de aceptación', formula:'admitidos ÷ solicitantes',
+         lectura:'Proporción de solicitantes que concluyó todo el proceso de admisión.',
+         diferencia: Math.max(0, c.asp - c.adm) + ' sin concluir', valor: pct(c.adm, c.asp)},
+        {nombre:'Índice de captación de admitidos', formula:'admitidos activos en 1.º semestre ÷ admitidos',
+         lectura:'De quienes concluyeron satisfactoriamente el proceso, cuántos se inscribieron y siguen activos. La diferencia son los admitidos no inscritos.',
+         diferencia: Math.max(0, c.adm - c.admAct) + ' admitidos no inscritos', valor: pct(c.admAct, c.adm)}
+      ],
+      indPorLic: lics.concat(['']).map(l => { const x = calc(l); return {nombre: l || 'Todas', sol: x.asp, adm: x.adm, act: x.act, abs: pct(x.act, x.asp), cap: pct(x.admAct, x.adm)}; })
+    };
+  }
 
   admDatos() {
     const d = this.state.admDatos || {};
@@ -5027,6 +5189,7 @@ class Component extends DCLogic {
       sesiones: num(d.sesiones, 5) || 5,
       exaniMin: num(d.exaniMin, 700), exaniMax: num(d.exaniMax, 1300),
       aspirantes: Array.isArray(d.aspirantes) ? d.aspirantes : [],
+      siglas: d.siglas && typeof d.siglas === 'object' ? d.siglas : this.SIGLAS_DEF,
       tsSinVinculo: Array.isArray(d.tsSinVinculo) ? d.tsSinVinculo : []
     };
   }
@@ -5358,11 +5521,14 @@ class Component extends DCLogic {
     const filas = lista.map(({a, p}) => {
       const up = c => this.cambiarAspirante(a.id, c);
       return {
-        folio: a.folio || '—', nombre: this.nombreAsp(a), area: a.area || '',
+        folio: a.folio || '—', nombre: this.nombreAsp(a), area: this.licAsp(a, d.siglas),
         textoPago: sn(a.pago), clasePago: cl(a.pago), altPago: () => up({pago: !a.pago}),
         textoPsico: sn(a.psicometrico), clasePsico: cl(a.psicometrico), altPsico: () => up({psicometrico: !a.psicometrico}),
         textoEntrevista: sn(a.entrevista), claseEntrevista: cl(a.entrevista), altEntrevista: () => up({entrevista: !a.entrevista}),
         exani: a.exani || '', setExani: e => up({exani: e.target.value.replace(/[^\d.]/g, '')}),
+        vistaAsistencias: a.asistencias ? a.asistencias + ' / ' + d.sesiones : '—',
+        vistaCalif: a.califProp || '—',
+        textoEditar: editable ? 'Editar' : 'Ver',
         asistencias: a.asistencias || '', setAsistencias: e => up({asistencias: e.target.value.replace(/\D/g, '')}),
         califProp: a.califProp || '', setCalifProp: e => up({califProp: e.target.value.replace(/[^\d.,]/g, '')}),
         comentarios: a.comentarios || '', setComentarios: e => up({comentarios: e.target.value}),
@@ -5374,7 +5540,7 @@ class Component extends DCLogic {
         telefono: a.telefono || '', correo: a.correo || '', tutor: a.tutor || '', telTutor: a.telTutor || '',
         exaniEstatus: a.exaniEstatus || '', fecha: a.fecha || '', horaEntrevista: a.horaEntrevista || '',
         horaPsico: a.horaPsico || '', nota: a.nota || '',
-        tsLic: tsv(a, 'licenciatura'), tsEdad: tsv(a, 'edad'), tsPrepa: tsv(a, 'nombre de la preparatoria'),
+        tsLic: this.licAsp(a, d.siglas) || tsv(a, 'licenciatura'), tsEdad: tsv(a, 'edad'), tsPrepa: tsv(a, 'nombre de la preparatoria'),
         tsPromedio: tsv(a, 'promedio'), tsVive: tsv(a, 'con quien vives'), tsMedio: tsv(a, 'por que medio', '¿por que medio'),
         textoTs: (a.ts || []).length ? 'Cargado' : 'Pendiente', claseTs: (a.ts || []).length ? 'tag-accent' : 'tag-neutral',
         verFicha: () => this.setState({admFicha: a.id, admQuitar:''})
@@ -5383,14 +5549,15 @@ class Component extends DCLogic {
 
     const TABS = [
       {id:'evaluacion', nombre:'Aspirantes'}, {id:'datos', nombre:'Datos de aspirantes'},
-      {id:'prop', nombre:'Curso propedéutico'}, {id:'ts', nombre:'Trabajo social'}
+      {id:'prop', nombre:'Curso propedéutico'}, {id:'ts', nombre:'Trabajo social'},
+      {id:'indicadores', nombre:'Indicadores'}
     ];
     const CARGA = {
       evaluacion: ['Carga inicial del libro de admisión', 'Suba el libro completo (.xlsx). Se leen las hojas «DATOS DE ASPIRANTES», «CURSO PROPEDÉUTICO» y «TRABAJO SOCIAL»; se enlazan por folio y, si no hay, por nombre. Volver a subirlo actualiza sin duplicar.'],
       datos: ['Cargar datos de aspirantes', 'Hoja «DATOS DE ASPIRANTES»: folio, nombre, teléfono, correo, tutor, estatus EXANI-II, estatus de pago, fecha y horarios. Los aspirantes que no existan se agregan.'],
       prop: ['Cargar curso propedéutico', 'Hoja «CURSO PROPEDÉUTICO»: folio y nombre, más asistencias, calificación y la columna de seguimiento si las trae.'],
       ts: ['Cargar estudios de Trabajo social', 'Hoja «TRABAJO SOCIAL»: la ficha completa de cada aspirante. Se enlaza por nombre con los aspirantes ya registrados.']
-    }[tab];
+    }[tab === 'indicadores' ? 'evaluacion' : tab];
 
     const nuevo = s.admNuevo || {};
     const campoNuevo = (k, etiqueta, pista) => ({etiqueta, pista, valor: nuevo[k] || '',
@@ -5407,6 +5574,7 @@ class Component extends DCLogic {
 
     return {
       esAdmision: true,
+      ...this.valsExtraAdm(d, editable, tab),
       admAnio: String((s.admDatos || {}).anio != null ? s.admDatos.anio : d.anio),
       admSesiones: String((s.admDatos || {}).sesiones != null ? s.admDatos.sesiones : d.sesiones),
       admExMin: String((s.admDatos || {}).exaniMin != null ? s.admDatos.exaniMin : d.exaniMin),
@@ -5459,7 +5627,11 @@ class Component extends DCLogic {
         campoFicha('horaEntrevista', 'Horario de entrevista'), campoFicha('horaPsico', 'Horario de psicométrico'),
         campoFicha('nota', 'Nota')
       ] : [],
-      fichaTs: ficha ? (ficha.ts || []) : [],
+      fichaTs: ficha ? (ficha.ts || []).map((t, i) => ({k: t.k, v: t.v, set: e => {
+        const v = e.target.value;
+        const act = (this.admDatos().aspirantes.filter(x => x.id === ficha.id)[0] || ficha).ts || [];
+        this.cambiarAspirante(ficha.id, {ts: act.map((x, j) => j === i ? {k: x.k, v} : x)});
+      }})) : [],
       fichaSinTs: !!ficha && !(ficha.ts || []).length,
       fichaDispTs: ficha && (ficha.ts || []).length ? 'block' : 'none',
       fichaEditable: editable,
