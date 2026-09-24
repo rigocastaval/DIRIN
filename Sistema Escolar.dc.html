@@ -138,7 +138,7 @@ a:hover{color:var(--color-accent-700)}
       </sc-if>
       <div class="field" style="margin-bottom:16px">
         <label>PIN</label>
-        <input class="input" type="password" inputmode="numeric" autocomplete="off" value="{{ pinIntento }}" onChange="{{ setPinIntento }}" onKeyDown="{{ enterPin }}" placeholder="••••" style="width:100%;letter-spacing:.3em;font-size:18px;text-align:center">
+        <input class="input" autofocus="{{ true }}" ref="{{ refPin }}" type="password" inputmode="numeric" autocomplete="off" value="{{ pinIntento }}" onChange="{{ setPinIntento }}" onKeyDown="{{ enterPin }}" placeholder="••••" style="width:100%;letter-spacing:.3em;font-size:18px;text-align:center">
       </div>
       <sc-if value="{{ sinPin }}" hint-placeholder-val="{{ false }}">
         <div class="field" style="margin-bottom:16px">
@@ -6283,6 +6283,7 @@ class Component extends DCLogic {
       pidiendoPin: s.pidiendoPin, pinIntento: s.pinIntento, pinIntento2: s.pinIntento2,
       sinPin: !s.pinHash, conPin: !!s.pinHash,
       textoBotonPin: s.pinHash ? 'Desbloquear' : 'Guardar PIN y desbloquear',
+      refPin: this.refPin || (this.refPin = el => { if (el) setTimeout(() => { try { el.focus(); } catch (e) {} }, 30); }),
       setPinIntento: e => this.setState({pinIntento: e.target.value.replace(/\D/g,'').slice(0,8)}),
       setPinIntento2: e => this.setState({pinIntento2: e.target.value.replace(/\D/g,'').slice(0,8)}),
       pinAviso: s.pinAviso, hayPinAviso: !!s.pinAviso,
