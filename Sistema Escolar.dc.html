@@ -1271,7 +1271,7 @@ a:hover{color:var(--color-accent-700)}
                 <thead><tr>
                   <th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Folio</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Aspirante</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Pagó</th>
                   <th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">EXANI-II</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Asistencias</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Calif. propedéutico</th>
-                  <th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Psicométrico</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Entrevista</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Comentarios</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Puntaje</th>
+                  <th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Psicométrico</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Entrevista</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Comentarios</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Puntaje</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap;text-align:center">Admitido</th>
                 </tr></thead>
                 <tbody>
                   <sc-for list="{{ admFilas }}" as="a" hint-placeholder-count="8">
@@ -1292,6 +1292,9 @@ a:hover{color:var(--color-accent-700)}
                         <div style="font-family:var(--font-heading);font-weight:800;font-size:15px">{{ a.puntaje }}</div>
                         <div style="height:4px;background:var(--color-neutral-200, #e5e5e5);margin:4px 0 3px"><div style="height:4px;width:{{ a.barra }};background:{{ a.tonoBarra }}"></div></div>
                         <div class="text-muted" style="font-size:10.5px">{{ a.avance }}</div>
+                      </td>
+                      <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider);text-align:center">
+                        <input type="checkbox" checked="{{ a.admitido }}" onChange="{{ a.altAdmitido }}" disabled="{{ admBloqueado }}" title="Marcar manualmente cuando el aspirante haya sido admitido" style="width:18px;height:18px;cursor:pointer;accent-color:#1f9d55">
                       </td>
                     </tr>
                   </sc-for>
@@ -1968,7 +1971,7 @@ Vázquez Ledesma, Iván	MG-25-0092" style="width:100%;font-family:var(--font-bod
                       <th rowspan="2" style="text-align:left;padding:9px 12px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;min-width:230px;vertical-align:bottom">Alumno</th>
                       <th rowspan="2" style="text-align:left;padding:9px 12px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap;vertical-align:bottom">Beca %</th>
                       <sc-for list="{{ contSemColumnas }}" as="sc" hint-placeholder-count="3">
-                        <th colspan="7" style="padding:7px 8px;border-bottom:1px solid var(--color-divider);border-left:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">{{ sc.titulo }}<span style="opacity:.5"> {{ sc.ciclo }}</span></th>
+                        <th colspan="{{ sc.span }}" style="padding:7px 8px;border-bottom:1px solid var(--color-divider);border-left:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">{{ sc.titulo }}<span style="opacity:.5"> {{ sc.ciclo }}</span></th>
                       </sc-for>
                       <th rowspan="2" style="text-align:left;padding:9px 12px;border-bottom:2px solid var(--color-divider);border-left:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;min-width:230px;vertical-align:bottom">Comentarios</th>
                     </tr>
@@ -2009,7 +2012,7 @@ Vázquez Ledesma, Iván	MG-25-0092" style="width:100%;font-family:var(--font-bod
                           <sc-if value="{{ sm.cursado }}" hint-placeholder-val="{{ true }}">
                             <sc-for list="{{ sm.celdas }}" as="p" hint-placeholder-count="7">
                               <td style="padding:6px 6px;border-bottom:1px solid var(--color-divider);border-left:1px solid var(--color-divider);text-align:center">
-                                <button onClick="{{ p.alternar }}" title="{{ p.titulo }}" disabled="{{ f.soloLectura }}" style="width:14px;height:14px;padding:0;border:1px solid {{ p.borde }};border-radius:50%;background:{{ p.color }};cursor:pointer;display:block;margin:0 auto"></button>
+                                <button onClick="{{ p.alternar }}" title="{{ p.titulo }}" disabled="{{ p.inactiva }}" style="width:14px;height:14px;padding:0;border:1px solid {{ p.borde }};border-radius:50%;background:{{ p.color }};cursor:pointer;display:block;margin:0 auto"></button>
                               </td>
                             </sc-for>
                           </sc-if>
@@ -4754,6 +4757,7 @@ class Component extends DCLogic {
       const idCiclo = historial && n ? cicloDeSemestre(n) : cicloSel;
       return {
         titulo: n ? ORD(n) + ' semestre' : 'Ciclo ' + cicloSel,
+        span: 6,
         ciclo: verTodas ? '' : idCiclo,
         cols: [{etiqueta:'insc.', anio:''}].concat(
           mesesDeCiclo(idCiclo).map(m => ({etiqueta: m.etiqueta, anio: verTodas ? '' : m.anio}))
@@ -4790,6 +4794,7 @@ class Component extends DCLogic {
             : est === 'encurso' ? '#a97a00' : 'transparent',
           titulo: def.etiqueta + ' · ' + TEXTO[est] + ' · vence ' + fechaCorta(def.vence)
             + (pagado ? ' · registrado ' + c.pagos[id] : ''),
+          inactiva: bloqueado,
           alternar: () => this.alternarPago(clave, id)
         };
       };
@@ -4854,7 +4859,7 @@ class Component extends DCLogic {
     })).filter(r => r.ids.length);
     const pagosPorMarcar = porMarcar.reduce((t, r) => t + r.ids.length, 0);
 
-    return {
+    const ret = {
       esContabilidad: true,
       contAviso: s.contAviso || 'Sin capturar',
       claseContAviso: s.contAvisoError ? 'tag-neutral' : 'tag-accent',
@@ -4941,6 +4946,91 @@ class Component extends DCLogic {
       marcarAlCorriente: () => this.marcarAlCorriente(porMarcar),
       contCruceNota: 'El archivo se cruza por matrícula; los alumnos del ciclo que no vengan en la hoja quedan al corriente.'
     };
+    const admC = this.admDatos();
+    if (admC.aspirantes.length) ret.contGrupos = ret.contGrupos.concat([{valor:'ADM', nombre:'Proceso de admisión ' + admC.anio}]);
+    return s.contGrupoSel === 'ADM' ? Object.assign(ret, this.contAdmision(editable, filtroEstado, busca)) : ret;
+  }
+
+  /* Aspirantes del proceso de admisión en Contabilidad: dos conceptos, el pago del
+     proceso y la inscripción. La inscripción sólo se habilita si en Admisión está
+     marcada la casilla «Admitido». Los pagos se guardan en el registro del aspirante. */
+  contAdmision(editable, filtroEstado, busca) {
+    const d = this.admDatos();
+    const COLOR = {pagado:'#1f9d55', encurso:'#e0a300', pendiente:'var(--color-neutral-300, #d3d6da)'};
+    let pagados = 0, pendientes = 0;
+    const filas = d.aspirantes.slice()
+      .sort((x, y) => String(x.folio || '~').localeCompare(String(y.folio || '~'), 'es', {numeric:true}))
+      .map(a => {
+        const clave = this.claveCuenta({mat: a.folio, apellidos: a.apellidos, nombres: a.nombres});
+        const c = this.cuentaDe(clave);
+        const celda = (campo, etiqueta, bloqueada, notaBloq) => {
+          const pagado = !!a[campo];
+          const est = pagado ? 'pagado' : bloqueada ? 'pendiente' : 'encurso';
+          if (pagado) pagados++; else if (!bloqueada) pendientes++;
+          return {
+            est, id: campo, etiqueta, color: COLOR[est],
+            borde: est === 'pendiente' ? 'var(--color-neutral-400, #9aa0a6)' : est === 'encurso' ? '#a97a00' : 'transparent',
+            titulo: etiqueta + ' · ' + (pagado ? 'Pagado' + (a[campo + 'Fecha'] ? ' · registrado ' + a[campo + 'Fecha'] : '')
+              : bloqueada ? notaBloq : 'Pendiente · dé clic al recibir el pago'),
+            inactiva: !editable || (bloqueada && !pagado),
+            alternar: () => this.pagoAdmDesdeCont(a.id, campo)
+          };
+        };
+        const comentario = c.comentario || '';
+        const alCorriente = !!a.pago && (!a.admitido || !!a.pagoInscripcion);
+        return {
+          clave, generacion: String(d.anio), semestre: '',
+          grupo: a.admitido ? 'Admitido' : 'Aspirante',
+          alumno: ((a.apellidos || '') + (a.nombres ? ' ' + a.nombres : '')).trim() || a.nombre || '—',
+          mat: a.folio || '—', beca: c.beca, comentario,
+          hayConvenio: !!comentario, hayConvenioTag: /convenio|acuerdo/i.test(comentario), etiquetaConvenio: '',
+          soloLectura: !editable,
+          semestres: [{cursado: true, sinCursar: false, celdas: [
+            celda('pago', 'Proceso de admisión', false, ''),
+            celda('pagoInscripcion', 'Inscripción', !a.admitido, 'Se habilita cuando el aspirante esté marcado como Admitido en el módulo de Admisión')
+          ]}],
+          setBeca: e => this.cambiarCuenta(clave, {beca: e.target.value}),
+          setComentario: e => this.cambiarCuenta(clave, {comentario: e.target.value}),
+          guardar: this.persistirCuentas,
+          hayAdeudo: false, faltas: 0, etiquetaFaltas: '', adeudoTexto: '',
+          alCorriente, porVencer: !alCorriente, conAdeudoVigente: false,
+          buscable: this.normalizaTexto([a.folio, a.apellidos, a.nombres, a.nombre].filter(Boolean).join(' '))
+        };
+      })
+      .filter(f => !busca || f.buscable.indexOf(busca) !== -1)
+      .filter(f => !filtroEstado || (filtroEstado === 'pagado' && f.alCorriente) || (filtroEstado === 'pendiente' && f.porVencer));
+    return {
+      contHayGens: true, contSinGens: false, contMuestraGen: true,
+      contGrupoSel: 'ADM',
+      contSemColumnas: [{titulo: 'Admisión ' + d.anio, ciclo: '', span: 2,
+        cols: [{etiqueta: 'proc. adm.', anio: ''}, {etiqueta: 'insc.', anio: ''}]}],
+      contAnchoTabla: '820px',
+      contFilas: filas, contHayFilas: filas.length > 0, contSinFilas: filas.length === 0,
+      contVacioTexto: d.aspirantes.length ? 'Ningún aspirante coincide con la búsqueda o el filtro.' : 'No hay aspirantes registrados en el módulo de Admisión.',
+      contResumen: d.aspirantes.length + ' aspirante(s) · ' + d.aspirantes.filter(a => a.admitido).length + ' admitidos · '
+        + pagados + ' pagos cubiertos · ' + pendientes + ' por cobrar',
+      contNotaSemestre: 'Aspirantes del proceso de admisión ' + d.anio + '. La inscripción se habilita al marcar «Admitido» en el módulo de Admisión.',
+      contPorMarcar: false, contHayAvisoMarcar: false
+    };
+  }
+
+  pagoAdmDesdeCont(id, campo) {
+    if (!this.puedeEditarAhora('contabilidad')) { this.setState({contAviso:'Edición bloqueada: abre el candado con tu PIN.', contAvisoError:true}); return; }
+    const d = this.admDatos();
+    const a = d.aspirantes.filter(x => x.id === id)[0];
+    if (!a) return;
+    if (campo === 'pagoInscripcion' && !a.admitido && !a.pagoInscripcion) {
+      this.setState({contAviso:'La inscripción se habilita cuando el aspirante esté marcado como Admitido.', contAvisoError:true}); return;
+    }
+    const ahora = !a[campo];
+    const cambios = {[campo]: ahora, [campo + 'Fecha']: ahora ? new Date().toLocaleDateString('es-MX') : ''};
+    this.setState({admDatos: Object.assign({}, d, {aspirantes: d.aspirantes.map(x => x.id === id ? Object.assign({}, x, cambios) : x)}),
+      contAviso:'Guardando…', contAvisoError:false});
+    clearTimeout(this.tAdm);
+    this.tAdm = setTimeout(async () => {
+      await this.guardarAdmision('Pago registrado desde Contabilidad');
+      this.setState({contAviso: this.state.admError ? this.state.admAviso : 'Al día', contAvisoError: !!this.state.admError});
+    }, 400);
   }
 
   cambiarAlumnoTray(genId, etapaId, indice, cambios) {
@@ -5237,7 +5327,7 @@ class Component extends DCLogic {
     const pct = (a, b) => b ? (a / b * 100).toFixed(1) + ' %' : 'sin datos';
     const calc = lic => {
       const asp = d.aspirantes.filter(a => !lic || this.licAsp(a, sig) === lic);
-      const adm = asp.filter(a => this.puntajeAdm(a, d).hechos === this.PROCESOS_ADM.length);
+      const adm = asp.filter(a => a.admitido);
       const act = sem1.filter(a => !lic || licMat(a.mat) === lic);
       const comoAsp = act.map(x => ({folio: x.mat, nombres: x.nombres, apellidos: x.apellidos, nombre: ((x.nombres || '') + ' ' + (x.apellidos || '')).trim()}));
       const admAct = adm.filter(a => this.hallarAsp(comoAsp, a.folio, this.nombreAsp(a)) !== -1).length;
@@ -5631,6 +5721,7 @@ class Component extends DCLogic {
         vistaAsistencias: a.asistencias ? a.asistencias + ' / ' + d.sesiones : '—',
         vistaCalif: a.califProp || '—',
         textoEditar: editable ? 'Editar' : 'Ver',
+        admitido: !!a.admitido, altAdmitido: () => up({admitido: !a.admitido}),
         asistencias: a.asistencias || '', setAsistencias: e => up({asistencias: e.target.value.replace(/\D/g, '')}),
         califProp: a.califProp || '', setCalifProp: e => up({califProp: e.target.value.replace(/[^\d.,]/g, '')}),
         comentarios: a.comentarios || '', setComentarios: e => up({comentarios: e.target.value}),
@@ -5750,7 +5841,7 @@ class Component extends DCLogic {
     const sem1 = gen ? this.etapaDe(gen, 'sem1').alumnos : [];
     const licMat = m => sig[this.siglaDe(m)] || '';
     const asp = d.aspirantes.filter(a => !lic || this.licAsp(a, sig) === lic);
-    const adm = asp.filter(a => this.puntajeAdm(a, d).hechos === this.PROCESOS_ADM.length);
+    const adm = asp.filter(a => a.admitido);
     const ins = sem1.filter(a => !lic || licMat(a.mat) === lic);
     const act = ins.filter(a => (a.estatus || 'activo') === 'activo' || a.estatus === 'rezago');
     const comoAsp = act.map(x => ({folio: x.mat, nombres: x.nombres, apellidos: x.apellidos, nombre: ((x.nombres || '') + ' ' + (x.apellidos || '')).trim()}));
@@ -5833,10 +5924,10 @@ class Component extends DCLogic {
       o = {
         ixTitulo: 'Indicadores de ingreso',
         ixNota: usaAdm
-          ? 'Generación ' + gen.anio + ' · solicitantes y admitidos salen del módulo de Admisión (admitido = concluyó los ' + this.PROCESOS_ADM.length + ' procesos); inscritos y activos, del 1.º semestre en Trayectoria escolar.'
+          ? 'Generación ' + gen.anio + ' · solicitantes y admitidos salen del módulo de Admisión (admitido = marcado en la columna «Admitido»); inscritos y activos, del 1.º semestre en Trayectoria escolar.'
           : 'Generación ' + gen.anio + ' · se calcula con las etapas Aspirantes, Aceptados y 1.º semestre de Trayectoria escolar.',
         ixConLic: usaAdm,
-        ixKpis: [kpi('Solicitaron admisión', num(e.asp), 'aspirantes'), kpi('Admitidos', num(e.adm), usaAdm ? 'concluyeron el proceso' : 'aceptados'),
+        ixKpis: [kpi('Solicitaron admisión', num(e.asp), 'aspirantes'), kpi('Admitidos', num(e.adm), usaAdm ? 'marcados como admitidos' : 'aceptados'),
           kpi('Inscritos en 1.º', num(e.ins), 'primer ingreso'), kpi('Activos en 1.º', num(e.act), 'activos o en rezago')],
         ixGrafTitulo: 'Del registro a la inscripción',
         ixGraf: barras([{etiqueta:'Solicitaron', n:e.asp, color:GRIS}, {etiqueta:'Admitidos', n:e.adm}, {etiqueta:'Inscritos en 1.º', n:e.ins}, {etiqueta:'Activos en 1.º', n:e.act, color:AC7}]),
