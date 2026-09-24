@@ -1747,6 +1747,8 @@ async function resolverInstitucion(){
 window.addEventListener("message", e => {
   const d = e && e.data;
   if (!d) return;
+  // Candado: lo abre o cierra DIRIN (tras pedir el PIN) desde su encabezado.
+  if (d.tipo === "dirin-edicion"){ fijarEdicion(!!d.activa, false); return; }
 
   if (d.tipo === "dirin-institucion"){
     institucionActiva = d.id || "";
