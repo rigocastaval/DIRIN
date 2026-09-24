@@ -397,8 +397,8 @@ a:hover{color:var(--color-accent-700)}
           </div>
           <hr class="hr">
 
-          <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;border:2px solid var(--color-divider);margin-bottom:20px">
-            <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="4">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:0;border:2px solid var(--color-divider);margin-bottom:20px">
+            <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="6">
               <div style="padding:18px 20px;border-right:2px solid var(--color-divider);background:var(--color-bg)">
                 <h6 style="margin:0" class="text-muted">{{ k.etiqueta }}</h6>
                 <div style="font-family:var(--font-heading);font-weight:800;font-size:38px;line-height:1.05;letter-spacing:-.02em;margin:10px 0 6px">{{ k.valor }}</div>
@@ -988,6 +988,240 @@ a:hover{color:var(--color-accent-700)}
             <div style="border:2px solid var(--color-divider);margin-top:20px">
               <h5 style="margin:0;padding:11px 18px;border-bottom:2px solid var(--color-divider)">Criterios de desempate aplicados (10.4)</h5>
               <div class="text-muted" style="padding:14px 18px;font-size:12.5px;line-height:1.7">1.º Mayor puntaje en el criterio B · 2.º Mayor puntaje en el criterio E · 3.º Menor tiempo transcurrido desde la baja · 4.º Causal de baja más favorable (criterio A) · 5.º Mayor número de créditos aprobados · 6.º Fecha y hora de recepción de la solicitud.</div>
+            </div>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ esAdmision }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:24px 28px 60px">
+          <sc-if value="{{ soloLectura }}" hint-placeholder-val="{{ false }}">
+            <div style="border:2px solid #2C5F8A;color:#2C5F8A;padding:10px 16px;margin-bottom:18px;font-size:13px;display:flex;align-items:center;gap:10px">
+              <span style="font-family:var(--font-heading);font-weight:800;text-transform:uppercase;letter-spacing:.09em;font-size:11.5px">{{ tituloSoloLectura }}</span>
+              <span>{{ textoSoloLectura }}</span>
+            </div>
+          </sc-if>
+          <div style="display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap">
+            <div>
+              <h6 style="margin:0 0 4px" class="text-muted">Admisión</h6>
+              <h2 style="margin:0">Proceso de admisión {{ admAnio }}</h2>
+            </div>
+            <div style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap">
+              <sc-for list="{{ admTabs }}" as="t" hint-placeholder-count="4">
+                <button class="btn {{ t.clase }}" onClick="{{ t.abrir }}">{{ t.nombre }}</button>
+              </sc-for>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:10px;font-size:11.5px;color:{{ admAvisoColor }}">
+            <span style="width:7px;height:7px;background:currentColor;flex:none"></span>
+            <span>{{ admAviso }}</span>
+          </div>
+          <hr class="hr">
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:18px;margin-bottom:20px;align-items:start">
+            <div style="border:2px solid var(--color-divider);padding:14px 16px;min-width:0">
+              <h6 style="margin:0 0 5px">{{ admCargaTitulo }}</h6>
+              <p class="text-muted" style="margin:0 0 12px;font-size:12.5px;line-height:1.55">{{ admCargaTexto }}</p>
+              <input class="input" type="file" accept=".xlsx,.xls,.csv" onChange="{{ admImportar }}" disabled="{{ admBloqueado }}" style="width:100%;font-size:12px">
+              <div style="font-size:12px;margin-top:8px;font-weight:600;color:{{ admImportColor }}">{{ admImportAviso }}</div>
+            </div>
+            <div style="border:2px solid var(--color-divider);padding:14px 16px;min-width:0">
+              <h6 style="margin:0 0 5px">Puntaje del proceso</h6>
+              <p class="text-muted" style="margin:0 0 12px;font-size:12.5px;line-height:1.55">{{ admPesoTexto }}</p>
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px">
+                <div class="field" style="margin:0"><label>Generación</label><input class="input" inputmode="numeric" value="{{ admAnio }}" onChange="{{ setAdmAnio }}" disabled="{{ admBloqueado }}" style="width:100%"></div>
+                <div class="field" style="margin:0"><label>Sesiones del curso</label><input class="input" inputmode="numeric" value="{{ admSesiones }}" onChange="{{ setAdmSesiones }}" disabled="{{ admBloqueado }}" style="width:100%"></div>
+                <div class="field" style="margin:0"><label>EXANI mínimo</label><input class="input" inputmode="numeric" value="{{ admExMin }}" onChange="{{ setAdmExMin }}" disabled="{{ admBloqueado }}" style="width:100%"></div>
+                <div class="field" style="margin:0"><label>EXANI máximo</label><input class="input" inputmode="numeric" value="{{ admExMax }}" onChange="{{ setAdmExMax }}" disabled="{{ admBloqueado }}" style="width:100%"></div>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:12px">
+            <div class="field" style="flex:1;min-width:240px;margin:0">
+              <label>Buscar por folio, nombre, correo o licenciatura</label>
+              <input class="input" value="{{ admBusca }}" onChange="{{ setAdmBusca }}" placeholder="LMG26 / García / Medicina" style="width:100%">
+            </div>
+            <div class="field" style="margin:0">
+              <label>Ordenar</label>
+              <select class="input" value="{{ admOrden }}" onChange="{{ setAdmOrden }}">
+                <option value="folio">Por folio</option>
+                <option value="nombre">Por nombre</option>
+                <option value="puntaje">Por puntaje</option>
+              </select>
+            </div>
+            <div class="text-muted" style="font-size:11.5px;padding-bottom:8px">{{ admNota }}</div>
+            <button class="btn {{ claseNuevoAdm }}" onClick="{{ abrirNuevoAdm }}" disabled="{{ admBloqueado }}" style="margin-left:auto">{{ textoNuevoAdm }}</button>
+          </div>
+
+          <sc-if value="{{ admNuevoAbierto }}" hint-placeholder-val="{{ false }}">
+            <div style="border:2px solid var(--color-accent);padding:14px 16px;margin-bottom:18px">
+              <h6 style="margin:0 0 10px">Agregar aspirante</h6>
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;align-items:end">
+                <sc-for list="{{ admNuevoCampos }}" as="c" hint-placeholder-count="8">
+                  <div class="field" style="margin:0"><label>{{ c.etiqueta }}</label><input class="input" value="{{ c.valor }}" onChange="{{ c.set }}" placeholder="{{ c.pista }}" style="width:100%"></div>
+                </sc-for>
+                <div style="display:flex;gap:8px">
+                  <button class="btn btn-primary" onClick="{{ agregarAspirante }}">Agregar</button>
+                  <button class="btn btn-ghost" onClick="{{ abrirNuevoAdm }}">Cancelar</button>
+                </div>
+              </div>
+              <div style="font-size:12px;margin-top:9px;font-weight:600;color:{{ admNuevoColor }}">{{ admNuevoAviso }}</div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ admVacio }}" hint-placeholder-val="{{ false }}">
+            <div style="border:2px dashed var(--color-divider);padding:34px 26px;text-align:center">
+              <p class="text-muted" style="margin:0;font-size:13px">Todavía no hay aspirantes. Cargue el libro de admisión o use «Agregar aspirante».</p>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ admTabEval }}" hint-placeholder-val="{{ true }}">
+            <div style="border:2px solid var(--color-divider);overflow-x:auto;display:{{ admDispTabla }}">
+              <table style="border-collapse:collapse;width:100%;min-width:1180px;font-size:12.5px">
+                <thead><tr>
+                  <th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Folio</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Aspirante</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Pagó</th>
+                  <th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">EXANI-II</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Asistencias</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Calif. propedéutico</th>
+                  <th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Psicométrico</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Entrevista</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Comentarios</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Puntaje</th>
+                </tr></thead>
+                <tbody>
+                  <sc-for list="{{ admFilas }}" as="a" hint-placeholder-count="8">
+                    <tr>
+                      <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider);font-family:var(--font-mono, monospace);white-space:nowrap">{{ a.folio }}</td>
+                      <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider);min-width:200px">
+                        <button onClick="{{ a.verFicha }}" style="border:0;background:none;padding:0;cursor:pointer;font:inherit;font-weight:600;color:var(--color-text);text-align:left;text-decoration:underline;text-decoration-color:var(--color-divider);text-underline-offset:3px">{{ a.nombre }}</button>
+                        <div class="text-muted" style="font-size:11px;margin-top:2px">{{ a.area }}</div>
+                      </td>
+                      <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider)"><button class="btn {{ a.clasePago }}" style="font-size:11px;padding:3px 10px;min-width:46px" onClick="{{ a.altPago }}" disabled="{{ admBloqueado }}">{{ a.textoPago }}</button></td>
+                      <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider)"><input class="input" inputmode="numeric" value="{{ a.exani }}" onChange="{{ a.setExani }}" disabled="{{ admBloqueado }}" placeholder="—" style="padding:3px 6px;font-size:12px;width:72px"></td>
+                      <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider);white-space:nowrap"><input class="input" inputmode="numeric" value="{{ a.asistencias }}" onChange="{{ a.setAsistencias }}" disabled="{{ admBloqueado }}" placeholder="—" style="padding:3px 6px;font-size:12px;width:52px"> <span class="text-muted" style="font-size:11px">/ {{ admSesiones }}</span></td>
+                      <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider)"><input class="input" inputmode="decimal" value="{{ a.califProp }}" onChange="{{ a.setCalifProp }}" disabled="{{ admBloqueado }}" placeholder="0–10" style="padding:3px 6px;font-size:12px;width:62px"></td>
+                      <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider)"><button class="btn {{ a.clasePsico }}" style="font-size:11px;padding:3px 10px;min-width:46px" onClick="{{ a.altPsico }}" disabled="{{ admBloqueado }}">{{ a.textoPsico }}</button></td>
+                      <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider)"><button class="btn {{ a.claseEntrevista }}" style="font-size:11px;padding:3px 10px;min-width:46px" onClick="{{ a.altEntrevista }}" disabled="{{ admBloqueado }}">{{ a.textoEntrevista }}</button></td>
+                      <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider);min-width:180px"><input class="input" value="{{ a.comentarios }}" onChange="{{ a.setComentarios }}" disabled="{{ admBloqueado }}" style="padding:3px 6px;font-size:12px;width:100%"></td>
+                      <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider);min-width:110px">
+                        <div style="font-family:var(--font-heading);font-weight:800;font-size:15px">{{ a.puntaje }}</div>
+                        <div style="height:4px;background:var(--color-neutral-200, #e5e5e5);margin:4px 0 3px"><div style="height:4px;width:{{ a.barra }};background:{{ a.tonoBarra }}"></div></div>
+                        <div class="text-muted" style="font-size:10.5px">{{ a.avance }}</div>
+                      </td>
+                    </tr>
+                  </sc-for>
+                </tbody>
+              </table>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ admTabDatos }}" hint-placeholder-val="{{ false }}">
+            <div style="border:2px solid var(--color-divider);overflow-x:auto;display:{{ admDispTabla }}">
+              <table style="border-collapse:collapse;width:100%;min-width:1180px;font-size:12.5px">
+                <thead><tr>
+                  <th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Folio</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Aspirante</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Teléfono</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Correo</th>
+                  <th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Tutor</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Tel. tutor</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Estatus EXANI-II</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Fecha</th>
+                  <th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Entrevista</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Psicométrico</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Nota</th>
+                </tr></thead>
+                <tbody>
+                  <sc-for list="{{ admFilas }}" as="a" hint-placeholder-count="8">
+                    <tr>
+                      <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider);font-family:var(--font-mono, monospace);white-space:nowrap">{{ a.folio }}</td>
+                      <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider);min-width:190px"><button onClick="{{ a.verFicha }}" style="border:0;background:none;padding:0;cursor:pointer;font:inherit;font-weight:600;color:var(--color-text);text-align:left;text-decoration:underline;text-decoration-color:var(--color-divider);text-underline-offset:3px">{{ a.nombre }}</button></td>
+                      <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider);white-space:nowrap">{{ a.telefono }}</td>
+                      <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider)">{{ a.correo }}</td>
+                      <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider)">{{ a.tutor }}</td>
+                      <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider);white-space:nowrap">{{ a.telTutor }}</td>
+                      <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider)">{{ a.exaniEstatus }}</td>
+                      <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider);white-space:nowrap">{{ a.fecha }}</td>
+                      <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider);white-space:nowrap">{{ a.horaEntrevista }}</td>
+                      <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider);white-space:nowrap">{{ a.horaPsico }}</td>
+                      <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider)">{{ a.nota }}</td>
+                    </tr>
+                  </sc-for>
+                </tbody>
+              </table>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ admTabProp }}" hint-placeholder-val="{{ false }}">
+            <div style="border:2px solid var(--color-divider);overflow-x:auto;display:{{ admDispTabla }}">
+              <table style="border-collapse:collapse;width:100%;min-width:900px;font-size:12.5px">
+                <thead><tr>
+                  <th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Folio</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Aspirante</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Asistencias</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Calificación</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Seguimiento</th>
+                </tr></thead>
+                <tbody>
+                  <sc-for list="{{ admFilas }}" as="a" hint-placeholder-count="8">
+                    <tr>
+                      <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider);font-family:var(--font-mono, monospace);white-space:nowrap">{{ a.folio }}</td>
+                      <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider);min-width:190px"><button onClick="{{ a.verFicha }}" style="border:0;background:none;padding:0;cursor:pointer;font:inherit;font-weight:600;color:var(--color-text);text-align:left;text-decoration:underline;text-decoration-color:var(--color-divider);text-underline-offset:3px">{{ a.nombre }}</button></td>
+                      <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider);white-space:nowrap"><input class="input" inputmode="numeric" value="{{ a.asistencias }}" onChange="{{ a.setAsistencias }}" disabled="{{ admBloqueado }}" placeholder="—" style="padding:3px 6px;font-size:12px;width:52px"> <span class="text-muted" style="font-size:11px">/ {{ admSesiones }}</span></td>
+                      <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider)"><input class="input" inputmode="decimal" value="{{ a.califProp }}" onChange="{{ a.setCalifProp }}" disabled="{{ admBloqueado }}" placeholder="0–10" style="padding:3px 6px;font-size:12px;width:62px"></td>
+                      <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider);width:55%"><input class="input" value="{{ a.seguimiento }}" onChange="{{ a.setSeguimiento }}" disabled="{{ admBloqueado }}" placeholder="Llamadas, avisos, observaciones del curso" style="padding:3px 6px;font-size:12px;width:100%"></td>
+                    </tr>
+                  </sc-for>
+                </tbody>
+              </table>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ admTabTs }}" hint-placeholder-val="{{ false }}">
+            <sc-if value="{{ admHaySinVinculo }}" hint-placeholder-val="{{ false }}">
+              <div style="border-left:3px solid #b3261e;background:var(--color-neutral-100);padding:11px 14px;margin-bottom:14px;font-size:12.5px;line-height:1.5">{{ admSinVinculo }}</div>
+            </sc-if>
+            <div style="border:2px solid var(--color-divider);overflow-x:auto;display:{{ admDispTabla }}">
+              <table style="border-collapse:collapse;width:100%;min-width:1100px;font-size:12.5px">
+                <thead><tr>
+                  <th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Aspirante</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Licenciatura</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Edad</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Preparatoria</th>
+                  <th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Promedio</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Vive con</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Se enteró por</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Estudio</th>
+                </tr></thead>
+                <tbody>
+                  <sc-for list="{{ admFilas }}" as="a" hint-placeholder-count="8">
+                    <tr>
+                      <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider);min-width:190px"><button onClick="{{ a.verFicha }}" style="border:0;background:none;padding:0;cursor:pointer;font:inherit;font-weight:600;color:var(--color-text);text-align:left;text-decoration:underline;text-decoration-color:var(--color-divider);text-underline-offset:3px">{{ a.nombre }}</button></td>
+                      <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider)">{{ a.tsLic }}</td>
+                      <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider)">{{ a.tsEdad }}</td>
+                      <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider)">{{ a.tsPrepa }}</td>
+                      <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider)">{{ a.tsPromedio }}</td>
+                      <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider)">{{ a.tsVive }}</td>
+                      <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider)">{{ a.tsMedio }}</td>
+                      <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider);white-space:nowrap"><span class="tag {{ a.claseTs }}" style="font-size:9.5px">{{ a.textoTs }}</span></td>
+                    </tr>
+                  </sc-for>
+                </tbody>
+              </table>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ admFichaAbierta }}" hint-placeholder-val="{{ false }}">
+            <div onClick="{{ cerrarFichaAdm }}" style="position:fixed;inset:0;background:rgba(20,20,20,.35);z-index:400"></div>
+            <div style="position:fixed;top:0;right:0;bottom:0;width:min(620px,100%);background:var(--color-bg);z-index:401;overflow:auto;border-left:2px solid var(--color-divider);box-shadow:-12px 0 30px rgba(0,0,0,.12)">
+              <div style="padding:18px 22px;border-bottom:2px solid var(--color-divider);display:flex;align-items:flex-start;gap:12px;position:sticky;top:0;background:var(--color-bg);z-index:1">
+                <div style="min-width:0">
+                  <h6 style="margin:0 0 3px" class="text-muted">{{ fichaFolio }}</h6>
+                  <h3 style="margin:0">{{ fichaNombre }}</h3>
+                  <div style="font-size:12.5px;margin-top:6px">Puntaje <b>{{ fichaPuntaje }}</b> · {{ fichaAvance }}</div>
+                </div>
+                <button class="btn btn-secondary" style="margin-left:auto" onClick="{{ cerrarFichaAdm }}">Cerrar</button>
+              </div>
+              <div style="padding:18px 22px">
+                <h6 style="margin:0 0 10px">Datos del aspirante</h6>
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-bottom:22px">
+                  <sc-for list="{{ fichaCampos }}" as="c" hint-placeholder-count="10">
+                    <div class="field" style="margin:0"><label>{{ c.etiqueta }}</label><input class="input" value="{{ c.valor }}" onChange="{{ c.set }}" disabled="{{ admBloqueado }}" style="width:100%"></div>
+                  </sc-for>
+                </div>
+                <h6 style="margin:0 0 10px">Estudio de Trabajo social</h6>
+                <sc-if value="{{ fichaSinTs }}" hint-placeholder-val="{{ false }}">
+                  <p class="text-muted" style="margin:0 0 22px;font-size:12.5px">Sin estudio cargado. Súbalo desde la pestaña «Trabajo social».</p>
+                </sc-if>
+                <div style="border:2px solid var(--color-divider);margin-bottom:22px;display:{{ fichaDispTs }}">
+                  <sc-for list="{{ fichaTs }}" as="t" hint-placeholder-count="10">
+                    <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:12px;padding:7px 12px;border-bottom:1px solid var(--color-divider);font-size:12.5px">
+                      <span class="text-muted">{{ t.k }}</span><span>{{ t.v }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+                <sc-if value="{{ fichaEditable }}" hint-placeholder-val="{{ false }}">
+                  <button class="btn btn-ghost" onClick="{{ quitarAspirante }}">{{ textoQuitarAsp }}</button>
+                </sc-if>
+              </div>
             </div>
           </sc-if>
         </div>
@@ -2075,6 +2309,32 @@ Vázquez Ledesma, Iván	MG-25-0092" style="width:100%;font-family:var(--font-bod
             <sc-if value="{{ detBloqueada }}" hint-placeholder-val="{{ false }}">
               <div style="border-left:3px solid var(--color-accent);background:var(--color-neutral-100);padding:11px 14px;margin-bottom:20px;font-size:12.5px;line-height:1.5">{{ detMotivoBloqueo }}</div>
             </sc-if>
+            <sc-if value="{{ detEditable }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex;justify-content:flex-end;margin-bottom:12px">
+                <button class="btn {{ claseNuevoTray }}" onClick="{{ abrirNuevoTray }}">{{ textoNuevoTray }}</button>
+              </div>
+              <sc-if value="{{ trayNuevoAbierto }}" hint-placeholder-val="{{ false }}">
+                <div style="border:2px solid var(--color-accent);padding:14px 16px;margin-bottom:20px">
+                  <h6 style="margin:0 0 10px">Agregar estudiante · {{ detEtapa }}</h6>
+                  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;align-items:end">
+                    <div class="field" style="margin:0"><label>Matrícula</label><input class="input" value="{{ tnMat }}" onChange="{{ setTnMat }}" placeholder="LMG26001" style="width:100%"></div>
+                    <div class="field" style="margin:0"><label>Apellidos</label><input class="input" value="{{ tnApellidos }}" onChange="{{ setTnApellidos }}" placeholder="Pérez López" style="width:100%"></div>
+                    <div class="field" style="margin:0"><label>Nombres</label><input class="input" value="{{ tnNombres }}" onChange="{{ setTnNombres }}" placeholder="Ana María" style="width:100%"></div>
+                    <div class="field" style="margin:0"><label>Grupo</label><input class="input" value="{{ tnGrupo }}" onChange="{{ setTnGrupo }}" placeholder="{{ tnGrupoPista }}" style="width:100%"></div>
+                    <div class="field" style="margin:0"><label>Estatus</label>
+                      <select class="input" value="{{ tnEstatus }}" onChange="{{ setTnEstatus }}" style="width:100%">
+                        <sc-for list="{{ estatusOpc }}" as="o" hint-placeholder-count="5"><option value="{{ o.id }}">{{ o.nombre }}</option></sc-for>
+                      </select>
+                    </div>
+                    <div style="display:flex;gap:8px">
+                      <button class="btn btn-primary" onClick="{{ agregarAlumnoTray }}">Agregar</button>
+                      <button class="btn btn-ghost" onClick="{{ abrirNuevoTray }}">Cancelar</button>
+                    </div>
+                  </div>
+                  <div style="font-size:12px;margin-top:9px;font-weight:600;color:{{ tnAvisoColor }}">{{ tnAviso }}</div>
+                </div>
+              </sc-if>
+            </sc-if>
 
             <sc-if value="{{ detHayAlumnos }}" hint-placeholder-val="{{ true }}">
               <div style="display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:12px">
@@ -2207,7 +2467,7 @@ const AREAS = [
     {id:'convenios', nombre:'Convenios'},
     {id:'normatividad', nombre:'Normatividad'}]},
   {id:'adm', nombre:'Admisión', perfiles:['super','admin_inst','admin','direccion','control'], modulos:[
-    {id:'admision', nombre:'Admisión'},
+    {id:'admision', nombre:'Admisión', listo:true},
     {id:'conducta', nombre:'Conducta'},
     {id:'bajas', nombre:'Bajas'},
     {id:'reingreso', nombre:'Reingreso', listo:true}]},
@@ -3332,6 +3592,7 @@ class Component extends DCLogic {
         trayAviso: gens && gens.length ? 'Al día' : 'Sin capturar',
         trayGenSel: (gens && gens[0] ? gens[0].id : '')
       });
+      this.trayCargada = true;
     } catch (e) {}
     // Los grupos de Carga horaria sirven para validar el grupo que traiga el archivo.
     try {
@@ -3689,6 +3950,8 @@ class Component extends DCLogic {
     const extemporaneos = aspirantes.filter(a => a.via === 'extemporaneo').length;
 
     const titulados = gens.reduce((t, g) => t + this.etapaDe(g, 'titulacion').alumnos.filter(a => a.concluido).length, 0);
+    const genServicio = gens.filter(g => !g.cerrada && this.etapaDe(g, 'servicio').alumnos.length);
+    const enServicio = genServicio.reduce((t, g) => t + activos(this.etapaDe(g, 'servicio').alumnos), 0);
     const pct = (a, b) => b ? Math.round((a / b) * 1000) / 10 + '%' : 'sin datos';
 
     const max = Math.max.apply(null, enCurso.map(x => x.activos).concat([1]));
@@ -3709,6 +3972,12 @@ class Component extends DCLogic {
          tono:'var(--color-neutral-700)'},
         {etiqueta:'Extemporáneos', valor: aspirantes.length ? String(extemporaneos) : 'sin datos',
          nota: aspirantes.length ? 'en la generación ' + nueva.anio : 'sin lista de aspirantes',
+         tono:'var(--color-accent-700)'},
+        {etiqueta:'Servicio social', valor: genServicio.length ? String(enServicio) : 'sin datos',
+         nota: genServicio.length ? 'activos · generación ' + genServicio.map(g => g.anio).sort().join(', ') : 'sin lista de servicio social',
+         tono:'var(--color-neutral-700)'},
+        {etiqueta:'Titulados', valor: titulados ? String(titulados) : 'sin datos',
+         nota: titulados ? 'titulaciones concluidas registradas' : 'sin titulaciones registradas',
          tono:'var(--color-accent-700)'}
       ],
       barras: enCurso.map(x => ({
@@ -3770,7 +4039,31 @@ class Component extends DCLogic {
     this.guardarTrayectoria(gens, 'Aceptados actualizados');
   };
 
-  cerrarDetalleTray = () => this.setState({trayEtapaSel:'', trayCargaAviso:'', trayEditFila:null});
+  cerrarDetalleTray = () => this.setState({trayEtapaSel:'', trayCargaAviso:'', trayEditFila:null, trayNuevoAbierto:false, trayNuevoAviso:''});
+
+  abrirNuevoTray = () => this.setState(s => ({trayNuevoAbierto: !s.trayNuevoAbierto, trayNuevo:{estatus:'activo'}, trayNuevoAviso:'', trayNuevoError:false}));
+
+  agregarAlumnoTray = () => {
+    const s = this.state;
+    if (!this.puedeEditarAhora('trayectoria')) { this.setState({trayNuevoAviso:'Edición bloqueada: abre el candado con tu PIN.', trayNuevoError:true}); return; }
+    const gen = this.generacionesTray().filter(g => g.id === s.trayGenSel)[0];
+    if (!gen || gen.cerrada) { this.setState({trayNuevoAviso:'La generación está cerrada.', trayNuevoError:true}); return; }
+    const n = s.trayNuevo || {};
+    const etapaId = s.trayEtapaSel;
+    const a = {mat:(n.mat || '').trim(), apellidos:(n.apellidos || '').trim(), nombres:(n.nombres || '').trim(),
+      grupo:(n.grupo || '').trim(), estatus:n.estatus || 'activo', modalidad:'', concluido:false};
+    if (!a.apellidos && !a.nombres) { this.setState({trayNuevoAviso:'Escribe al menos los apellidos o los nombres.', trayNuevoError:true}); return; }
+    if (!a.grupo && etapaId === 'aspirantes') a.grupo = 'Aspirante';
+    const lista = this.etapaDe(gen, etapaId).alumnos;
+    if (a.mat && lista.some(x => this.normalizaTexto(x.mat) === this.normalizaTexto(a.mat))) {
+      this.setState({trayNuevoAviso:'Ya hay un alumno con la matrícula ' + a.mat + ' en esta etapa.', trayNuevoError:true}); return;
+    }
+    const gens = this.generacionesTray().map(g => g.id !== gen.id ? g : Object.assign({}, g, {
+      etapas: Object.assign({}, g.etapas || {}, {[etapaId]: {alumnos: lista.concat([a]), actualizado: new Date().toISOString()}})
+    }));
+    this.setState({trayNuevo:{estatus:a.estatus, grupo:a.grupo}, trayNuevoAviso:(a.apellidos + ' ' + a.nombres).trim() + ' agregado. Puedes capturar el siguiente.', trayNuevoError:false});
+    this.guardarTrayectoria(gens, 'Alumno agregado');
+  };
 
   /* Contabilidad. Los alumnos no se capturan aquí: se leen de Trayectoria escolar
      (generación + semestre). Lo propio del módulo es el estado de cada pago, el
@@ -4718,6 +5011,463 @@ class Component extends DCLogic {
     return p ? !!p.editar : true;
   }
 
+/* ================= Admisión =================
+     Un libro por institución en horarios_almacen. Cada aspirante lleva su
+     evaluación (pago, EXANI-II, propedéutico, psicométrico, entrevista), los datos
+     de contacto y el estudio de Trabajo social. Al guardar, la lista se copia a
+     Trayectoria escolar (etapa Admisión de la generación) con grupo «Aspirante». */
+  CLAVE_ADM = 'admision:aspirantes';
+  PROCESOS_ADM = ['Pago','EXANI-II','Asistencias','Calif. propedéutico','Psicométrico','Entrevista'];
+
+  admDatos() {
+    const d = this.state.admDatos || {};
+    const num = (v, def) => { const n = parseFloat(v); return isNaN(n) ? def : n; };
+    return {
+      anio: parseInt(d.anio, 10) || new Date().getFullYear(),
+      sesiones: num(d.sesiones, 5) || 5,
+      exaniMin: num(d.exaniMin, 700), exaniMax: num(d.exaniMax, 1300),
+      aspirantes: Array.isArray(d.aspirantes) ? d.aspirantes : [],
+      tsSinVinculo: Array.isArray(d.tsSinVinculo) ? d.tsSinVinculo : []
+    };
+  }
+
+  async cargarAdmision() {
+    if (!this.cliente || !this.state.instActiva) return;
+    try {
+      const {data, error} = await this.cliente.from('horarios_almacen')
+        .select('valor').eq('clave', this.CLAVE_ADM)
+        .eq('institucion_id', this.state.instActiva).maybeSingle();
+      if (error) throw error;
+      const d = data && data.valor ? (JSON.parse(data.valor) || {}) : {};
+      this.setState({admDatos: d, admAviso: (d.aspirantes || []).length ? 'Al día' : 'Sin capturar', admError:false});
+    } catch (e) {
+      this.setState({admAviso:'No se pudo leer Admisión: ' + (e.message || e), admError:true});
+    }
+  }
+
+  cambiarAdm(mutar, aviso) {
+    if (!this.puedeEditarAhora('admision')) {
+      this.setState({admAviso: this.motivoBloqueo('admision'), admError:true});
+      return false;
+    }
+    const d = mutar(this.admDatos());
+    this.setState({admDatos: d, admAviso:'Cambios sin guardar…', admError:false});
+    clearTimeout(this.tAdm);
+    this.tAdm = setTimeout(() => this.guardarAdmision(aviso), 800);
+    return true;
+  }
+
+  cambiarAspirante(id, cambios) {
+    return this.cambiarAdm(d => Object.assign({}, d, {
+      aspirantes: d.aspirantes.map(a => a.id === id ? Object.assign({}, a, cambios) : a)
+    }));
+  }
+
+  async guardarAdmision(aviso) {
+    const d = this.admDatos();
+    if (!this.cliente || !this.state.instActiva) { this.setState({admAviso:'Sin institución activa: no se guardó', admError:true}); return; }
+    this.setState({admAviso:'Guardando…'});
+    const {error} = await this.cliente.from('horarios_almacen').upsert({
+      clave: this.CLAVE_ADM, valor: JSON.stringify(d),
+      institucion_id: this.state.instActiva,
+      actualizado_en: new Date().toISOString(), actualizado_por: this.usuarioId
+    }, {onConflict:'clave,institucion_id'});
+    if (error) { this.setState({admAviso:'No se pudo guardar: ' + error.message, admError:true}); return; }
+    const tray = await this.enviarAspirantesTray(d);
+    this.setState({admAviso: (aviso || 'Guardado') + tray, admError:false});
+  }
+
+  // Copia la lista a Trayectoria escolar · etapa Admisión, con grupo «Aspirante».
+  async enviarAspirantesTray(d) {
+    if (!this.trayCargada) return ' · Trayectoria escolar aún no se lee: se enviará en el próximo guardado';
+    let gens = this.generacionesTray().slice();
+    let gen = gens.filter(g => g.anio === d.anio)[0];
+    if (!gen) { gen = {id:'gen' + d.anio, anio:d.anio, cerrada:false, etapas:{}}; gens.push(gen); }
+    if (gen.cerrada) return ' · la generación ' + d.anio + ' está cerrada en Trayectoria escolar';
+    const folios = d.aspirantes.map(a => this.normalizaTexto(a.folio)).filter(Boolean);
+    const previos = this.etapaDe(gen, 'aspirantes').alumnos
+      .filter(p => p.origen !== 'admision' && (!p.mat || folios.indexOf(this.normalizaTexto(p.mat)) === -1));
+    const lista = d.aspirantes.map(a => ({
+      mat: a.folio || '', apellidos: a.apellidos || '', nombres: a.nombres || '',
+      grupo:'Aspirante', estatus:'activo', modalidad:'', concluido:false, origen:'admision'
+    }));
+    const etapas = Object.assign({}, gen.etapas || {}, {aspirantes:{alumnos: previos.concat(lista), actualizado: new Date().toISOString()}});
+    gens = gens.map(g => g.anio === d.anio ? Object.assign({}, g, {etapas}) : g).sort((a, b) => b.anio - a.anio);
+    await this.guardarTrayectoria(gens, 'Aspirantes recibidos de Admisión');
+    return this.state.trayAvisoError ? ' · no llegó a Trayectoria: ' + this.state.trayAviso : ' · ' + lista.length + ' en Trayectoria escolar';
+  }
+
+  partirNombre(n) {
+    const p = String(n || '').replace(/\s+/g, ' ').trim().split(' ').filter(Boolean);
+    if (p.length <= 1) return {nombres: p[0] || '', apellidos: ''};
+    if (p.length === 2) return {nombres: p[0], apellidos: p[1]};
+    return {nombres: p.slice(0, -2).join(' '), apellidos: p.slice(-2).join(' ')};
+  }
+
+  nombreAsp(a) { return ((a.nombres || '') + ' ' + (a.apellidos || '')).trim() || a.nombre || '(sin nombre)'; }
+
+  puntajeAdm(a, d) {
+    const cl = x => Math.max(0, Math.min(1, x));
+    const n = v => { const x = parseFloat(String(v == null ? '' : v).replace(',', '.')); return isNaN(x) ? null : x; };
+    const ex = n(a.exani), as = n(a.asistencias), ca = n(a.califProp);
+    const exN = ex == null ? null : ex > 100 ? cl((ex - d.exaniMin) / ((d.exaniMax - d.exaniMin) || 1)) : ex > 10 ? cl(ex / 100) : cl(ex / 10);
+    const partes = [
+      a.pago ? 1 : 0, exN || 0, as == null ? 0 : cl(as / d.sesiones),
+      ca == null ? 0 : ca > 10 ? cl(ca / 100) : cl(ca / 10),
+      a.psicometrico ? 1 : 0, a.entrevista ? 1 : 0
+    ];
+    const hechos = [a.pago, exN != null, as != null, ca != null, a.psicometrico, a.entrevista].filter(Boolean).length;
+    const total = partes.reduce((t, x) => t + x, 0) / partes.length * 100;
+    return {total, hechos};
+  }
+
+  fechaExcel(v) {
+    if (typeof v === 'number' && v > 20000) {
+      const f = new Date(Math.round((v - 25569) * 864e5));
+      return String(f.getUTCDate()).padStart(2, '0') + '/' + String(f.getUTCMonth() + 1).padStart(2, '0') + '/' + f.getUTCFullYear();
+    }
+    return v == null ? '' : String(v).trim();
+  }
+
+  horaExcel(v) {
+    if (typeof v === 'number' && v >= 0 && v < 1) {
+      const m = Math.round(v * 1440);
+      return Math.floor(m / 60) + ':' + String(m % 60).padStart(2, '0');
+    }
+    return v == null ? '' : String(v).trim();
+  }
+
+  // Busca la fila de encabezados (la primera, entre las seis de arriba, que diga «nombre»).
+  encabezadosAdm(filas) {
+    for (let i = 0; i < Math.min(6, filas.length); i++) {
+      const crudo = (filas[i] || []).map(c => String(c == null ? '' : c).trim());
+      const cab = crudo.map(c => this.normalizaTexto(c));
+      if (cab.some(c => c.indexOf('nombre') !== -1)) return {i, cab, crudo};
+    }
+    const crudo = (filas[0] || []).map(c => String(c == null ? '' : c).trim());
+    return {i:0, cab: crudo.map(c => this.normalizaTexto(c)), crudo};
+  }
+
+  hallarAsp(lista, folio, nombre) {
+    const f = this.normalizaTexto(folio);
+    if (f) { const i = lista.findIndex(a => this.normalizaTexto(a.folio) === f); if (i !== -1) return i; }
+    const k = this.claveNombre(nombre);
+    if (!k) return -1;
+    let i = lista.findIndex(a => this.claveNombre(a.nombre || this.nombreAsp(a)) === k || this.claveNombre(this.nombreAsp(a)) === k);
+    if (i !== -1) return i;
+    // Coincidencia parcial: todas las palabras del más corto están en el otro (mínimo tres).
+    const pal = k.split(' ');
+    return lista.findIndex(a => {
+      const otra = this.claveNombre(a.nombre || this.nombreAsp(a)).split(' ');
+      const [c, l] = pal.length <= otra.length ? [pal, otra] : [otra, pal];
+      return c.length >= 3 && c.every(w => l.indexOf(w) !== -1);
+    });
+  }
+
+  leerHojaAdm(tipo, filas, d) {
+    const {i: fila0, cab, crudo} = this.encabezadosAdm(filas);
+    const col = fn => cab.findIndex(fn);
+    const has = (c, ...k) => k.some(x => c.indexOf(x) !== -1);
+    const txt = v => v == null ? '' : String(v).replace(/\s+/g, ' ').trim();
+    const iNom = cab.indexOf('nombre') !== -1 ? cab.indexOf('nombre')
+      : col(c => has(c, 'nombre de aspirante', 'nombre del aspirante', 'aspirante', 'nombre') && !has(c, 'tutor', 'padre', 'madre'));
+    if (iNom === -1) throw new Error('la hoja no trae la columna del nombre del aspirante');
+    const iFol = col(c => has(c, 'folio', 'matricula'));
+    const lista = d.aspirantes.slice();
+    let nuevos = 0, act = 0; const sinVinculo = [];
+
+    const filasDatos = filas.slice(fila0 + 1).filter(f => txt((f || [])[iNom]));
+    if (tipo === 'datos') {
+      const iTel = col(c => has(c, 'telefono', 'celular') && !has(c, 'tutor'));
+      const iCor = col(c => has(c, 'correo', 'email'));
+      const iTut = col(c => has(c, 'tutor') && !has(c, 'telefono'));
+      const iTelT = col(c => has(c, 'tutor') && has(c, 'telefono'));
+      const iExE = col(c => has(c, 'exani') && has(c, 'estatus'));
+      const iEx = col(c => (has(c, 'exani') && !has(c, 'estatus')) || has(c, 'puntaje exani', 'calificacion exani'));
+      const iPago = col(c => has(c, 'pago'));
+      const iFecha = col(c => c.indexOf('fecha') === 0);
+      const iHEnt = col(c => has(c, 'entrevista') && has(c, 'horario', 'hora'));
+      const iHPsi = col(c => has(c, 'psicometrico') && has(c, 'horario', 'hora'));
+      const iPsi = col(c => has(c, 'psicometrico') && !has(c, 'horario', 'hora'));
+      const iEnt = col(c => has(c, 'entrevista') && !has(c, 'horario', 'hora'));
+      const iArea = col(c => has(c, 'area', 'licenciatura', 'programa'));
+      const iAs = col(c => has(c, 'asistencia'));
+      const iCal = col(c => has(c, 'calificacion') && has(c, 'propedeutico'));
+      const iCom = col(c => has(c, 'comentario', 'observacion'));
+      const sinCab = cab.map((c, i) => !c && i > iNom ? i : -1).filter(i => i !== -1);
+      const si = v => /^(si|x|1|true|pagad|asist|acudi|present|liquid)/.test(this.normalizaTexto(v));
+      filasDatos.forEach(f => {
+        const nombre = txt(f[iNom]), folio = iFol >= 0 ? txt(f[iFol]) : '';
+        const c = {};
+        const pon = (k, v) => { if (v !== '' && v != null) c[k] = v; };
+        pon('telefono', iTel >= 0 ? txt(f[iTel]) : ''); pon('correo', iCor >= 0 ? txt(f[iCor]) : '');
+        pon('tutor', iTut >= 0 ? txt(f[iTut]) : ''); pon('telTutor', iTelT >= 0 ? txt(f[iTelT]) : '');
+        pon('exaniEstatus', iExE >= 0 ? txt(f[iExE]) : ''); pon('exani', iEx >= 0 ? txt(f[iEx]) : '');
+        pon('fecha', iFecha >= 0 ? this.fechaExcel(f[iFecha]) : '');
+        pon('horaEntrevista', iHEnt >= 0 ? this.horaExcel(f[iHEnt]) : ''); pon('horaPsico', iHPsi >= 0 ? this.horaExcel(f[iHPsi]) : '');
+        pon('area', iArea >= 0 ? txt(f[iArea]) : ''); pon('asistencias', iAs >= 0 ? txt(f[iAs]) : '');
+        pon('califProp', iCal >= 0 ? txt(f[iCal]) : ''); pon('comentarios', iCom >= 0 ? txt(f[iCom]) : '');
+        const nota = sinCab.map(i => txt(f[i])).filter(x => x && !/^[<>&lt;]+$/.test(x)).join(' · ');
+        pon('nota', nota);
+        if (iPago >= 0 && txt(f[iPago])) c.pago = si(f[iPago]);
+        if (iPsi >= 0 && txt(f[iPsi])) c.psicometrico = si(f[iPsi]);
+        if (iEnt >= 0 && txt(f[iEnt])) c.entrevista = si(f[iEnt]);
+        const k = this.hallarAsp(lista, folio, nombre);
+        if (k === -1) {
+          lista.push(Object.assign({id: nid('as'), folio, nombre}, this.partirNombre(nombre), c));
+          nuevos++;
+        } else {
+          lista[k] = Object.assign({}, lista[k], folio ? {folio} : {}, c);
+          act++;
+        }
+      });
+      return {d: Object.assign({}, d, {aspirantes: lista}), texto: 'Datos de aspirantes: ' + nuevos + ' nuevos, ' + act + ' actualizados'};
+    }
+
+    if (tipo === 'prop') {
+      const iAs = col(c => has(c, 'asistencia'));
+      const iCal = col(c => has(c, 'calificacion', 'promedio'));
+      let iSeg = col(c => has(c, 'seguimiento', 'observacion', 'comentario', 'nota'));
+      if (iSeg === -1) iSeg = cab.findIndex((c, i) => !c && i > iNom);
+      filasDatos.forEach(f => {
+        const nombre = txt(f[iNom]), folio = iFol >= 0 ? txt(f[iFol]) : '';
+        const c = {};
+        if (iAs >= 0 && txt(f[iAs])) c.asistencias = txt(f[iAs]);
+        if (iCal >= 0 && txt(f[iCal])) c.califProp = txt(f[iCal]);
+        if (iSeg >= 0 && txt(f[iSeg])) c.seguimiento = txt(f[iSeg]);
+        const k = this.hallarAsp(lista, folio, nombre);
+        if (k === -1) {
+          lista.push(Object.assign({id: nid('as'), folio, nombre}, this.partirNombre(nombre), c)); nuevos++;
+        } else { lista[k] = Object.assign({}, lista[k], c); act++; }
+      });
+      return {d: Object.assign({}, d, {aspirantes: lista}), texto: 'Curso propedéutico: ' + act + ' actualizados' + (nuevos ? ', ' + nuevos + ' nuevos' : '')};
+    }
+
+    // Trabajo social: se guarda la ficha completa, con etiquetas únicas.
+    const etiquetas = [], usadas = {};
+    let contexto = '';
+    crudo.forEach((c, i) => {
+      if (!c) { etiquetas.push(''); return; }
+      const n = this.normalizaTexto(c);
+      let et = c.replace(/\s+/g, ' ').trim();
+      if (usadas[this.normalizaTexto(et)] && contexto) et = et + ' (' + contexto + ')';
+      usadas[this.normalizaTexto(et)] = true;
+      etiquetas.push(et);
+      if (/padre|madre|familiar/.test(n)) contexto = n.replace(/^nombre (del|de la|de) /, '').replace(/^tienes algun /, '').slice(0, 32);
+    });
+    filasDatos.forEach(f => {
+      const nombre = txt(f[iNom]);
+      const k = this.hallarAsp(lista, '', nombre);
+      if (k === -1) { sinVinculo.push(nombre); return; }
+      const ts = [];
+      etiquetas.forEach((et, i) => {
+        if (!et || i === iNom) return;
+        const v = /fecha/i.test(et) ? this.fechaExcel(f[i]) : txt(f[i]);
+        if (v) ts.push({k: et, v});
+      });
+      const a = Object.assign({}, lista[k], {ts});
+      const val = (...p) => (ts.filter(x => p.some(q => this.normalizaTexto(x.k).indexOf(q) === 0))[0] || {}).v || '';
+      if (!a.area) a.area = val('licenciatura');
+      if (!a.telefono) a.telefono = val('telefono celular');
+      if (!a.correo) a.correo = val('correo');
+      lista[k] = a; act++;
+    });
+    return {d: Object.assign({}, d, {aspirantes: lista, tsSinVinculo: sinVinculo}),
+      texto: 'Trabajo social: ' + act + ' estudios vinculados' + (sinVinculo.length ? ', ' + sinVinculo.length + ' sin coincidencia' : '')};
+  }
+
+  importarAdmision = async (e) => {
+    const archivo = e.target.files && e.target.files[0];
+    e.target.value = '';
+    if (!archivo) return;
+    const tab = this.state.admTab || 'evaluacion';
+    const pedida = tab === 'datos' ? 'datos' : tab === 'prop' ? 'prop' : tab === 'ts' ? 'ts' : 'todo';
+    if (!this.puedeEditarAhora('admision')) { this.setState({admImportAviso: this.motivoBloqueo('admision'), admImportError:true}); return; }
+    this.setState({admImportAviso:'Leyendo ' + archivo.name + '…', admImportError:false});
+    try {
+      const hojas = {};
+      if (/\.csv$/i.test(archivo.name)) {
+        hojas[pedida === 'todo' ? 'datos' : pedida] = this.partirCSV(await this.leerTextoCSV(archivo));
+      } else {
+        const XLSX = await this.cargarLectorXLSX();
+        const libro = XLSX.read(await archivo.arrayBuffer(), {type:'array'});
+        const buscar = (...p) => libro.SheetNames.find(n => p.some(x => this.normalizaTexto(n).indexOf(x) !== -1));
+        const nombres = {datos: buscar('datos de aspirantes', 'datos'), prop: buscar('propedeutico'), ts: buscar('trabajo social')};
+        if (pedida !== 'todo' && !nombres[pedida]) nombres[pedida] = libro.SheetNames[0];
+        const leer = n => XLSX.utils.sheet_to_json(libro.Sheets[n], {header:1, defval:'', raw:true});
+        (pedida === 'todo' ? ['datos', 'prop', 'ts'] : [pedida]).forEach(t => { if (nombres[t]) hojas[t] = leer(nombres[t]); });
+      }
+      let d = this.admDatos();
+      const partes = [];
+      ['datos', 'prop', 'ts'].forEach(t => {
+        if (!hojas[t]) return;
+        const r = this.leerHojaAdm(t, hojas[t], d);
+        d = r.d; partes.push(r.texto);
+      });
+      if (!partes.length) throw new Error('el libro no trae las hojas «DATOS DE ASPIRANTES», «CURSO PROPEDÉUTICO» ni «TRABAJO SOCIAL»');
+      this.cambiarAdm(() => d, 'Libro cargado');
+      this.setState({admImportAviso: partes.join(' · ') + '.', admImportError:false});
+    } catch (err) {
+      console.error(err);
+      this.setState({admImportAviso:'No se pudo cargar: ' + (err && err.message || err) + '.', admImportError:true});
+    }
+  };
+
+  abrirNuevoAdm = () => this.setState(s => ({admNuevoAbierto: !s.admNuevoAbierto, admNuevo:{}, admNuevoAviso:'', admNuevoError:false}));
+
+  agregarAspirante = () => {
+    const n = this.state.admNuevo || {};
+    const t = k => (n[k] || '').trim();
+    if (!t('apellidos') && !t('nombres')) { this.setState({admNuevoAviso:'Escribe al menos los apellidos o los nombres.', admNuevoError:true}); return; }
+    const d = this.admDatos();
+    if (t('folio') && d.aspirantes.some(a => this.normalizaTexto(a.folio) === this.normalizaTexto(t('folio')))) {
+      this.setState({admNuevoAviso:'El folio ' + t('folio') + ' ya está registrado.', admNuevoError:true}); return;
+    }
+    const a = {id: nid('as'), folio:t('folio'), apellidos:t('apellidos'), nombres:t('nombres'), telefono:t('telefono'),
+      correo:t('correo'), tutor:t('tutor'), telTutor:t('telTutor'), area:t('area')};
+    a.nombre = this.nombreAsp(a);
+    const ok = this.cambiarAdm(x => Object.assign({}, x, {aspirantes: x.aspirantes.concat([a])}), 'Aspirante agregado');
+    if (ok) this.setState({admNuevo:{area: a.area}, admNuevoAviso: a.nombre + ' agregado. Puedes capturar el siguiente.', admNuevoError:false});
+  };
+
+  quitarAspirante = () => {
+    const id = this.state.admFicha;
+    if (this.state.admQuitar !== id) { this.setState({admQuitar:id}); return; }
+    const ok = this.cambiarAdm(d => Object.assign({}, d, {aspirantes: d.aspirantes.filter(a => a.id !== id)}), 'Aspirante quitado');
+    if (ok) this.setState({admFicha:'', admQuitar:''});
+  };
+
+  valsAdmision() {
+    const s = this.state;
+    if (s.vista !== 'admision') return {esAdmision:false};
+    const d = this.admDatos();
+    const editable = this.puedeEditarAhora('admision');
+    const tab = s.admTab || 'evaluacion';
+    const busca = this.normalizaTexto((s.admBusca || '').trim());
+    const tsv = (a, ...p) => ((a.ts || []).filter(x => p.some(q => this.normalizaTexto(x.k).indexOf(q) === 0))[0] || {}).v || '';
+
+    let lista = d.aspirantes.map(a => ({a, p: this.puntajeAdm(a, d)}));
+    if (busca) lista = lista.filter(x => this.normalizaTexto([x.a.folio, this.nombreAsp(x.a), x.a.nombre, x.a.correo, x.a.area].join(' ')).indexOf(busca) !== -1);
+    const orden = s.admOrden || 'folio';
+    lista.sort((x, y) => orden === 'puntaje' ? y.p.total - x.p.total
+      : orden === 'nombre' ? (x.a.apellidos || x.a.nombre || '').localeCompare(y.a.apellidos || y.a.nombre || '', 'es')
+      : String(x.a.folio || '~').localeCompare(String(y.a.folio || '~'), 'es', {numeric:true}));
+
+    const sn = v => v ? 'Sí' : 'No';
+    const cl = v => v ? 'btn-primary' : 'btn-ghost';
+    const filas = lista.map(({a, p}) => {
+      const up = c => this.cambiarAspirante(a.id, c);
+      return {
+        folio: a.folio || '—', nombre: this.nombreAsp(a), area: a.area || '',
+        textoPago: sn(a.pago), clasePago: cl(a.pago), altPago: () => up({pago: !a.pago}),
+        textoPsico: sn(a.psicometrico), clasePsico: cl(a.psicometrico), altPsico: () => up({psicometrico: !a.psicometrico}),
+        textoEntrevista: sn(a.entrevista), claseEntrevista: cl(a.entrevista), altEntrevista: () => up({entrevista: !a.entrevista}),
+        exani: a.exani || '', setExani: e => up({exani: e.target.value.replace(/[^\d.]/g, '')}),
+        asistencias: a.asistencias || '', setAsistencias: e => up({asistencias: e.target.value.replace(/\D/g, '')}),
+        califProp: a.califProp || '', setCalifProp: e => up({califProp: e.target.value.replace(/[^\d.,]/g, '')}),
+        comentarios: a.comentarios || '', setComentarios: e => up({comentarios: e.target.value}),
+        seguimiento: a.seguimiento || '', setSeguimiento: e => up({seguimiento: e.target.value}),
+        puntaje: p.total.toFixed(1),
+        barra: Math.round(p.total) + '%',
+        tonoBarra: p.total >= 70 ? '#2e7d32' : p.total >= 40 ? 'var(--color-accent)' : '#b3261e',
+        avance: p.hechos + ' de 6 procesos',
+        telefono: a.telefono || '', correo: a.correo || '', tutor: a.tutor || '', telTutor: a.telTutor || '',
+        exaniEstatus: a.exaniEstatus || '', fecha: a.fecha || '', horaEntrevista: a.horaEntrevista || '',
+        horaPsico: a.horaPsico || '', nota: a.nota || '',
+        tsLic: tsv(a, 'licenciatura'), tsEdad: tsv(a, 'edad'), tsPrepa: tsv(a, 'nombre de la preparatoria'),
+        tsPromedio: tsv(a, 'promedio'), tsVive: tsv(a, 'con quien vives'), tsMedio: tsv(a, 'por que medio', '¿por que medio'),
+        textoTs: (a.ts || []).length ? 'Cargado' : 'Pendiente', claseTs: (a.ts || []).length ? 'tag-accent' : 'tag-neutral',
+        verFicha: () => this.setState({admFicha: a.id, admQuitar:''})
+      };
+    });
+
+    const TABS = [
+      {id:'evaluacion', nombre:'Aspirantes'}, {id:'datos', nombre:'Datos de aspirantes'},
+      {id:'prop', nombre:'Curso propedéutico'}, {id:'ts', nombre:'Trabajo social'}
+    ];
+    const CARGA = {
+      evaluacion: ['Carga inicial del libro de admisión', 'Suba el libro completo (.xlsx). Se leen las hojas «DATOS DE ASPIRANTES», «CURSO PROPEDÉUTICO» y «TRABAJO SOCIAL»; se enlazan por folio y, si no hay, por nombre. Volver a subirlo actualiza sin duplicar.'],
+      datos: ['Cargar datos de aspirantes', 'Hoja «DATOS DE ASPIRANTES»: folio, nombre, teléfono, correo, tutor, estatus EXANI-II, estatus de pago, fecha y horarios. Los aspirantes que no existan se agregan.'],
+      prop: ['Cargar curso propedéutico', 'Hoja «CURSO PROPEDÉUTICO»: folio y nombre, más asistencias, calificación y la columna de seguimiento si las trae.'],
+      ts: ['Cargar estudios de Trabajo social', 'Hoja «TRABAJO SOCIAL»: la ficha completa de cada aspirante. Se enlaza por nombre con los aspirantes ya registrados.']
+    }[tab];
+
+    const nuevo = s.admNuevo || {};
+    const campoNuevo = (k, etiqueta, pista) => ({etiqueta, pista, valor: nuevo[k] || '',
+      set: e => this.setState({admNuevo: Object.assign({}, this.state.admNuevo, {[k]: e.target.value})})});
+
+    const ficha = d.aspirantes.filter(a => a.id === s.admFicha)[0];
+    const pf = ficha ? this.puntajeAdm(ficha, d) : null;
+    const campoFicha = (k, etiqueta) => ({etiqueta, valor: ficha[k] || '', set: e => {
+      const c = {[k]: e.target.value};
+      this.cambiarAspirante(ficha.id, c);
+    }});
+    const setNum = (k, lim) => e => this.cambiarAdm(x => Object.assign({}, x, {[k]: e.target.value.replace(/\D/g, '').slice(0, lim)}), 'Parámetros actualizados');
+    const pesoProc = (100 / this.PROCESOS_ADM.length).toFixed(1);
+
+    return {
+      esAdmision: true,
+      admAnio: String((s.admDatos || {}).anio != null ? s.admDatos.anio : d.anio),
+      admSesiones: String((s.admDatos || {}).sesiones != null ? s.admDatos.sesiones : d.sesiones),
+      admExMin: String((s.admDatos || {}).exaniMin != null ? s.admDatos.exaniMin : d.exaniMin),
+      admExMax: String((s.admDatos || {}).exaniMax != null ? s.admDatos.exaniMax : d.exaniMax),
+      setAdmAnio: setNum('anio', 4), setAdmSesiones: setNum('sesiones', 3),
+      setAdmExMin: setNum('exaniMin', 4), setAdmExMax: setNum('exaniMax', 4),
+      admBloqueado: !editable,
+      admAviso: s.admAviso || 'Sin capturar',
+      admAvisoColor: s.admError ? '#b3261e' : 'var(--color-accent-700)',
+      admTabs: TABS.map(t => ({nombre: t.nombre, clase: t.id === tab ? 'btn-primary' : 'btn-secondary',
+        abrir: () => this.setState({admTab: t.id, admImportAviso:''})})),
+      admTabEval: tab === 'evaluacion', admTabDatos: tab === 'datos', admTabProp: tab === 'prop', admTabTs: tab === 'ts',
+      admCargaTitulo: CARGA[0], admCargaTexto: CARGA[1],
+      admImportar: this.importarAdmision,
+      admImportAviso: s.admImportAviso || 'Ningún archivo cargado en esta sesión.',
+      admImportColor: s.admImportError ? '#b3261e' : (s.admImportAviso ? '#2e7d32' : 'var(--color-neutral-500, #777)'),
+      admPesoTexto: this.PROCESOS_ADM.length + ' procesos, cada uno vale ' + pesoProc + ' % del puntaje: ' + this.PROCESOS_ADM.join(', ') + '. EXANI-II se escala entre el mínimo y el máximo; las asistencias contra las sesiones del curso; la calificación del propedéutico sobre 10.',
+      admBusca: s.admBusca || '', setAdmBusca: e => this.setState({admBusca: e.target.value}),
+      admOrden: orden, setAdmOrden: e => this.setState({admOrden: e.target.value}),
+      admNota: busca ? filas.length + ' de ' + d.aspirantes.length + ' aspirantes' : d.aspirantes.length + ' aspirantes',
+      admFilas: filas,
+      admVacio: d.aspirantes.length === 0,
+      admDispTabla: filas.length ? 'block' : 'none',
+      admNuevoAbierto: !!s.admNuevoAbierto,
+      abrirNuevoAdm: this.abrirNuevoAdm,
+      textoNuevoAdm: s.admNuevoAbierto ? 'Cerrar captura' : 'Agregar aspirante',
+      claseNuevoAdm: s.admNuevoAbierto ? 'btn-secondary' : 'btn-primary',
+      admNuevoCampos: [
+        campoNuevo('folio', 'Folio', 'LMG26001'), campoNuevo('apellidos', 'Apellidos', 'Pérez López'),
+        campoNuevo('nombres', 'Nombres', 'Ana María'), campoNuevo('telefono', 'Teléfono', '312 000 0000'),
+        campoNuevo('correo', 'Correo electrónico', 'nombre@correo.com'), campoNuevo('tutor', 'Nombre de tutor', ''),
+        campoNuevo('telTutor', 'Teléfono de tutor', ''), campoNuevo('area', 'Licenciatura', 'Medicina General')
+      ],
+      agregarAspirante: this.agregarAspirante,
+      admNuevoAviso: s.admNuevoAviso || 'El aspirante pasa a Trayectoria escolar con grupo «Aspirante».',
+      admNuevoColor: s.admNuevoError ? '#b3261e' : (s.admNuevoAviso ? '#2e7d32' : 'var(--color-neutral-500, #777)'),
+      admHaySinVinculo: d.tsSinVinculo.length > 0,
+      admSinVinculo: d.tsSinVinculo.length + ' estudio(s) de Trabajo social no coinciden por nombre con ningún aspirante: ' + d.tsSinVinculo.slice(0, 12).join(', ') + (d.tsSinVinculo.length > 12 ? '…' : '') + '. Corrija el nombre en la ficha del aspirante o en el Excel y vuelva a cargar la hoja.',
+      admFichaAbierta: !!ficha,
+      cerrarFichaAdm: () => this.setState({admFicha:'', admQuitar:''}),
+      fichaFolio: ficha ? (ficha.folio || 'Sin folio') : '',
+      fichaNombre: ficha ? this.nombreAsp(ficha) : '',
+      fichaPuntaje: pf ? pf.total.toFixed(1) : '',
+      fichaAvance: pf ? pf.hechos + ' de 6 procesos' : '',
+      fichaCampos: ficha ? [
+        campoFicha('folio', 'Folio'), campoFicha('apellidos', 'Apellidos'), campoFicha('nombres', 'Nombres'),
+        campoFicha('area', 'Licenciatura'), campoFicha('telefono', 'Teléfono'), campoFicha('correo', 'Correo electrónico'),
+        campoFicha('tutor', 'Nombre de tutor'), campoFicha('telTutor', 'Teléfono de tutor'),
+        campoFicha('exaniEstatus', 'Estatus EXANI-II'), campoFicha('fecha', 'Fecha'),
+        campoFicha('horaEntrevista', 'Horario de entrevista'), campoFicha('horaPsico', 'Horario de psicométrico'),
+        campoFicha('nota', 'Nota')
+      ] : [],
+      fichaTs: ficha ? (ficha.ts || []) : [],
+      fichaSinTs: !!ficha && !(ficha.ts || []).length,
+      fichaDispTs: ficha && (ficha.ts || []).length ? 'block' : 'none',
+      fichaEditable: editable,
+      quitarAspirante: this.quitarAspirante,
+      textoQuitarAsp: s.admQuitar && s.admQuitar === s.admFicha ? 'Confirmar: quitar aspirante' : 'Quitar aspirante'
+    };
+  }
+
   valsTrayectoria() {
     const s = this.state;
     if (s.vista !== 'trayectoria') return {esTrayectoria:false};
@@ -4874,6 +5624,22 @@ class Component extends DCLogic {
 
     return Object.assign(base, {
       detGen: 'Generación ' + gen.anio + (gen.cerrada ? ' · cerrada' : ''),
+      trayNuevoAbierto: !!s.trayNuevoAbierto,
+      abrirNuevoTray: this.abrirNuevoTray,
+      textoNuevoTray: s.trayNuevoAbierto ? 'Cerrar captura' : 'Agregar estudiante',
+      claseNuevoTray: s.trayNuevoAbierto ? 'btn-secondary' : 'btn-primary',
+      agregarAlumnoTray: this.agregarAlumnoTray,
+      tnMat: (s.trayNuevo || {}).mat || '', tnApellidos: (s.trayNuevo || {}).apellidos || '',
+      tnNombres: (s.trayNuevo || {}).nombres || '', tnGrupo: (s.trayNuevo || {}).grupo || '',
+      tnEstatus: (s.trayNuevo || {}).estatus || 'activo',
+      tnGrupoPista: s.trayEtapaSel === 'aspirantes' ? 'Aspirante' : '3A',
+      setTnMat: e => this.setState({trayNuevo: Object.assign({}, s.trayNuevo, {mat: e.target.value})}),
+      setTnApellidos: e => this.setState({trayNuevo: Object.assign({}, s.trayNuevo, {apellidos: e.target.value})}),
+      setTnNombres: e => this.setState({trayNuevo: Object.assign({}, s.trayNuevo, {nombres: e.target.value})}),
+      setTnGrupo: e => this.setState({trayNuevo: Object.assign({}, s.trayNuevo, {grupo: e.target.value})}),
+      setTnEstatus: e => this.setState({trayNuevo: Object.assign({}, s.trayNuevo, {estatus: e.target.value})}),
+      tnAviso: s.trayNuevoAviso || 'La matrícula no debe repetirse dentro de la etapa.',
+      tnAvisoColor: s.trayNuevoError ? '#b3261e' : (s.trayNuevoAviso ? '#2e7d32' : 'var(--color-neutral-500, #777)'),
       detEtapa: etapaDef.nombre,
       detResumen: et.alumnos.length ? et.alumnos.length + ' alumno(s)' : 'sin cargar',
       cerrarDetalle: this.cerrarDetalleTray,
@@ -5178,6 +5944,7 @@ class Component extends DCLogic {
       this.cargarModulosActivos();
       this.cargarPublicado();
       this.cargarTrayectoria();
+      this.cargarAdmision();
       this.cargarContabilidad();
       this.cargarExpedienteDocente();
         this.cargarExpedientes();
@@ -6393,9 +7160,10 @@ class Component extends DCLogic {
       esReingreso: s.vista === 'reingreso',
       esPadron: s.vista === 'padron',
       esIdentidad: s.vista === 'identidad',
-      esObra: ['inicio','carga','calendario','usuarios','reingreso','padron','identidad','instituciones','trayectoria','contabilidad','expediente','publicas'].indexOf(s.vista) === -1,
+      esObra: ['inicio','admision','carga','calendario','usuarios','reingreso','padron','identidad','instituciones','trayectoria','contabilidad','expediente','publicas'].indexOf(s.vista) === -1,
       ...this.valsExpediente(),
       ...this.valsTrayectoria(),
+      ...this.valsAdmision(),
       ...this.valsContabilidad(),
       ...this.valsInicio(),
       ...this.valsIdentidad(),
