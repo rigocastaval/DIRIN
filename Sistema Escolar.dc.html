@@ -570,15 +570,15 @@ a:hover{color:var(--color-accent-700)}
                         </sc-if>
                       </div>
 
-                      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;padding-left:2px">
+                      <div style="display:flex;flex-direction:column;gap:0;margin-top:10px;border:1.5px solid var(--color-divider);max-width:640px">
                         <sc-for list="{{ i.programas }}" as="p" hint-placeholder-count="2">
-                          <span style="display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--color-divider);padding:3px 4px 3px 9px;font-size:12px">
-                            <span style="font-family:var(--font-mono, monospace);font-weight:700;color:{{ p.colorSigla }}">{{ p.sigla }}</span>
-                            <span>{{ p.nombre }}</span>
+                          <div style="display:flex;align-items:center;gap:10px;padding:6px 8px 6px 10px;border-bottom:1px solid var(--color-divider);font-size:13px">
+                            <input class="input" value="{{ p.sigla }}" onChange="{{ p.setSigla }}" onBlur="{{ p.guardarSigla }}" disabled="{{ p.noEditable }}" placeholder="Siglas" title="Siglas del programa: generan folios y se vinculan con la matrícula" style="flex:none;width:74px;padding:3px 6px;font-size:12px;font-family:var(--font-mono, monospace);font-weight:700;color:{{ p.colorSigla }}">
+                            <span style="flex:1;min-width:0">{{ p.nombre }}</span>
                             <sc-if value="{{ p.puedeQuitar }}" hint-placeholder-val="{{ false }}">
-                              <button onClick="{{ p.quitar }}" title="Quitar este programa de la institución" style="border:0;background:none;cursor:pointer;font-size:13px;line-height:1;padding:2px 4px;color:var(--color-neutral-600)" style-hover="color:var(--color-accent)">×</button>
+                              <button onClick="{{ p.quitar }}" title="Quitar este programa de la institución" style="border:0;background:none;cursor:pointer;font-size:15px;line-height:1;padding:2px 6px;color:var(--color-neutral-600)" style-hover="color:var(--color-accent)">×</button>
                             </sc-if>
-                          </span>
+                          </div>
                         </sc-for>
                         <sc-if value="{{ i.sinProgramas }}" hint-placeholder-val="{{ false }}">
                           <span class="text-muted" style="font-size:12px">Sin programas académicos · agrégalos para que aparezcan en el Programador de horarios</span>
@@ -1158,9 +1158,9 @@ a:hover{color:var(--color-accent-700)}
             </div>
             <div style="border:2px solid var(--color-divider);padding:14px 16px;min-width:0">
               <h6 style="margin:0 0 5px">Licenciaturas por siglas</h6>
-              <p class="text-muted" style="margin:0 0 10px;font-size:12.5px;line-height:1.55">Las letras iniciales del folio indican la licenciatura. Las siglas se definen en Sistema → Instituciones al dar de alta cada programa.</p>
+              <p class="text-muted" style="margin:0 0 10px;font-size:12.5px;line-height:1.55">Clic en un plan para ver sólo sus aspirantes; clic otra vez para ver todos. Las siglas se definen en Sistema → Instituciones.</p>
               <sc-for list="{{ admSiglas }}" as="x" hint-placeholder-count="3">
-                <div style="display:flex;align-items:center;gap:10px;padding:5px 0;border-bottom:1px solid var(--color-divider);font-size:12.5px">
+                <div onClick="{{ x.filtrar }}" title="{{ x.tituloFiltro }}" style="display:flex;align-items:center;gap:10px;padding:5px 8px;margin:0 -8px;border-bottom:1px solid var(--color-divider);font-size:12.5px;cursor:pointer;background:{{ x.fondo }};color:{{ x.color }}" style-hover="background:var(--color-neutral-100)">
                   <span style="font-family:var(--font-mono, monospace);font-weight:700;min-width:44px">{{ x.sigla }}</span>
                   <span style="flex:1;min-width:0">{{ x.nombre }}</span>
                   <span class="text-muted" style="font-size:11px">{{ x.cuenta }}</span>
@@ -1331,35 +1331,6 @@ a:hover{color:var(--color-accent-700)}
                       <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider)"><input class="input" inputmode="decimal" value="{{ a.entrev }}" onChange="{{ a.setEntrev }}" disabled="{{ a.bloqPuntaje }}" placeholder="0–10" style="padding:3px 6px;font-size:12px;width:58px"></td>
                       <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider);font-family:var(--font-heading);font-weight:800;font-size:14px;white-space:nowrap">{{ a.puntaje }}</td>
                       <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider);width:30%"><input class="input" value="{{ a.seguimiento }}" onChange="{{ a.setSeguimiento }}" disabled="{{ admBloqueado }}" placeholder="Llamadas, avisos, observaciones" style="padding:3px 6px;font-size:12px;width:100%"></td>
-                    </tr>
-                  </sc-for>
-                </tbody>
-              </table>
-            </div>
-          </sc-if>
-
-          <sc-if value="{{ admTabTs }}" hint-placeholder-val="{{ false }}">
-            <sc-if value="{{ admHaySinVinculo }}" hint-placeholder-val="{{ false }}">
-              <div style="border-left:3px solid #b3261e;background:var(--color-neutral-100);padding:11px 14px;margin-bottom:14px;font-size:12.5px;line-height:1.5">{{ admSinVinculo }}</div>
-            </sc-if>
-            <div style="border:2px solid var(--color-divider);overflow-x:auto;display:{{ admDispTabla }}">
-              <table style="border-collapse:collapse;width:100%;min-width:1100px;font-size:12.5px">
-                <thead><tr>
-                  <th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Aspirante</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Licenciatura</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Edad</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Preparatoria</th>
-                  <th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Promedio</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Vive con</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Se enteró por</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Estudio</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap"></th>
-                </tr></thead>
-                <tbody>
-                  <sc-for list="{{ admFilas }}" as="a" hint-placeholder-count="8">
-                    <tr>
-                      <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider);min-width:190px"><button onClick="{{ a.verFicha }}" style="border:0;background:none;padding:0;cursor:pointer;font:inherit;font-weight:600;color:var(--color-text);text-align:left;text-decoration:underline;text-decoration-color:var(--color-divider);text-underline-offset:3px">{{ a.nombre }}</button></td>
-                      <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider)">{{ a.tsLic }}</td>
-                      <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider)">{{ a.tsEdad }}</td>
-                      <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider)">{{ a.tsPrepa }}</td>
-                      <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider)">{{ a.tsPromedio }}</td>
-                      <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider)">{{ a.tsVive }}</td>
-                      <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider)">{{ a.tsMedio }}</td>
-                      <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider);white-space:nowrap"><span class="tag {{ a.claseTs }}" style="font-size:9.5px">{{ a.textoTs }}</span></td>
-                      <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider);text-align:right;white-space:nowrap"><button class="btn btn-secondary" style="font-size:11px;padding:3px 10px" onClick="{{ a.verFicha }}">Ver</button></td>
                     </tr>
                   </sc-for>
                 </tbody>
@@ -5629,6 +5600,10 @@ class Component extends DCLogic {
       admSiglasDesc: Object.keys(desc).map(sg => ({sigla: sg,
         texto: desc[sg].length + ' aspirante(s) con siglas que el sistema no conoce: ' + desc[sg].slice(0, 8).join(', ') + (desc[sg].length > 8 ? '…' : '') + '. Actualice el listado de licenciaturas o corrija la matrícula.'})),
       admSiglas: Object.keys(sig).sort().map(sg => ({sigla: sg, nombre: sig[sg], cuenta: cuenta(sg) + ' asp.',
+        filtrar: () => this.setState({admFiltroSigla: s.admFiltroSigla === sg ? '' : sg}),
+        tituloFiltro: s.admFiltroSigla === sg ? 'Quitar el filtro' : 'Ver sólo los aspirantes de ' + sig[sg],
+        fondo: s.admFiltroSigla === sg ? 'color-mix(in srgb, var(--color-accent) 14%, transparent)' : 'transparent',
+        color: s.admFiltroSigla === sg ? 'var(--color-accent-700)' : 'var(--color-text)',
         puedeQuitar: editable, quitar: this.quitarSigla(sg), textoQuitar: s.admQuitarSigla === sg ? 'Confirmar' : 'Quitar'})),
       admSiglaNueva: s.admSiglaNueva || '', admLicNueva: s.admLicNueva || '',
       setAdmSiglaNueva: e => this.setState({admSiglaNueva: e.target.value.toUpperCase()}),
@@ -6249,6 +6224,7 @@ class Component extends DCLogic {
     const tsv = (a, ...p) => ((a.ts || []).filter(x => p.some(q => this.normalizaTexto(x.k).indexOf(q) === 0))[0] || {}).v || '';
 
     let lista = d.aspirantes.map(a => ({a, p: this.puntajeAdm(a, d)}));
+    if (s.admFiltroSigla) lista = lista.filter(x => this.siglaDe(x.a.folio) === s.admFiltroSigla);
     if (busca) lista = lista.filter(x => this.normalizaTexto([x.a.folio, this.nombreAsp(x.a), x.a.nombre, x.a.correo, x.a.area].join(' ')).indexOf(busca) !== -1);
     const orden = s.admOrden || 'folio';
     lista.sort((x, y) => orden === 'puntaje' ? y.p.total - x.p.total
@@ -6293,7 +6269,7 @@ class Component extends DCLogic {
 
     const TABS = [
       {id:'evaluacion', nombre:'Aspirantes'}, {id:'datos', nombre:'Datos de aspirantes'},
-      {id:'prop', nombre:'Puntaje'}, {id:'ts', nombre:'Trabajo social'}
+      {id:'prop', nombre:'Puntaje'}
     ];
     const CARGA = {
       evaluacion: ['Carga inicial del libro de admisión', 'Suba el libro completo (.xlsx). Se leen las hojas «DATOS DE ASPIRANTES», «CURSO PROPEDÉUTICO» y «TRABAJO SOCIAL»; se enlazan por folio y, si no hay, por nombre. Volver a subirlo actualiza sin duplicar.'],
@@ -6335,7 +6311,7 @@ class Component extends DCLogic {
       admPesoTexto: 'Total 100 puntos: EXANI-II 50, curso propedéutico 20, examen psicométrico 20 y entrevista 10. Sin pago marcado no se captura ni se suma nada. EXANI-II se captura en su escala (máximo 1300) y se convierte a 50 puntos.',
       admBusca: s.admBusca || '', setAdmBusca: e => this.setState({admBusca: e.target.value}),
       admOrden: orden, setAdmOrden: e => this.setState({admOrden: e.target.value}),
-      admNota: busca ? filas.length + ' de ' + d.aspirantes.length + ' aspirantes' : d.aspirantes.length + ' aspirantes',
+      admNota: (busca || s.admFiltroSigla) ? filas.length + ' de ' + d.aspirantes.length + ' aspirantes' + (s.admFiltroSigla ? ' · plan ' + s.admFiltroSigla : '') : d.aspirantes.length + ' aspirantes',
       admFilas: filas,
       admVacio: d.aspirantes.length === 0,
       admDispTabla: filas.length ? 'block' : 'none',
@@ -6919,7 +6895,20 @@ class Component extends DCLogic {
         detalle: (i.programas || []).length + ' programa(s)',
         programas: (i.programas || []).map(p => ({
           nombre: (p && p.nombre) || String(p || ''),
-          sigla: (p && p.siglas) || 'sin siglas', colorSigla: p && p.siglas ? 'var(--color-accent-700)' : '#b3261e',
+          sigla: s.instSiglaEdit && s.instSiglaEdit.id === ((p && p.id) || p) ? s.instSiglaEdit.v : ((p && p.siglas) || ''),
+          colorSigla: p && p.siglas ? 'var(--color-accent-700)' : '#b3261e',
+          noEditable: !this.puedeProgramasInst(i.id),
+          setSigla: e => this.setState({instSiglaEdit: {id: (p && p.id) || p, v: e.target.value.replace(/[^A-Za-zÑñ]/g, '').toUpperCase().slice(0, 6)}}),
+          guardarSigla: () => {
+            const ed = this.state.instSiglaEdit;
+            if (!ed || ed.id !== ((p && p.id) || p)) return;
+            this.setState({instSiglaEdit: null});
+            const actual = (p && p.siglas) || '';
+            if (ed.v === actual) return;
+            const lista = i.programas || [];
+            if (ed.v && lista.some(q => q !== p && q && String(q.siglas || '').toUpperCase() === ed.v)) { this.setState({instAvisoFila: i.id, avisoProg: 'Las siglas ' + ed.v + ' ya pertenecen a otro programa.'}); return; }
+            this.escribirProgramasInst(i.id, lista.map(q => q === p ? Object.assign({}, typeof q === 'object' ? q : {id: 'pg' + Date.now(), nombre: String(q)}, {siglas: ed.v}) : q));
+          },
           puedeQuitar: this.puedeProgramasInst(i.id),
           quitar: () => this.quitarProgramaInst(i.id, (p && p.id) || p)
         })),
@@ -7057,11 +7046,22 @@ class Component extends DCLogic {
       id: r.id, nombre: r.nombre || '',
       colores: this.leerJson(r.colores, ['#7a1f2b','#2C5F8A','#D9A441']),
       logo: r.logo || '', membrete: r.membrete || '', membreteH: r.membrete_h || '',
-      programas: this.leerJson(r.programas, [])
+      programas: this.siglasPorOmision(this.leerJson(r.programas, []))
     }));
     let activa = preferida || this.state.instActiva;
     if (!lista.some(i => i.id === activa)) activa = lista.length ? lista[0].id : '';
     this.setState({instituciones: lista}, () => this.entrarInstitucion(activa, true));
+  }
+
+  // Programas dados de alta antes de que existieran las siglas: se les asignan por nombre.
+  siglasPorOmision(programas) {
+    const REGLAS = [[/medicina/, 'LMG'], [/fisioterapia/, 'LF'], [/entrenamiento/, 'LED']];
+    return (programas || []).map(p => {
+      if (!p || typeof p !== 'object' || p.siglas) return p;
+      const n = this.normalizaTexto(p.nombre);
+      const r = REGLAS.filter(x => x[0].test(n))[0];
+      return r ? Object.assign({}, p, {siglas: r[1]}) : p;
+    });
   }
 
   leerJson(txt, porDefecto) {
