@@ -262,6 +262,7 @@ a:hover{color:var(--color-accent-700)}
                 <option value="{{ p.nombre }}">{{ p.nombre }}</option>
               </sc-for>
             </select>
+            <button onClick="{{ irElegirPrograma }}" title="Ver todos los planes de estudio" style="border:0;background:none;padding:0 0 0 6px;cursor:pointer;font-size:10.5px;color:var(--color-accent-700);text-decoration:underline">cambiar</button>
           </sc-if>
         </div>
       </div>
@@ -2476,6 +2477,26 @@ Vázquez Ledesma, Iván	MG-25-0092" style="width:100%;font-family:var(--font-bod
 
       </sc-if>
 
+      <sc-if value="{{ esElegirPrograma }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:48px 28px 64px;max-width:980px">
+          <h6 style="margin:0 0 6px" class="text-muted">{{ epInstitucion }}</h6>
+          <h2 style="margin:0 0 8px">¿En qué plan de estudios va a trabajar?</h2>
+          <p class="text-muted" style="margin:0 0 26px;font-size:14px;max-width:62ch;text-wrap:pretty">Todo lo que verá en el sistema (inicio, admisión, trayectoria, indicadores, contabilidad y fichas) corresponde al plan que elija. Puede cambiarlo en cualquier momento desde la barra superior.</p>
+          <sc-if value="{{ epSinProgramas }}" hint-placeholder-val="{{ false }}">
+            <div style="border:2px dashed var(--color-divider);padding:26px;font-size:13px" class="text-muted">Esta institución no tiene planes de estudio registrados. Agréguelos en Sistema → Instituciones.</div>
+          </sc-if>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr));gap:14px">
+            <sc-for list="{{ epProgramas }}" as="p" hint-placeholder-count="3">
+              <button onClick="{{ p.elegir }}" style="text-align:left;border:2px solid {{ p.borde }};background:var(--color-bg);padding:18px 20px;cursor:pointer;display:flex;flex-direction:column;gap:8px;color:var(--color-text)" style-hover="border-color:var(--color-accent)">
+                <span style="font-family:var(--font-mono, monospace);font-weight:800;font-size:13px;color:var(--color-accent-700)">{{ p.siglas }}</span>
+                <span style="font-family:var(--font-heading);font-weight:800;font-size:18px;line-height:1.2">{{ p.nombre }}</span>
+                <span class="text-muted" style="font-size:12px">{{ p.detalle }}</span>
+              </button>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
       <sc-if value="{{ esObra }}" hint-placeholder-val="{{ false }}">
         <div style="padding:28px 28px 56px">
           <h6 style="margin:0 0 4px" class="text-muted">{{ areaActual }}</h6>
@@ -3003,7 +3024,7 @@ class Component extends DCLogic {
     idNombre:'', idColores: COLORES_POR_DEFECTO.slice(), idLogo:'', idMembrete:'', idMembreteH:'',
     idProgramas:[], idNuevoPrograma:'', idAviso:'Sin capturar', idAvisoError:false,
     permisos:{}, permisoUsuario:'', avisoPermisos:'', edClave:'', edClave2:'',
-    instituciones:[], instActiva:'', miInstitucion:'', misProgramas:[], programaActivo:'',
+    instituciones:[], instActiva:'', miInstitucion:'', misProgramas:[], programaActivo:'', programaElegido:false,
     instAlta:'', instProgNuevo:'', instSiglaNueva:'', instAvisoFila:'', avisoProg:'',
     tsFichas:{}, fiSel:'', fiAspId:'', fiBusca:'', fiGen:'', fiAviso:'', fiError:false,
     trayGens:[], trayGenSel:'', trayEtapaSel:'', trayAviso:'Sin capturar', trayAvisoError:false,
@@ -3412,7 +3433,7 @@ class Component extends DCLogic {
       area: fila.area || '', usuario:user.email || '', pinHash: fila.pin_hash || '',
       miInstitucion: fila.institucion_id || '',
       misProgramas: (this.leerJson(fila.programas, []) || []).filter(Boolean),
-      programaActivo: (this.leerJson(fila.programas, []) || [])[0] || ''});
+      programaActivo: '', programaElegido: false});
     let preferida = fila.institucion_id || '';
     if (fila.rol === 'super') {
       try { preferida = localStorage.getItem('dirin-institucion') || preferida; } catch (e) {}
@@ -4281,7 +4302,7 @@ class Component extends DCLogic {
 
   valsInicio() {
     const hoy = new Date();
-    const gens = this.generacionesTray();
+    const gens = this.trayProg();
     const MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
     const activos = lista => lista.filter(a => (a.estatus || 'activo') === 'activo' || a.estatus === 'rezago').length;
 
@@ -4528,7 +4549,7 @@ class Component extends DCLogic {
   // Alumnos que cursan el ciclo dado, con el prefijo de pago que les corresponde.
   padronDelCiclo(cicloId) {
     const lista = [];
-    this.generacionesTray().forEach(g => {
+    this.trayProg().forEach(g => {
       const n = this.semestreEnCiclo(g.anio, cicloId);
       if (!n) return;
       this.etapaDe(g, this.etapaParaSemestre(n)).alumnos.forEach(a => lista.push({
@@ -4832,7 +4853,7 @@ class Component extends DCLogic {
     const s = this.state;
     if (s.vista !== 'contabilidad') return {esContabilidad:false};
     const hoy = new Date();
-    const todas = this.generacionesTray();
+    const todas = this.trayProg();
     const gens = todas.filter(g => Object.keys(g.etapas || {}).length);
     const normGrupo = g => this.normalizaTexto(g).replace(/[^a-z0-9]/g, '').toUpperCase();
 
@@ -5107,7 +5128,7 @@ class Component extends DCLogic {
       marcarAlCorriente: () => this.marcarAlCorriente(porMarcar),
       contCruceNota: 'El archivo se cruza por matrícula; los alumnos del ciclo que no vengan en la hoja quedan al corriente.'
     };
-    const admC = this.admDatos();
+    const admC = this.admVista();
     if (admC.aspirantes.length) ret.contGrupos = ret.contGrupos.concat([{valor:'ADM', nombre:'Proceso de admisión ' + admC.anio}]);
     return s.contGrupoSel === 'ADM' ? Object.assign(ret, this.contAdmision(editable, filtroEstado, busca)) : ret;
   }
@@ -5116,7 +5137,7 @@ class Component extends DCLogic {
      proceso y la inscripción. La inscripción sólo se habilita si en Admisión está
      marcada la casilla «Admitido». Los pagos se guardan en el registro del aspirante. */
   contAdmision(editable, filtroEstado, busca) {
-    const d = this.admDatos();
+    const d = this.admVista();
     const COLOR = {pagado:'#1f9d55', encurso:'#e0a300', pendiente:'var(--color-neutral-300, #d3d6da)'};
     let pagados = 0, pendientes = 0;
     const filas = d.aspirantes.slice()
@@ -5227,7 +5248,10 @@ class Component extends DCLogic {
     const gens = this.generacionesTray().map(g => {
       if (g.id !== s.trayGenSel) return g;
       const etapas = Object.assign({}, g.etapas || {});
-      delete etapas[s.trayEtapaSel];
+      // Con un plan activo sólo se vacían sus alumnos; los de otros planes se conservan.
+      const otros = s.programaActivo ? this.etapaDe(g, s.trayEtapaSel).alumnos.filter(a => !this.enPrograma(a.mat)) : [];
+      if (otros.length) etapas[s.trayEtapaSel] = {alumnos: otros, actualizado: new Date().toISOString()};
+      else delete etapas[s.trayEtapaSel];
       return Object.assign({}, g, {etapas});
     });
     this.setState({trayVaciar:false});
@@ -5339,7 +5363,8 @@ class Component extends DCLogic {
     const gens = this.generacionesTray().map(g => {
       if (g.id !== s.trayGenSel) return g;
       const etapas = Object.assign({}, g.etapas || {});
-      etapas[s.trayEtapaSel] = {alumnos, actualizado: new Date().toISOString()};
+      const otros = s.programaActivo ? this.etapaDe(g, s.trayEtapaSel).alumnos.filter(a => !this.enPrograma(a.mat)) : [];
+      etapas[s.trayEtapaSel] = {alumnos: otros.concat(alumnos), actualizado: new Date().toISOString()};
       return Object.assign({}, g, {etapas});
     });
     const sinMat = alumnos.filter(a => !a.mat).length;
@@ -5361,7 +5386,7 @@ class Component extends DCLogic {
       this.setState({modulosActivos: mapa}, () => {
         // Si el módulo abierto quedó apagado para esta cuenta, se regresa al inicio.
         const v = this.state.vista;
-        if (this.state.perfil !== 'super' && v !== 'inicio' && !this.moduloActivo(v)) {
+        if (this.state.perfil !== 'super' && v !== 'inicio' && v !== 'programa' && !this.moduloActivo(v)) {
           this.setState({vista:'inicio', areaVista:''});
         }
       });
@@ -5459,6 +5484,91 @@ class Component extends DCLogic {
   MAX_ADM = {exani:50, prop:20, psico:20, entrev:10};
   SIGLAS_DEF = {LMG:'Licenciatura en Medicina General', LED:'Licenciatura en Entrenamiento Deportivo', LF:'Licenciatura en Fisioterapia'};
 
+  /* ================= Plan de estudios activo =================
+     Todo lo que se ve se limita al programa elegido. El programa de un alumno o
+     aspirante sale de las siglas de su matrícula/folio; si las siglas no se
+     reconocen, se toma el primer programa de la institución. Los filtros son sólo
+     de lectura: al guardar se sigue escribiendo el libro completo. */
+  programasDisponibles(programas) {
+    const s = this.state;
+    const nombres = (programas || s.idProgramas || []).map(p => (p && p.nombre) || String(p || '')).filter(Boolean);
+    if (s.perfil === 'super' || !(s.misProgramas || []).length) return nombres;
+    const mios = nombres.filter(n => s.misProgramas.indexOf(n) !== -1);
+    return mios.length ? mios : nombres;
+  }
+
+  programaDe(mat, area) {
+    const progs = (this.state.idProgramas || []).map(p => (p && p.nombre) || String(p || '')).filter(Boolean);
+    if (!progs.length) return '';
+    const mapa = this.siglasProgramas() || this.SIGLAS_DEF;
+    const sg = this.siglaDe(mat);
+    const n = this.normalizaTexto;
+    const porNombre = x => progs.filter(p => n.call(this, p) === n.call(this, x))[0];
+    if (sg && mapa[sg]) { const p = porNombre(mapa[sg]); if (p) return p; }
+    if (area) { const p = porNombre(area); if (p) return p; }
+    return progs[0];
+  }
+
+  enPrograma(mat, area) {
+    const pa = this.state.programaActivo;
+    return !pa || this.programaDe(mat, area) === pa;
+  }
+
+  trayProg() {
+    const gens = this.generacionesTray(), s = this.state;
+    if (!s.programaActivo) return gens;
+    const c = this._trayProgCache;
+    if (c && c.gens === gens && c.pa === s.programaActivo && c.progs === s.idProgramas) return c.out;
+    const out = gens.map(g => {
+      const etapas = {};
+      Object.keys(g.etapas || {}).forEach(k => {
+        const e = g.etapas[k] || {};
+        etapas[k] = Object.assign({}, e, {alumnos: (Array.isArray(e.alumnos) ? e.alumnos : []).filter(a => this.enPrograma(a.mat))});
+      });
+      return Object.assign({}, g, {etapas});
+    });
+    this._trayProgCache = {gens, pa: s.programaActivo, progs: s.idProgramas, out};
+    return out;
+  }
+
+  admVista() {
+    const d = this.admDatos();
+    if (!this.state.programaActivo) return d;
+    return Object.assign({}, d, {aspirantes: d.aspirantes.filter(a => this.enPrograma(a.folio, a.area))});
+  }
+
+  elegirPrograma = nombre => {
+    try { localStorage.setItem('dirin-programa-' + this.state.instActiva, nombre); } catch (e) {}
+    this.setState({programaActivo: nombre, programaElegido: true, indLic: null, admNuevo: {},
+      vista: this.state.vista === 'programa' ? 'inicio' : this.state.vista},
+      () => { this.cargarExpedientes(); this.cargarPadron(); this.avisarCandado(); });
+  };
+
+  valsElegirPrograma() {
+    const s = this.state;
+    const inst = this.institucionActual ? this.institucionActual() : null;
+    const progs = this.programasDisponibles();
+    const mapa = {};
+    (s.idProgramas || []).forEach(p => { if (p && p.nombre) mapa[p.nombre] = p.siglas || ''; });
+    const gens = this.generacionesTray(), adm = this.admDatos();
+    return {
+      esElegirPrograma: s.vista === 'programa',
+      epInstitucion: inst ? inst.nombre : '',
+      epSinProgramas: !progs.length,
+      epProgramas: progs.map(p => {
+        const alumnos = {};
+        gens.forEach(g => Object.keys(g.etapas || {}).filter(k => k !== 'aspirantes' && k !== 'aceptados').forEach(k =>
+          this.etapaDe(g, k).alumnos.forEach(a => { if (this.programaDe(a.mat) === p) alumnos[this.normalizaTexto(a.mat) || this.claveNombre(a.apellidos + ' ' + a.nombres)] = 1; })));
+        const asp = adm.aspirantes.filter(a => this.programaDe(a.folio, a.area) === p).length;
+        const nAl = Object.keys(alumnos).length;
+        return {nombre: p, siglas: mapa[p] || '—',
+          detalle: (nAl || asp) ? nAl + ' alumno(s) en trayectoria · ' + asp + ' aspirante(s) ' + adm.anio : 'Sin información registrada',
+          borde: p === s.programaActivo ? 'var(--color-accent)' : 'var(--color-divider)',
+          elegir: () => this.elegirPrograma(p)};
+      })
+    };
+  }
+
   // Las siglas vienen de los programas registrados en Sistema → Instituciones.
   siglasProgramas() {
     const m = {};
@@ -5498,7 +5608,7 @@ class Component extends DCLogic {
     const desc = {};
     d.aspirantes.forEach(a => { const sg = this.siglaDe(a.folio); if (sg && !sig[sg]) (desc[sg] = desc[sg] || []).push(a.folio); });
     const cuenta = sg => d.aspirantes.filter(a => this.siglaDe(a.folio) === sg).length;
-    const gen = this.generacionesTray().filter(g => g.anio === d.anio)[0];
+    const gen = this.trayProg().filter(g => g.anio === d.anio)[0];
     const sem1 = gen ? this.etapaDe(gen, 'sem1').alumnos.filter(a => (a.estatus || 'activo') === 'activo' || a.estatus === 'rezago') : [];
     const licMat = m => sig[this.siglaDe(m)] || '';
     const pct = (a, b) => b ? (a / b * 100).toFixed(1) + ' %' : 'sin datos';
@@ -5919,7 +6029,7 @@ class Component extends DCLogic {
     const n = this.state.admNuevo || {};
     const t = k => (n[k] || '').trim();
     const d = this.admDatos();
-    const sg = t('sigla');
+    const sg = n.sigla != null ? t('sigla') : (((this.state.idProgramas || []).filter(p => p && p.nombre === this.state.programaActivo)[0] || {}).siglas || '');
     if (!sg || !d.siglas[sg]) { this.setState({admNuevoAviso:'Primero elija el programa al que aspira.', admNuevoError:true}); return; }
     if (!t('apellidos') || !t('nombres')) { this.setState({admNuevoAviso:'Escriba apellidos y nombres.', admNuevoError:true}); return; }
     const folio = this.siguienteFolio(sg, d);
@@ -5979,9 +6089,9 @@ class Component extends DCLogic {
   claveFicha(mat, nombre) { return this.normalizaTexto(mat) || 'n:' + this.claveNombre(nombre); }
 
   listaFichas() {
-    const d = this.admDatos();
+    const d = this.admVista();
     const mapa = {};
-    this.generacionesTray().forEach(g => ETAPAS_TRAY.forEach((et, idx) => this.etapaDe(g, et.id).alumnos.forEach(a => {
+    this.trayProg().forEach(g => ETAPAS_TRAY.forEach((et, idx) => this.etapaDe(g, et.id).alumnos.forEach(a => {
       const nombre = ((a.nombres || '') + ' ' + (a.apellidos || '')).trim();
       const k = this.claveFicha(a.mat, nombre);
       const prev = mapa[k];
@@ -6027,7 +6137,7 @@ class Component extends DCLogic {
   valsFichaId() {
     const s = this.state;
     if (s.vista !== 'fichaid') return {esFichaId:false};
-    const d = this.admDatos();
+    const d = this.admVista();
     const editable = this.puedeEditarAhora('fichaid');
     const fichas = s.tsFichas || {};
     const todos = this.listaFichas();
@@ -6085,9 +6195,9 @@ class Component extends DCLogic {
       fiTextoNuevo: s.admNuevoAbierto ? 'Cerrar registro' : 'Registrar aspirante',
       fiClaseNuevo: s.admNuevoAbierto ? 'btn-secondary' : 'btn-primary',
       fiProgOpc: siglasOpc, fiSinProgramas: !this.siglasProgramas(),
-      fiNuevoSigla: nuevo.sigla || '',
+      fiNuevoSigla: nuevo.sigla != null ? nuevo.sigla : (((s.idProgramas || []).filter(p => p && p.nombre === s.programaActivo)[0] || {}).siglas || ''),
       setFiNuevoSigla: e => this.setState({admNuevo: Object.assign({}, this.state.admNuevo, {sigla: e.target.value})}),
-      fiNuevoFolio: this.siguienteFolio(nuevo.sigla || '', d),
+      fiNuevoFolio: this.siguienteFolio(nuevo.sigla != null ? nuevo.sigla : (((s.idProgramas || []).filter(p => p && p.nombre === s.programaActivo)[0] || {}).siglas || ''), this.admDatos()),
       admNuevoAbierto: !!s.admNuevoAbierto, abrirNuevoAdm: this.abrirNuevoAdm, agregarAspirante: this.agregarAspirante,
       admNuevoCampos: [['apellidos','Apellidos','Pérez López'],['nombres','Nombres','Ana María'],['telefono','Teléfono','312 000 0000'],
         ['correo','Correo electrónico','nombre@correo.com'],['tutor','Nombre de tutor',''],['telTutor','Teléfono de tutor','']].map(([k, etiqueta, pista]) => ({etiqueta, pista, valor: nuevo[k] || '',
@@ -6132,7 +6242,7 @@ class Component extends DCLogic {
   valsAdmision() {
     const s = this.state;
     if (s.vista !== 'admision') return {esAdmision:false};
-    const d = this.admDatos();
+    const d = this.admVista();
     const editable = this.puedeEditarAhora('admision');
     const tab = s.admTab || 'evaluacion';
     const busca = this.normalizaTexto((s.admBusca || '').trim());
@@ -6276,7 +6386,7 @@ class Component extends DCLogic {
      elegida en el desplegable; el comparativo inferior es general. */
   embudoAdm(d, lic) {
     const sig = d.siglas;
-    const gen = this.generacionesTray().filter(g => g.anio === d.anio)[0];
+    const gen = this.trayProg().filter(g => g.anio === d.anio)[0];
     const sem1 = gen ? this.etapaDe(gen, 'sem1').alumnos : [];
     const licMat = m => sig[this.siglaDe(m)] || '';
     const asp = d.aspirantes.filter(a => !lic || this.licAsp(a, sig) === lic);
@@ -6324,7 +6434,7 @@ class Component extends DCLogic {
   valsIndicadores() {
     const s = this.state;
     if (s.vista !== 'indicadores') return {esIndicadores:false};
-    const todas = this.generacionesTray().slice().sort((a, b) => b.anio - a.anio);
+    const todas = this.trayProg().slice().sort((a, b) => b.anio - a.anio);
     const conDatos = todas.filter(g => Object.keys(g.etapas || {}).some(k => this.etapaDe(g, k).alumnos.length));
     const gen = todas.filter(g => g.id === s.ixGen)[0] || conDatos[0] || todas[0];
     const tab = s.ixTab || 'ingreso';
@@ -6350,7 +6460,7 @@ class Component extends DCLogic {
     };
     const promedio = (fn) => { const v = historia.map(x => fn(x.m)).filter(x => x != null); return v.length ? v.reduce((a, b) => a + b, 0) / v.length : null; };
 
-    const adm = this.admDatos();
+    const adm = this.admVista();
     const usaAdm = adm.aspirantes.length > 0 && adm.anio === gen.anio;
     const sig = adm.siglas;
     const lics = Object.keys(sig).map(k => sig[k]).filter((v, i, arr) => arr.indexOf(v) === i);
@@ -6498,7 +6608,8 @@ class Component extends DCLogic {
   valsTrayectoria() {
     const s = this.state;
     if (s.vista !== 'trayectoria') return {esTrayectoria:false};
-    const gens = this.generacionesTray();
+    const gens = this.trayProg();
+    const gensTodas = this.generacionesTray();
     const editable = this.puedeEditarAhora('trayectoria');
     const cuenta = (g, id) => this.etapaDe(g, id).alumnos.length;
     const activos = (g, id) => this.etapaDe(g, id).alumnos
@@ -6638,8 +6749,8 @@ class Component extends DCLogic {
     const usaVia = idx <= 1;
 
     const buscaTray = this.normalizaTexto((s.trayBusca || '').trim());
-    const coincideTray = a => !buscaTray ||
-      this.normalizaTexto([a.mat, a.apellidos, a.nombres, a.grupo].filter(Boolean).join(' ')).indexOf(buscaTray) !== -1;
+    const coincideTray = a => this.enPrograma(a.mat) && (!buscaTray ||
+      this.normalizaTexto([a.mat, a.apellidos, a.nombres, a.grupo].filter(Boolean).join(' ')).indexOf(buscaTray) !== -1);
     const alumnosFiltrados = et.alumnos.filter(coincideTray);
 
     const columnas = [{nombre:'Matrícula'},{nombre:'Apellidos'},{nombre:'Nombres'}]
@@ -6708,7 +6819,7 @@ class Component extends DCLogic {
         : et.alumnos.length + ' alumno(s) en la lista',
       detSinResultados: !!(s.trayBusca || '').trim() && alumnosFiltrados.length === 0,
       dispTablaTray: alumnosFiltrados.length === 0 ? 'none' : 'block',
-      detAlumnos: et.alumnos.map((a, i) => ({
+      detAlumnos: this.etapaDe(gensTodas.filter(g => g.id === gen.id)[0] || gen, s.trayEtapaSel).alumnos.map((a, i) => ({
         mat: a.mat || '—', apellidos: a.apellidos || '', nombres: a.nombres || '',
         grupo: a.grupo || '—',
         coincide: coincideTray(a),
@@ -6842,13 +6953,13 @@ class Component extends DCLogic {
       estiloLogoBarra: {width:'26px', height:'26px', flex:'none',
         backgroundImage:'url("' + (inst && inst.logo ? inst.logo : '') + '")',
         backgroundSize:'contain', backgroundPosition:'center', backgroundRepeat:'no-repeat'},
-      programaEnUso: s.programaActivo || 'Todos los programas',
-      variosProgramas: s.misProgramas.length > 1,
-      unSoloPrograma: s.misProgramas.length <= 1,
-      misProgramasOpc: s.misProgramas.map(p => ({nombre:p})),
+      programaEnUso: s.programaActivo || (this.programasDisponibles().length ? 'Elija un plan de estudios' : 'Sin programas registrados'),
+      variosProgramas: this.programasDisponibles().length > 1,
+      unSoloPrograma: this.programasDisponibles().length <= 1,
+      misProgramasOpc: (s.programaActivo ? [] : [{nombre:''}]).concat(this.programasDisponibles().map(p => ({nombre:p}))),
       programaActivo: s.programaActivo,
-      setProgramaActivo: e => this.setState({programaActivo: e.target.value},
-        () => { this.cargarExpedientes(); this.cargarPadron(); this.avisarCandado(); }),
+      setProgramaActivo: e => e.target.value && this.elegirPrograma(e.target.value),
+      irElegirPrograma: () => this.setState({vista:'programa', areaVista:''}),
       nvInstNombre: s.nvInstNombre,
       setNvInstNombre: e => this.setState({nvInstNombre:e.target.value}),
       crearInstitucion: this.crearInstitucion,
@@ -6963,13 +7074,20 @@ class Component extends DCLogic {
     if (!inst) { this.setState({instActiva:'', idAviso:'Sin institución'}); return; }
     try { localStorage.setItem('dirin-institucion', id); } catch (e) {}
     this.aplicarColores(inst.colores);
-    this.setState({
+    const cambia = id !== this.state.instActiva || !this.state.programaElegido;
+    const disp = this.programasDisponibles(inst.programas);
+    const prog = !cambia ? {} : disp.length === 1
+      ? {programaActivo: disp[0], programaElegido: true}
+      : disp.length > 1
+        ? {programaActivo: '', programaElegido: false, vista: 'programa', areaVista: ''}
+        : {programaActivo: '', programaElegido: true};
+    this.setState(Object.assign(prog, {
       instActiva: id,
       idNombre: inst.nombre, idColores: inst.colores,
       idLogo: inst.logo, idMembrete: inst.membrete, idMembreteH: inst.membreteH || '', idProgramas: inst.programas,
       idAviso: 'Al día', idAvisoError: false,
       avisoInst: callado ? this.state.avisoInst : 'Trabajando en ' + inst.nombre
-    }, () => {
+    }), () => {
       this.cargarPermisos();
       this.cargarModulosActivos();
       this.cargarPublicado();
@@ -7509,6 +7627,8 @@ class Component extends DCLogic {
      para que nadie deje la edición abierta al pasar de una cosa a otra. */
   navegar(cambios) {
     if (this.esPantallaChica()) cambios = Object.assign({}, cambios, {menuVisible:false});
+    // Sin plan de estudios elegido no se entra a ningún módulo.
+    if (!this.state.programaElegido && this.programasDisponibles().length > 1) cambios = Object.assign({}, cambios, {vista:'programa', areaVista:''});
     const cerrar = this.state.edicionHorarios ? {edicionHorarios:false, pidiendoPin:false,
       pinIntento:'', pinIntento2:'', pinAviso:''} : null;
     this.setState(Object.assign({}, cambios, cerrar), cerrar ? this.avisarCandado : undefined);
@@ -7522,8 +7642,8 @@ class Component extends DCLogic {
   // Ver el sistema como otro perfil sin cerrar la sesión. Sólo cambia lo que se
   // muestra: la cuenta y sus permisos en la base de datos no se tocan.
   alternarCambioPerfil = () => this.setState(s => ({cambioPerfil: !s.cambioPerfil}));
-  verComoPerfil = (id) => this.setState({perfil:id, cambioPerfil:false, vista:'inicio', areaVista:''});
-  volverAMiPerfil = () => this.setState(s => ({perfil: s.perfilReal || s.perfil, cambioPerfil:false, vista:'inicio', areaVista:''}));
+  verComoPerfil = (id) => this.setState(s => ({perfil:id, cambioPerfil:false, vista: s.programaElegido ? 'inicio' : 'programa', areaVista:''}));
+  volverAMiPerfil = () => this.setState(s => ({perfil: s.perfilReal || s.perfil, cambioPerfil:false, vista: s.programaElegido ? 'inicio' : 'programa', areaVista:''}));
 
   abrirMiCuenta = () => this.setState({miPanel:true, mcAviso:'', mcClave1:'', mcClave2:'', mcPin1:'', mcPin2:''});
   cerrarMiCuenta = () => this.setState({miPanel:false, mcAviso:''});
@@ -7614,7 +7734,7 @@ class Component extends DCLogic {
     this.setState({logged:false, demo:false, vista:'inicio', areaVista:'', clave:'',
       avisoInactividad:0, edicionHorarios:false, cuentas:[],
       pinHash:'', pidiendoPin:false, pinIntento:'', pinIntento2:'', pinAviso:'', miPanel:false,
-      instActiva:'', instituciones:[], misProgramas:[], programaActivo:'',
+      instActiva:'', instituciones:[], misProgramas:[], programaActivo:'', programaElegido:false,
       error: typeof motivo === 'string' ? motivo : ''});
   };
 
@@ -8201,11 +8321,12 @@ class Component extends DCLogic {
       esReingreso: s.vista === 'reingreso',
       esPadron: s.vista === 'padron',
       esIdentidad: s.vista === 'identidad',
-      esObra: ['inicio','admision','fichaid','indicadores','carga','calendario','usuarios','reingreso','padron','identidad','instituciones','trayectoria','contabilidad','expediente','publicas'].indexOf(s.vista) === -1,
+      esObra: ['programa','inicio','admision','fichaid','indicadores','carga','calendario','usuarios','reingreso','padron','identidad','instituciones','trayectoria','contabilidad','expediente','publicas'].indexOf(s.vista) === -1,
       ...this.valsExpediente(),
       ...this.valsTrayectoria(),
       ...this.valsAdmision(),
       ...this.valsFichaId(),
+      ...this.valsElegirPrograma(),
       ...this.valsIndicadores(),
       ...this.valsContabilidad(),
       ...this.valsInicio(),
