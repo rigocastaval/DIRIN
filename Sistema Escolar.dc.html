@@ -12,9 +12,13 @@
 <script src="_ds/broadsheet-eff7845e-49a2-4322-8552-fc9ff75a7900/_ds_bundle.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <style>
-html,body{margin:0;padding:0;height:100%}
+html,body{margin:0;padding:0;height:100%;background:#fff}
+:root{--color-bg:#ffffff !important;--color-surface:#ffffff !important}
 a:hover{color:var(--color-accent-700)}
 @keyframes girar{to{transform:rotate(360deg)}}
+@keyframes trTrazar{from{clip-path:inset(-20px var(--c0) -20px -20px)}to{clip-path:inset(-20px var(--c1) -20px -20px)}}
+@keyframes trEncender{from{opacity:0;transform:translate(-50%,-50%) scale(.2)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+@keyframes trAparecer{from{opacity:0;transform:translate(-50%,5px)}to{opacity:1;transform:translate(-50%,0)}}
 [data-solo-movil]{display:none}
 @media (max-width:880px){
   [data-movil-ocultar]{display:none !important}
@@ -103,7 +107,7 @@ a:hover{color:var(--color-accent-700)}
       <h1 style="margin:0;font-size:clamp(34px,6vw,56px);line-height:1.04;color:var(--color-bg);max-width:12ch">Toda la operación académica.</h1>
       <p style="margin:24px 0 0;font-size:16px;line-height:1.55;max-width:44ch;text-wrap:pretty">Dirección, admisión, coordinaciones, control escolar e indicadores. Cada perfil accede únicamente a los módulos que le corresponden.</p>
     </div>
-    <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.75">Ciclo 2026-A · {{ estadoConexion }}</div>
+    <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.75">Ciclo 2026-B · {{ estadoConexion }}</div>
   </div>
 </div>
 </sc-if>
@@ -210,7 +214,7 @@ a:hover{color:var(--color-accent-700)}
 <div style="min-height:100vh;display:flex;flex-direction:column;background:var(--color-bg)">
 
   <div style="background:var(--color-bg);border-bottom:2px solid var(--color-divider);position:sticky;top:0;z-index:40">
-    <div data-barra-sup style="display:flex;align-items:center;flex-wrap:wrap;row-gap:10px;gap:16px;padding:12px 24px">
+    <div data-barra-sup="" style="display:flex;align-items:center;flex-wrap:wrap;row-gap:8px;gap:16px;padding:9px 24px">
       <button onClick="{{ alternarMenu }}" title="{{ tituloMenu }}" aria-label="{{ tituloMenu }}" style="border:1.5px solid var(--color-divider);background:none;cursor:pointer;color:var(--color-text);width:34px;height:34px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;flex:none;padding:0" style-hover="{{ hoverMenu }}">
         <span style="height:2px;width:16px;background:currentColor;display:block"></span>
         <span style="height:2px;width:16px;background:currentColor;display:block"></span>
@@ -220,7 +224,7 @@ a:hover{color:var(--color-accent-700)}
         <div style="width:34px;height:34px;background:var(--color-accent);color:var(--color-bg);display:flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-weight:800;font-size:12px;letter-spacing:.04em">DI</div>
         <div style="line-height:1.15">
           <div style="font-family:var(--font-heading);font-weight:800;font-size:15px;letter-spacing:.06em">DIRIN</div>
-          <div data-movil-ocultar style="font-size:10px;text-transform:uppercase;letter-spacing:.1em" class="text-muted">Dirección Inteligente</div>
+          <div data-movil-ocultar="" style="font-size:10px;text-transform:uppercase;letter-spacing:.1em" class="text-muted">Dirección Inteligente</div>
         </div>
       </div>
 
@@ -267,18 +271,9 @@ a:hover{color:var(--color-accent-700)}
         </div>
       </div>
 
-      <div data-movil-ocultar style="margin-left:auto;display:flex;align-items:center;gap:10px">
-        <span style="width:8px;height:8px;background:{{ colorConexion }};flex:none"></span>
-        <span class="text-muted" style="font-size:11px;text-transform:uppercase;letter-spacing:.08em">{{ modoTexto }}</span>
-      </div>
-
-      <div style="display:flex;align-items:center;gap:10px">
-        <span data-movil-ocultar style="font-size:11px;text-transform:uppercase;letter-spacing:.09em" class="text-muted">Ciclo</span>
-        <select class="input" value="{{ cicloSelGlobal }}" onChange="{{ setCicloGlobal }}" style="padding:6px 10px;font-size:13px">
-          <sc-for list="{{ cicloOpciones }}" as="c" hint-placeholder-count="3">
-            <option value="{{ c.valor }}">{{ c.nombre }}</option>
-          </sc-for>
-        </select>
+      <div style="display:flex;align-items:center;gap:10px;margin-left:auto">
+        <span data-movil-ocultar="" style="font-size:11px;text-transform:uppercase;letter-spacing:.09em" class="text-muted">Ciclo</span>
+        <span style="font-family:var(--font-heading);font-weight:800;font-size:13px;white-space:nowrap">{{ cicloTextoGlobal }}</span>
       </div>
 
       <div style="display:flex;align-items:center;gap:9px;padding-left:16px;border-left:2px solid var(--color-divider)">
@@ -290,47 +285,51 @@ a:hover{color:var(--color-accent-700)}
             <svg width="14" height="17" viewBox="0 0 15 18" fill="none" aria-hidden="true"><path d="M3 8V5.5a4.5 4.5 0 0 1 9 0" stroke="currentColor" stroke-width="1.7"></path><rect x="1" y="8" width="13" height="9" fill="currentColor"></rect></svg>
           </sc-if>
         </button>
-        <span data-movil-ocultar style="font-family:var(--font-heading);font-weight:800;font-size:10.5px;text-transform:uppercase;letter-spacing:.09em;color:{{ colorCandado }};white-space:nowrap;line-height:1.2;max-width:96px">{{ leyendaCandado }}</span>
       </div>
 
-      <div style="display:flex;align-items:center;flex-wrap:wrap;row-gap:8px;gap:12px;padding-left:16px;border-left:2px solid var(--color-divider);margin-left:auto">
-        <div data-movil-ocultar style="text-align:left;line-height:1.25;flex:none">
-          <div style="font-size:13px;font-family:var(--font-heading);font-weight:800">{{ nombreUsuario }}</div>
-          <div style="font-size:10px;text-transform:uppercase;letter-spacing:.08em" class="text-muted">{{ nombrePerfil }}</div>
-        </div>
-        <div style="width:32px;height:32px;background:var(--color-text);color:var(--color-bg);display:flex;align-items:center;justify-content:center;font-size:12px;font-family:var(--font-heading);font-weight:800">{{ iniciales }}</div>
-        <sc-if value="{{ puedeCambiarPerfil }}" hint-placeholder-val="{{ false }}">
-          <div data-movil-ocultar style="position:relative;flex:none">
-            <button class="btn btn-ghost" onClick="{{ alternarCambioPerfil }}" title="Ver el sistema como otro perfil, sin cerrar la sesión">Cambiar de perfil</button>
-            <sc-if value="{{ cambioPerfilAbierto }}" hint-placeholder-val="{{ false }}">
-              <div style="position:absolute;top:calc(100% + 8px);right:0;z-index:60;background:var(--color-bg);border:2px solid var(--color-text);min-width:250px;box-shadow:0 10px 26px rgba(0,0,0,.16)">
-                <div style="padding:9px 12px;border-bottom:1.5px solid var(--color-divider);font-size:9.5px;text-transform:uppercase;letter-spacing:.09em;font-family:var(--font-heading);font-weight:800">Ver el sistema como</div>
-                <sc-for list="{{ perfilesVista }}" as="p" hint-placeholder-count="5">
-                  <button onClick="{{ p.elegir }}" style="width:100%;text-align:left;border:0;border-bottom:1px solid var(--color-divider);background:{{ p.bg }};padding:9px 12px;cursor:pointer;font-size:13px;font-family:var(--font-heading);font-weight:{{ p.peso }};display:flex;align-items:center;gap:8px" style-hover="background:color-mix(in srgb, var(--color-accent) 10%, transparent)">
-                    <span>{{ p.nombre }}</span>
-                    <span class="text-muted" style="margin-left:auto;font-size:10px;text-transform:uppercase;letter-spacing:.08em;font-weight:500">{{ p.nota }}</span>
-                  </button>
-                </sc-for>
-                <div class="text-muted" style="padding:9px 12px;font-size:11px;line-height:1.45">Sólo cambia lo que ves en pantalla. Tu cuenta y tus permisos siguen igual.</div>
-              </div>
-            </sc-if>
-          </div>
-        </sc-if>
+      <div style="display:flex;align-items:center;gap:12px;padding-left:16px;border-left:2px solid var(--color-divider)">
         <sc-if value="{{ simulandoPerfil }}" hint-placeholder-val="{{ false }}">
           <button class="btn btn-secondary" onClick="{{ volverAMiPerfil }}" style="font-size:12px" title="Regresar a tu propio perfil">Volver a {{ nombrePerfilReal }}</button>
         </sc-if>
-        <button data-movil-ocultar class="btn btn-ghost" onClick="{{ abrirMiCuenta }}" title="Cambiar tu contraseña o tu PIN">Mi cuenta</button>
-        <button class="btn btn-secondary" onClick="{{ salir }}">Salir</button>
+        <div style="position:relative;flex:none">
+          <button onClick="{{ alternarMenuCuenta }}" title="Mi cuenta" aria-label="Mi cuenta" style="width:32px;height:32px;border:0;padding:0;cursor:pointer;background:var(--color-text);color:var(--color-bg);display:flex;align-items:center;justify-content:center;font-size:12px;font-family:var(--font-heading);font-weight:800" style-hover="background:var(--color-accent)">{{ iniciales }}</button>
+          <sc-if value="{{ menuCuenta }}" hint-placeholder-val="{{ false }}">
+            <button onClick="{{ cerrarMenuCuenta }}" aria-label="Cerrar" style="position:fixed;inset:0;z-index:59;background:transparent;border:0;cursor:default"></button>
+            <div style="position:absolute;top:calc(100% + 8px);right:0;z-index:60;background:var(--color-bg);border:2px solid var(--color-text);min-width:260px;box-shadow:0 10px 26px rgba(0,0,0,.16)">
+              <div style="padding:10px 14px;border-bottom:1.5px solid var(--color-divider);font-size:9.5px;text-transform:uppercase;letter-spacing:.09em;font-family:var(--font-heading);font-weight:800">Mi cuenta</div>
+              <div style="padding:12px 14px;border-bottom:1.5px solid var(--color-divider);line-height:1.3">
+                <div style="font-size:13px;font-family:var(--font-heading);font-weight:800">{{ nombreUsuario }}</div>
+                <div style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;margin-top:2px" class="text-muted">{{ nombrePerfil }}</div>
+              </div>
+              <sc-if value="{{ puedeCambiarPerfil }}" hint-placeholder-val="{{ false }}">
+                <button onClick="{{ alternarCambioPerfil }}" title="Ver el sistema como otro perfil, sin cerrar la sesión" style="width:100%;text-align:left;border:0;border-bottom:1px solid var(--color-divider);background:none;cursor:pointer;padding:10px 14px;font-size:13px;font-family:var(--font-heading);font-weight:800;display:flex;align-items:center" style-hover="background:color-mix(in srgb, var(--color-accent) 10%, transparent)"><span>Cambiar de perfil</span><span style="margin-left:auto;font-size:8px">▼</span></button>
+                <sc-if value="{{ cambioPerfilAbierto }}" hint-placeholder-val="{{ false }}">
+                  <div style="background:var(--color-neutral-100);border-bottom:1px solid var(--color-divider)">
+                    <sc-for list="{{ perfilesVista }}" as="p" hint-placeholder-count="5">
+                      <button onClick="{{ p.elegir }}" style="width:100%;text-align:left;border:0;border-bottom:1px solid var(--color-divider);background:{{ p.bg }};padding:8px 14px 8px 24px;cursor:pointer;font-size:12.5px;font-family:var(--font-heading);font-weight:{{ p.peso }};display:flex;align-items:center;gap:8px" style-hover="background:color-mix(in srgb, var(--color-accent) 10%, transparent)">
+                        <span>{{ p.nombre }}</span>
+                        <span class="text-muted" style="margin-left:auto;font-size:10px;text-transform:uppercase;letter-spacing:.08em;font-weight:500">{{ p.nota }}</span>
+                      </button>
+                    </sc-for>
+                    <div class="text-muted" style="padding:8px 14px 8px 24px;font-size:11px;line-height:1.45">Sólo cambia lo que ves en pantalla. Tu cuenta y tus permisos siguen igual.</div>
+                  </div>
+                </sc-if>
+              </sc-if>
+              <button onClick="{{ abrirMiCuentaMenu }}" title="Cambiar tu contraseña o tu PIN" style="width:100%;text-align:left;border:0;border-bottom:1px solid var(--color-divider);background:none;cursor:pointer;padding:10px 14px;font-size:13px;font-family:var(--font-heading);font-weight:800" style-hover="background:color-mix(in srgb, var(--color-accent) 10%, transparent)">Contraseña y PIN</button>
+              <button onClick="{{ salir }}" style="width:100%;text-align:left;border:0;background:none;cursor:pointer;padding:10px 14px;font-size:13px;font-family:var(--font-heading);font-weight:800;color:#c8341f" style-hover="background:color-mix(in srgb, #c8341f 8%, transparent)">Salir</button>
+            </div>
+          </sc-if>
+        </div>
       </div>
     </div>
   </div>
 
-  <div data-rejilla style="display:grid;grid-template-columns:{{ columnasMenu }};align-items:start;flex:1">
+  <div data-rejilla="" style="display:grid;grid-template-columns:{{ columnasMenu }};align-items:start;flex:1">
 
     <sc-if value="{{ menuVisible }}" hint-placeholder-val="{{ true }}">
-    <button data-velo data-solo-movil onClick="{{ alternarMenu }}" aria-label="Cerrar el menú de módulos" style="display:none"></button>
-    <nav data-nav-modulos style="border-right:2px solid var(--color-divider);min-height:calc(100vh - 60px);padding:8px 0 40px;position:sticky;top:60px;align-self:start;max-height:calc(100vh - 60px);overflow:auto">
-      <div data-solo-movil style="border-bottom:2px solid var(--color-divider);padding:6px 0">
+    <button data-velo="" data-solo-movil="" onClick="{{ alternarMenu }}" aria-label="Cerrar el menú de módulos" style="display:none"></button>
+    <nav data-nav-modulos="" style="border-right:2px solid var(--color-divider);min-height:calc(100vh - 60px);padding:8px 0 40px;position:sticky;top:60px;align-self:start;max-height:calc(100vh - 60px);overflow:auto">
+      <div data-solo-movil="" style="border-bottom:2px solid var(--color-divider);padding:6px 0">
         <div class="text-muted" style="padding:4px 18px 8px;font-size:11px;line-height:1.35">{{ nombreUsuario }} · {{ nombrePerfil }}</div>
         <button onClick="{{ abrirMiCuenta }}" style="width:100%;text-align:left;border:0;background:none;cursor:pointer;padding:11px 18px;font-size:13px;font-family:var(--font-heading);font-weight:800;color:var(--color-accent-700)">Mi cuenta</button>
         <sc-if value="{{ puedeCambiarPerfil }}" hint-placeholder-val="{{ false }}">
@@ -366,10 +365,10 @@ a:hover{color:var(--color-accent-700)}
 
       <sc-for list="{{ areas }}" as="a" hint-placeholder-count="6">
         <div style="margin-top:14px;border-top:2px solid var(--color-divider)">
-          <div class="text-muted" style="font-size:10px;text-transform:uppercase;letter-spacing:.1em;font-family:var(--font-heading);font-weight:800;padding:9px 18px 6px">{{ a.nombre }}</div>
+          <div style="font-size:14px;text-transform:uppercase;letter-spacing:.08em;font-family:var(--font-heading);font-weight:800;padding:12px 18px 6px">{{ a.nombre }}</div>
           <sc-for list="{{ a.modulos }}" as="m" hint-placeholder-count="3">
             <div style="display:flex;align-items:stretch;border-left:3px solid {{ m.barra }};background:{{ m.bg }}">
-              <button onClick="{{ m.abrir }}" style="flex:1;min-width:0;text-align:left;border:0;background:none;color:{{ m.color }};padding:7px 8px 7px 15px;cursor:pointer;font-size:13.5px;font-weight:{{ m.peso }}" style-hover="background:color-mix(in srgb, var(--color-accent) 10%, transparent)">{{ m.nombre }}</button>
+              <button onClick="{{ m.abrir }}" style="flex:1;min-width:0;text-align:left;border:0;background:none;color:{{ m.color }};padding:7px 8px 7px 34px;cursor:pointer;font-size:13.5px;font-weight:{{ m.peso }}" style-hover="background:color-mix(in srgb, var(--color-accent) 10%, transparent)">{{ m.nombre }}</button>
               <sc-if value="{{ m.puedeAlternar }}" hint-placeholder-val="{{ false }}">
                 <button onClick="{{ m.alternar }}" title="{{ m.titulo }}" style="border:0;background:none;cursor:pointer;padding:0 16px 0 8px;display:flex;align-items:center;flex:none" style-hover="background:color-mix(in srgb, var(--color-accent) 14%, transparent)">
                   <span style="width:11px;height:11px;background:{{ m.tono }};display:block"></span>
@@ -385,7 +384,7 @@ a:hover{color:var(--color-accent-700)}
     </nav>
     </sc-if>
 
-    <main style="min-width:0">
+    <main ref="{{ refMain }}" style="min-width:0">
 
       <sc-if value="{{ esInicio }}" hint-placeholder-val="{{ true }}">
         <div style="padding:28px 28px 56px">
@@ -398,48 +397,42 @@ a:hover{color:var(--color-accent-700)}
           </div>
           <hr class="hr">
 
-          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:0;border:2px solid var(--color-divider);margin-bottom:20px">
+          <div style="margin-bottom:28px">
+            <h5 style="margin:0;padding:12px 0">Matrícula activa · etapa en curso</h5>
+            <div style="padding:18px;display:flex;justify-content:center">{{ pastelMatricula }}</div>
+            <div style="display:flex;gap:22px;flex-wrap:wrap;justify-content:center;padding:0 18px 16px;font-size:11.5px" class="text-muted">
+              <span>Anillo interior: semestre</span><span>Anillo exterior: grupo</span><span>Al final de cada línea: estudiantes del grupo</span>
+            </div>
+            <sc-if value="{{ sinBarras }}" hint-placeholder-val="{{ false }}">
+              <div class="text-muted" style="padding:0 18px 18px;font-size:12.5px;text-align:center">Todavía no hay bases de datos cargadas en Trayectoria escolar.</div>
+            </sc-if>
+          </div>
+
+          <div style="display:grid;grid-template-columns:minmax(0,1fr);gap:20px;margin-bottom:20px">
+            <div>
+              <h5 style="margin:0;padding:12px 0">Pendientes de la semana</h5>
+              <div style="padding:0 0 12px">
+                <sc-for list="{{ pendientes }}" as="p" hint-placeholder-count="4">
+                  <div onClick="{{ p.abrir }}" role="link" style="display:flex;align-items:center;gap:12px;padding:10px 0;cursor:pointer;transform-origin:left center;transition:transform .2s ease" style-hover="transform:scale(1.06)">
+                    <div style="flex:1;min-width:0;line-height:1.35">
+                      <div style="font-size:13.5px">{{ p.texto }}</div>
+                      <div class="text-muted" style="font-size:11px;text-transform:uppercase;letter-spacing:.07em">{{ p.area }}</div>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </div>
+
+          <h5 style="margin:8px 0 10px">Indicadores principales</h5>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px">
             <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="6">
-              <div style="padding:18px 20px;border-right:2px solid var(--color-divider);background:var(--color-bg)">
+              <div style="padding:18px 20px;text-align:center">
                 <h6 style="margin:0" class="text-muted">{{ k.etiqueta }}</h6>
                 <div style="font-family:var(--font-heading);font-weight:800;font-size:38px;line-height:1.05;letter-spacing:-.02em;margin:10px 0 6px">{{ k.valor }}</div>
                 <div style="font-size:12px;color:{{ k.tono }}">{{ k.nota }}</div>
               </div>
             </sc-for>
-          </div>
-
-          <div style="display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:20px">
-            <div style="border:2px solid var(--color-divider)">
-              <h5 style="margin:0;padding:12px 18px;border-bottom:2px solid var(--color-divider)">Matrícula activa por generación · etapa en curso</h5>
-              <div style="padding:22px 18px;display:flex;align-items:flex-end;gap:12px;height:250px">
-                <sc-for list="{{ barras }}" as="b" hint-placeholder-count="8">
-                  <div style="flex:1;display:flex;flex-direction:column;align-items:stretch;justify-content:flex-end;height:100%;gap:8px">
-                    <div style="font-size:12px;font-family:var(--font-heading);font-weight:800">{{ b.valor }}</div>
-                    <div style="width:100%;background:var(--color-accent);height:{{ b.altura }}"></div>
-                    <div style="font-size:11.5px;font-family:var(--font-heading);font-weight:800">{{ b.etiqueta }}</div>
-                    <div class="text-muted" style="font-size:10.5px;letter-spacing:.05em;text-transform:uppercase">{{ b.sub }}</div>
-                  </div>
-                </sc-for>
-              </div>
-              <sc-if value="{{ sinBarras }}" hint-placeholder-val="{{ false }}">
-                <div class="text-muted" style="padding:0 18px 18px;font-size:12.5px">Todavía no hay bases de datos cargadas en Trayectoria escolar.</div>
-              </sc-if>
-            </div>
-
-            <div style="border:2px solid var(--color-divider)">
-              <h5 style="margin:0;padding:12px 18px;border-bottom:2px solid var(--color-divider)">Pendientes de la semana</h5>
-              <div style="padding:0 18px 12px">
-                <sc-for list="{{ pendientes }}" as="p" hint-placeholder-count="4">
-                  <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--color-divider)">
-                    <div style="flex:1;min-width:0;line-height:1.35">
-                      <div style="font-size:13.5px">{{ p.texto }}</div>
-                      <div class="text-muted" style="font-size:11px;text-transform:uppercase;letter-spacing:.07em">{{ p.area }}</div>
-                    </div>
-                    <button class="btn btn-ghost" onClick="{{ p.abrir }}">Abrir</button>
-                  </div>
-                </sc-for>
-              </div>
-            </div>
           </div>
         </div>
       </sc-if>
@@ -447,24 +440,17 @@ a:hover{color:var(--color-accent-700)}
       <sc-if value="{{ esCarga }}" hint-placeholder-val="{{ false }}">
         <div style="height:calc(100vh - 60px);display:flex;flex-direction:column">
           <div style="display:flex;align-items:center;gap:12px;padding:12px 24px;border-bottom:2px solid var(--color-divider)">
-            <button onClick="{{ alternarCandado }}" title="{{ ayudaCandado }}" style="border:1.5px solid currentColor;background:none;cursor:pointer;color:{{ colorCandado }};width:34px;height:34px;display:flex;align-items:center;justify-content:center;flex:none;padding:0" style-hover="{{ hoverCandado }}">
-              <sc-if value="{{ edicionBloqueada }}" hint-placeholder-val="{{ true }}">
-                <svg width="15" height="18" viewBox="0 0 15 18" fill="none" aria-hidden="true"><path d="M3 8V5.5a4.5 4.5 0 0 1 9 0V8" stroke="currentColor" stroke-width="1.7"></path><rect x="1" y="8" width="13" height="9" fill="currentColor"></rect></svg>
-              </sc-if>
-              <sc-if value="{{ edicionAbierta }}" hint-placeholder-val="{{ false }}">
-                <svg width="15" height="18" viewBox="0 0 15 18" fill="none" aria-hidden="true"><path d="M3 8V5.5a4.5 4.5 0 0 1 9 0" stroke="currentColor" stroke-width="1.7"></path><rect x="1" y="8" width="13" height="9" fill="currentColor"></rect></svg>
-              </sc-if>
-            </button>
+            
             <div style="line-height:1.2">
               <h6 style="margin:0 0 2px" class="text-muted">Coordinación Académica</h6>
               <div style="font-family:var(--font-heading);font-weight:800;font-size:16px">Carga horaria · Programador de horarios</div>
             </div>
             <div style="margin-left:auto;display:flex;align-items:center;gap:12px">
-              <span style="font-family:var(--font-heading);font-weight:800;font-size:12.5px;text-transform:uppercase;letter-spacing:.1em;color:{{ colorCandado }};border:2px solid currentColor;padding:5px 12px;white-space:nowrap">{{ leyendaCandado }}</span>
+              
               <a class="btn btn-secondary" href="programador-horarios.html" target="_blank">Abrir en pestaña</a>
             </div>
           </div>
-          <iframe src="programador-horarios.html" title="Programador de horarios" ref="{{ refHorarios }}" onLoad="{{ avisarCandado }}" style="flex:1;width:100%;border:0;background:var(--color-bg)"></iframe>
+          <iframe src="programador-horarios.html" title="Programador de horarios" ref="{{ refHorarios }}" style="flex:1;width:100%;border:0;background:var(--color-bg)"></iframe>
         </div>
       </sc-if>
 
@@ -488,7 +474,7 @@ a:hover{color:var(--color-accent-700)}
               <a class="btn btn-secondary" href="calendario-academico.html?publico" target="_blank">Ver versión pública</a>
             </div>
           </div>
-          <iframe src="calendario-academico.html" title="Calendario académico" ref="{{ refCalendario }}" onLoad="{{ avisarCandado }}" style="flex:1;width:100%;border:0;background:var(--color-bg)"></iframe>
+          <iframe src="calendario-academico.html" title="Calendario académico" ref="{{ refCalendario }}" style="flex:1;width:100%;border:0;background:var(--color-bg)"></iframe>
         </div>
       </sc-if>
 
@@ -512,7 +498,7 @@ a:hover{color:var(--color-accent-700)}
                   <button class="btn {{ p.clase }}" style="font-size:12.5px;flex:none" onClick="{{ p.alternar }}">{{ p.accion }}</button>
                 </div>
                 <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 18px">
-                  <input class="input" readonly value="{{ p.ligaCompleta }}" onFocus="{{ seleccionarLiga }}" style="flex:1 1 300px;min-width:0;font-size:12px">
+                  <input class="input" readonly="" value="{{ p.ligaCompleta }}" onFocus="{{ seleccionarLiga }}" style="flex:1 1 300px;min-width:0;font-size:12px">
                   <button class="btn btn-secondary" style="font-size:12.5px;flex:none" onClick="{{ p.copiar }}">Copiar liga</button>
                   <a class="btn btn-ghost" style="font-size:12.5px;flex:none" href="{{ p.liga }}" target="_blank">Abrir</a>
                 </div>
@@ -1246,7 +1232,7 @@ a:hover{color:var(--color-accent-700)}
 
           <sc-if value="{{ admTabEval }}" hint-placeholder-val="{{ true }}">
             <div style="border:2px solid var(--color-divider);overflow-x:auto;display:{{ admDispTabla }}">
-              <table style="border-collapse:collapse;width:100%;min-width:1180px;font-size:12.5px">
+              <table style="border-collapse:collapse;width:100%;min-width:1000px;font-size:12.5px;table-layout:fixed">
                 <thead><tr>
                   <th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Folio</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Aspirante</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Pagó</th>
                   <th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">EXANI-II /50</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Propedéutico /20</th>
@@ -1283,7 +1269,7 @@ a:hover{color:var(--color-accent-700)}
 
           <sc-if value="{{ admTabDatos }}" hint-placeholder-val="{{ false }}">
             <div style="border:2px solid var(--color-divider);overflow-x:auto;display:{{ admDispTabla }}">
-              <table style="border-collapse:collapse;width:100%;min-width:1180px;font-size:12.5px">
+              <table style="border-collapse:collapse;width:100%;min-width:1000px;font-size:12.5px;table-layout:fixed">
                 <thead><tr>
                   <th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Folio</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Aspirante</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Teléfono</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Correo</th>
                   <th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Tutor</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Tel. tutor</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Estatus EXANI-II</th><th style="text-align:left;padding:9px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Fecha</th>
@@ -1934,27 +1920,6 @@ Vázquez Ledesma, Iván	MG-25-0092" style="width:100%;font-family:var(--font-bod
                 <p class="text-muted" style="margin:12px 0 0;font-size:12px;line-height:1.5">Los horarios y la requisición docente se imprimen acostados: usan la horizontal. Las cédulas y listados verticales usan la primera.</p>
               </div>
 
-              <div>
-                <h6 style="margin:0 0 4px">Programas académicos</h6>
-                <p class="text-muted" style="margin:0 0 12px;font-size:13px">Uno por renglón, con sus siglas (LMG). Las siglas generan los folios de admisión y se vinculan con la matrícula.</p>
-                <div style="display:flex;flex-direction:column;gap:8px;max-width:560px">
-                  <sc-for list="{{ idProgramas }}" as="p" hint-placeholder-count="2">
-                    <div style="display:flex;gap:8px;align-items:center">
-                      <span class="text-muted" style="font-family:var(--font-heading);font-weight:800;font-size:12px;width:22px;flex:none;text-align:right">{{ p.n }}</span>
-                      <input class="input" value="{{ p.siglas }}" onChange="{{ p.setSiglas }}" placeholder="Siglas" title="Siglas del programa: se usan para generar folios y matrículas" style="flex:none;width:84px;font-family:var(--font-mono, monospace);font-weight:700">
-                      <input class="input" value="{{ p.nombre }}" onChange="{{ p.set }}" placeholder="Nombre del programa académico" style="flex:1">
-                      <button class="btn btn-ghost" style="font-size:12.5px;flex:none" onClick="{{ p.quitar }}">Quitar</button>
-                    </div>
-                  </sc-for>
-                  <div style="display:flex;gap:8px;align-items:center">
-                    <span style="width:22px;flex:none"></span>
-                    <input class="input" value="{{ idNuevaSigla }}" onChange="{{ setIdNuevaSigla }}" placeholder="Siglas" style="flex:none;width:84px;font-family:var(--font-mono, monospace);font-weight:700">
-                    <input class="input" value="{{ idNuevoPrograma }}" onChange="{{ setIdNuevoPrograma }}" onKeyDown="{{ enterPrograma }}" placeholder="Escriba un programa académico y presione +" style="flex:1">
-                    <button class="btn btn-primary" style="flex:none;width:44px;font-size:20px;line-height:1;padding:0;height:40px" title="Agregar programa académico" onClick="{{ agregarPrograma }}">+</button>
-                  </div>
-                </div>
-              </div>
-
             </div>
 
             <div style="position:sticky;top:20px;min-width:0;max-width:420px">
@@ -2005,8 +1970,164 @@ Vázquez Ledesma, Iván	MG-25-0092" style="width:100%;font-family:var(--font-bod
               <span class="tag {{ claseContAviso }}" style="margin-bottom:4px">{{ contAviso }}</span>
             </div>
           </div>
-          <p class="text-muted" style="margin:10px 0 0;max-width:78ch;font-size:14px;text-wrap:pretty">Estado de cuenta por grupo y semestre. Los alumnos se leen de Trayectoria escolar: aquí sólo se registra el pago. El ciclo que se elige en la cinta superior decide las columnas: la inscripción y un foco por cada mes del ciclo (A va de agosto a diciembre; B, de febrero a junio). Los focos nacen grises; se ponen amarillos al empezar el mes, verdes al dar clic para confirmar el pago, y rojos si pasan los primeros diez días naturales sin pago.</p>
+          <p class="text-muted" style="margin:10px 0 0;max-width:78ch;font-size:14px;text-wrap:pretty">Estado de cuenta por grupo y semestre. Los alumnos se leen de Trayectoria escolar: aquí sólo se registra el pago. El ciclo que se elige en la cinta superior decide las columnas: la inscripción y un foco por cada mes del ciclo (B: reinscripción y mensualidades de agosto a diciembre; A: reinscripción y mensualidades de enero a julio). Los focos nacen grises; se ponen amarillos al empezar el mes, verdes al dar clic para confirmar el pago, y rojos si pasan los primeros diez días naturales sin pago.</p>
           <hr class="hr">
+
+          <div style="display:flex;gap:0;flex-wrap:wrap;margin-bottom:20px">
+            <sc-for list="{{ contPestanas }}" as="p" hint-placeholder-count="5">
+              <button onClick="{{ p.elegir }}" style="border:2px solid {{ p.borde }};background:{{ p.bg }};color:{{ p.color }};padding:7px 14px;cursor:pointer;font-family:var(--font-heading);font-weight:800;font-size:11.5px;text-transform:uppercase;letter-spacing:.06em">{{ p.nombre }}</button>
+            </sc-for>
+          </div>
+
+          <sc-if value="{{ contVerCostos }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap;margin-bottom:12px">
+              <div style="flex:1;min-width:260px">
+                <h6 style="margin:0 0 5px">Costos por semestre · {{ costosPlanNombre }}</h6>
+                <p class="text-muted" style="margin:0;font-size:12.5px;line-height:1.55;max-width:80ch;text-wrap:pretty">Monto de la inscripción o reinscripción y de la mensualidad de cada semestre. Los impares (ciclo B) pagan reinscripción en agosto y cinco mensualidades de agosto a diciembre; los pares (ciclo A), reinscripción en enero y siete mensualidades de enero a julio. La beca de cada alumno se descuenta de la mensualidad. Deje en blanco los semestres que el plan no tiene.</p>
+              </div>
+              <span class="tag {{ costosClaseAviso }}">{{ costosAviso }}</span>
+            </div>
+            <div style="border:2px solid var(--color-divider);overflow-x:auto">
+              <table style="border-collapse:collapse;width:100%;min-width:720px;font-size:12.5px">
+                <thead>
+                  <tr>
+                    <th style="text-align:left;padding:9px 12px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Semestre</th>
+                    <th style="text-align:left;padding:9px 12px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Calendario</th>
+                    <th style="text-align:right;padding:9px 12px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Inscripción</th>
+                    <th style="text-align:right;padding:9px 12px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Mensualidad</th>
+                    <th style="text-align:right;padding:9px 12px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Meses</th>
+                    <th style="text-align:right;padding:9px 12px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Total del semestre</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <sc-for list="{{ costosFilas }}" as="r" hint-placeholder-count="10">
+                    <tr>
+                      <td style="padding:8px 12px;border-bottom:1px solid var(--color-divider);font-family:var(--font-heading);font-weight:800;white-space:nowrap">{{ r.nombre }}</td>
+                      <td style="padding:8px 12px;border-bottom:1px solid var(--color-divider)" class="text-muted">{{ r.ciclo }}</td>
+                      <td style="padding:8px 12px;border-bottom:1px solid var(--color-divider);text-align:right"><input class="input" value="{{ r.insc }}" onChange="{{ r.setInsc }}" onBlur="{{ r.guardar }}" disabled="{{ r.bloqueado }}" placeholder="$0" inputmode="decimal" style="padding:4px 8px;font-size:12px;width:110px;text-align:right"></td>
+                      <td style="padding:8px 12px;border-bottom:1px solid var(--color-divider);text-align:right"><input class="input" value="{{ r.mens }}" onChange="{{ r.setMens }}" onBlur="{{ r.guardar }}" disabled="{{ r.bloqueado }}" placeholder="$0" inputmode="decimal" style="padding:4px 8px;font-size:12px;width:110px;text-align:right"></td>
+                      <td style="padding:8px 12px;border-bottom:1px solid var(--color-divider);text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums">{{ r.meses }}</td>
+                      <td style="padding:8px 12px;border-bottom:1px solid var(--color-divider);text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums;font-family:var(--font-heading);font-weight:800">{{ r.totalTxt }}</td>
+                    </tr>
+                  </sc-for>
+                  <tr>
+                    <td colspan="5" style="padding:10px 12px;background:var(--color-neutral-100);font-family:var(--font-heading);font-weight:800;text-transform:uppercase;font-size:11px;letter-spacing:.06em">Carrera completa, sin beca</td>
+                    <td style="padding:10px 12px;background:var(--color-neutral-100);text-align:right;font-family:var(--font-heading);font-weight:800;font-size:14px;white-space:nowrap">{{ costosTotalCarrera }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ contVerInversion }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+              <sc-for list="{{ invVistas }}" as="o" hint-placeholder-count="5">
+                <button onClick="{{ o.elegir }}" style="border:1.5px solid {{ o.borde }};background:{{ o.bg }};color:{{ o.color }};padding:6px 12px;cursor:pointer;font-size:11.5px">{{ o.nombre }}</button>
+              </sc-for>
+              <input class="input" value="{{ contBusca }}" onChange="{{ setContBusca }}" placeholder="Buscar" style="margin-left:auto;width:220px;font-size:12px">
+            </div>
+            <p class="text-muted" style="margin:0 0 14px;font-size:12.5px;line-height:1.55;max-width:84ch;text-wrap:pretty">{{ invNota }}</p>
+            <sc-if value="{{ invSinCostos }}" hint-placeholder-val="{{ false }}">
+              <div style="border-left:3px solid #c8341f;background:var(--color-neutral-100);padding:10px 13px;margin-bottom:14px;font-size:12.5px">Aún no hay costos capturados para este plan: los montos salen en cero. Captúrelos en la pestaña Costos.</div>
+            </sc-if>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:16px">
+              <sc-for list="{{ invTarjetas }}" as="t" hint-placeholder-count="5">
+                <div style="border:2px solid var(--color-divider);padding:12px 14px">
+                  <div class="text-muted" style="font-size:10px;text-transform:uppercase;letter-spacing:.09em;font-family:var(--font-heading);font-weight:800;margin-bottom:4px">{{ t.nombre }}</div>
+                  <div style="font-family:var(--font-heading);font-weight:800;font-size:22px;color:{{ t.color }};font-variant-numeric:tabular-nums">{{ t.valor }}</div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="border:2px solid var(--color-divider);overflow-x:auto">
+              <table style="border-collapse:collapse;width:100%;min-width:820px;font-size:12.5px">
+                <thead>
+                  <tr>
+                    <th style="text-align:left;padding:9px 12px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">{{ invColNombre }}</th>
+                    <th style="text-align:left;padding:9px 12px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Detalle</th>
+                    <th style="text-align:right;padding:9px 12px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Esperado</th>
+                    <th style="text-align:right;padding:9px 12px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Cobrado</th>
+                    <th style="text-align:right;padding:9px 12px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Adeudo vencido</th>
+                    <th style="text-align:right;padding:9px 12px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">Por vencer</th>
+                    <th style="text-align:right;padding:9px 12px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;white-space:nowrap">% cobrado</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <sc-for list="{{ invFilas }}" as="f" hint-placeholder-count="8">
+                    <tr>
+                      <td style="padding:8px 12px;border-bottom:1px solid var(--color-divider);font-weight:600">{{ f.nombre }}</td>
+                      <td style="padding:8px 12px;border-bottom:1px solid var(--color-divider);font-size:11.5px" class="text-muted">{{ f.detalle }}</td>
+                      <td style="padding:8px 12px;border-bottom:1px solid var(--color-divider);text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums">{{ f.esperadoTxt }}</td>
+                      <td style="padding:8px 12px;border-bottom:1px solid var(--color-divider);text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums;color:#1f7a45">{{ f.cobradoTxt }}</td>
+                      <td style="padding:8px 12px;border-bottom:1px solid var(--color-divider);text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums;color:{{ f.colorVencido }}">{{ f.vencidoTxt }}</td>
+                      <td style="padding:8px 12px;border-bottom:1px solid var(--color-divider);text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums">{{ f.porVencerTxt }}</td>
+                      <td style="padding:8px 12px;border-bottom:1px solid var(--color-divider);text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums;font-family:var(--font-heading);font-weight:800">{{ f.pctTxt }}</td>
+                    </tr>
+                  </sc-for>
+                  <sc-if value="{{ invSinFilas }}" hint-placeholder-val="{{ false }}">
+                    <tr><td colspan="7" style="padding:22px;text-align:center" class="text-muted">Sin registros para esta vista.</td></tr>
+                  </sc-if>
+                </tbody>
+              </table>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ contVerAvance }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:16px">
+              <sc-for list="{{ avVistas }}" as="o" hint-placeholder-count="3">
+                <button onClick="{{ o.elegir }}" style="border:1.5px solid {{ o.borde }};background:{{ o.bg }};color:{{ o.color }};padding:6px 12px;cursor:pointer;font-size:11.5px">{{ o.nombre }}</button>
+              </sc-for>
+              <input class="input" value="{{ contBusca }}" onChange="{{ setContBusca }}" placeholder="Buscar" style="margin-left:auto;width:220px;font-size:12px">
+            </div>
+            <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:14px;font-size:11.5px" class="text-muted">
+              <span style="display:flex;align-items:center;gap:6px"><span style="width:11px;height:11px;background:#1f9d55;flex:none"></span>cobrado</span>
+              <span style="display:flex;align-items:center;gap:6px"><span style="width:11px;height:11px;background:#c8341f;flex:none"></span>adeudo vencido</span>
+              <span style="display:flex;align-items:center;gap:6px"><span style="width:11px;height:11px;background:var(--color-neutral-300, #d3d6da);flex:none"></span>por vencer</span>
+            </div>
+            <div style="border:2px solid var(--color-divider);padding:16px 18px 12px;margin-bottom:20px">
+              <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:14px">
+                <h6 style="margin:0">Cobranza por mes · ciclo {{ contCicloSel }}</h6>
+                <span class="text-muted" style="font-size:12px">{{ avResumenCiclo }}</span>
+              </div>
+              <div style="display:flex;align-items:flex-end;gap:12px;height:190px;border-bottom:2px solid var(--color-divider)">
+                <sc-for list="{{ avMeses }}" as="m" hint-placeholder-count="6">
+                  <div title="{{ m.titulo }}" style="flex:1;min-width:30px;height:100%;display:flex;flex-direction:column;justify-content:flex-end">
+                    <div style="font-size:10.5px;text-align:center;margin-bottom:4px;font-family:var(--font-heading);font-weight:800">{{ m.pctTxt }}</div>
+                    <div style="height:{{ m.alto }};min-height:2px;display:flex;flex-direction:column-reverse">
+                      <div style="height:{{ m.hCob }};background:#1f9d55"></div>
+                      <div style="height:{{ m.hVen }};background:#c8341f"></div>
+                      <div style="height:{{ m.hPor }};background:var(--color-neutral-300, #d3d6da)"></div>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="display:flex;gap:12px;padding-top:6px">
+                <sc-for list="{{ avMeses }}" as="m" hint-placeholder-count="6">
+                  <div style="flex:1;min-width:30px;text-align:center;font-size:10.5px;text-transform:uppercase;font-family:var(--font-heading);font-weight:800">{{ m.etiqueta }}<div class="text-muted" style="font-weight:400;text-transform:none;font-family:var(--font-body, inherit)">{{ m.monto }}</div></div>
+                </sc-for>
+              </div>
+            </div>
+            <p class="text-muted" style="margin:0 0 10px;font-size:12.5px">{{ avNota }}</p>
+            <div style="border:2px solid var(--color-divider)">
+              <sc-for list="{{ avFilas }}" as="f" hint-placeholder-count="8">
+                <div style="display:grid;grid-template-columns:minmax(160px,260px) minmax(0,1fr) 52px minmax(0,190px);gap:14px;align-items:center;padding:9px 14px;border-bottom:1px solid var(--color-divider);font-size:12.5px" title="{{ f.titulo }}">
+                  <div style="min-width:0">
+                    <div style="font-weight:600;overflow:hidden;text-overflow:ellipsis">{{ f.nombre }}</div>
+                    <div class="text-muted" style="font-size:11px">{{ f.detalle }}</div>
+                  </div>
+                  <div style="display:flex;height:14px;background:var(--color-neutral-100)">
+                    <div style="width:{{ f.wCob }};background:#1f9d55"></div>
+                    <div style="width:{{ f.wVen }};background:#c8341f"></div>
+                    <div style="width:{{ f.wPor }};background:var(--color-neutral-300, #d3d6da)"></div>
+                  </div>
+                  <div style="text-align:right;font-family:var(--font-heading);font-weight:800">{{ f.pctTxt }}</div>
+                  <div class="text-muted" style="font-size:11px;text-align:right;font-variant-numeric:tabular-nums">{{ f.cobradoTxt }} de {{ f.esperadoTxt }}</div>
+                </div>
+              </sc-for>
+              <sc-if value="{{ avSinFilas }}" hint-placeholder-val="{{ false }}">
+                <div style="padding:22px;text-align:center" class="text-muted">Sin registros para esta vista.</div>
+              </sc-if>
+            </div>
+          </sc-if>
 
           <sc-if value="{{ contSinGens }}" hint-placeholder-val="{{ false }}">
             <div style="border:2px solid var(--color-divider);padding:26px 20px;text-align:center;font-size:13px" class="text-muted">Todavía no hay listados de alumnos. Cargue las generaciones en Trayectoria escolar y regrese aquí.</div>
@@ -2050,11 +2171,6 @@ Vázquez Ledesma, Iván	MG-25-0092" style="width:100%;font-family:var(--font-bod
               </div>
             </div>
             <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-bottom:14px">
-              <div style="display:flex;gap:0">
-                <sc-for list="{{ contPestanas }}" as="p" hint-placeholder-count="2">
-                  <button onClick="{{ p.elegir }}" style="border:2px solid {{ p.borde }};background:{{ p.bg }};color:{{ p.color }};padding:7px 14px;cursor:pointer;font-family:var(--font-heading);font-weight:800;font-size:11.5px;text-transform:uppercase;letter-spacing:.06em">{{ p.nombre }}</button>
-                </sc-for>
-              </div>
               <sc-if value="{{ contPorMarcar }}" hint-placeholder-val="{{ false }}">
                 <button class="btn btn-secondary" onClick="{{ marcarAlCorriente }}" disabled="{{ contSoloLectura }}" style="font-size:11.5px;padding:6px 12px">{{ contTextoMarcar }}</button>
               </sc-if>
@@ -2145,7 +2261,7 @@ Vázquez Ledesma, Iván	MG-25-0092" style="width:100%;font-family:var(--font-bod
                             </sc-for>
                           </sc-if>
                           <sc-if value="{{ sm.sinCursar }}" hint-placeholder-val="{{ false }}">
-                            <sc-for list="{{ contSiete }}" as="h" hint-placeholder-count="7">
+                            <sc-for list="{{ sm.huecos }}" as="h" hint-placeholder-count="7">
                               <td style="padding:6px 6px;border-bottom:1px solid var(--color-divider);border-left:1px solid var(--color-divider);background:var(--color-neutral-100);opacity:.45"></td>
                             </sc-for>
                           </sc-if>
@@ -2160,6 +2276,292 @@ Vázquez Ledesma, Iván	MG-25-0092" style="width:100%;font-family:var(--font-bod
               </div>
             </sc-if>
           </sc-if>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ esEvalDoc }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:24px 28px 60px">
+
+          <sc-if value="{{ evEnLista }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap">
+              <div>
+                <h6 style="margin:0 0 4px" class="text-muted">Coordinación Docente</h6>
+                <h2 style="margin:0">Evaluación docente</h2>
+              </div>
+              <div style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap">
+                <sc-for list="{{ evTabs }}" as="t" hint-placeholder-count="2">
+                  <button class="btn {{ t.clase }}" onClick="{{ t.abrir }}">{{ t.nombre }}</button>
+                </sc-for>
+              </div>
+            </div>
+            <p class="text-muted" style="margin:10px 0 0;max-width:82ch;font-size:14px;line-height:1.55;text-wrap:pretty">{{ evDescripcion }}</p>
+            <sc-if value="{{ evHayAviso }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;align-items:center;gap:8px;margin-top:10px;font-size:11.5px;color:{{ evAvisoColor }}">
+                <span style="width:7px;height:7px;background:currentColor;flex:none"></span>
+                <span>{{ evAviso }}</span>
+              </div>
+            </sc-if>
+            <hr class="hr">
+
+            <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;margin-bottom:20px">
+              <div class="field" style="margin:0">
+                <label>Ciclo escolar</label>
+                <select class="input" value="{{ evCiclo }}" onChange="{{ setEvCiclo }}" style="min-width:210px">
+                  <sc-for list="{{ evCiclosOpc }}" as="c" hint-placeholder-count="3">
+                    <option value="{{ c }}">{{ c }}</option>
+                  </sc-for>
+                </select>
+              </div>
+              <sc-if value="{{ evTabGeneral }}" hint-placeholder-val="{{ true }}">
+                <div class="field" style="margin:0">
+                  <label>Mes evaluado</label>
+                  <input class="input" type="month" value="{{ evMes }}" onChange="{{ setEvMes }}" style="min-width:170px">
+                </div>
+              </sc-if>
+              <div class="field" style="margin:0;flex:1;min-width:220px">
+                <label>Buscar</label>
+                <input class="input" value="{{ evBusca }}" onChange="{{ setEvBusca }}" placeholder="Nombre del docente" style="width:100%">
+              </div>
+              <span class="tag tag-outline">{{ evConteo }}</span>
+            </div>
+
+            <sc-if value="{{ evTabIncid }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-bottom:20px;border:2px solid var(--color-divider);padding:12px 14px">
+                <div class="field" style="margin:0">
+                  <label>Quincena</label>
+                  <select class="input" value="{{ evQuincena }}" onChange="{{ setEvQuincena }}" style="min-width:230px">
+                    <sc-for list="{{ evQuincenasOpc }}" as="q" hint-placeholder-count="2">
+                      <option value="{{ q.id }}">{{ q.nombre }}</option>
+                    </sc-for>
+                  </select>
+                </div>
+                <button class="btn btn-primary" onClick="{{ evDescargarTodos }}" disabled="{{ evSinQuincenas }}">Descargar ausencias docentes</button>
+                <button class="btn btn-ghost" onClick="{{ evAlternarConfig }}">{{ evTextoConfig }}</button>
+                <span class="text-muted" style="font-size:12px">Un oficio por docente con ausencias en la quincena. La fecha del oficio es la del día en que se descarga.</span>
+              </div>
+              <sc-if value="{{ evVerConfig }}" hint-placeholder-val="{{ false }}">
+                <div style="border:2px solid var(--color-divider);padding:14px;margin-bottom:20px">
+                  <div style="font-family:var(--font-heading);font-weight:800;font-size:11px;text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px">Datos del oficio</div>
+                  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px">
+                    <sc-for list="{{ evConfigCampos }}" as="c" hint-placeholder-count="6">
+                      <div class="field" style="margin:0">
+                        <label>{{ c.etiqueta }}</label>
+                        <input class="input" value="{{ c.valor }}" onChange="{{ c.cambiar }}" disabled="{{ evBloqueado }}" style="width:100%">
+                      </div>
+                    </sc-for>
+                  </div>
+                </div>
+              </sc-if>
+            </sc-if>
+
+            <sc-if value="{{ evVacio }}" hint-placeholder-val="{{ false }}">
+              <div class="text-muted" style="border:2px dashed var(--color-divider);padding:36px;text-align:center;font-size:13.5px">{{ evMensajeVacio }}</div>
+            </sc-if>
+
+            <sc-if value="{{ evTabGeneral }}" hint-placeholder-val="{{ true }}">
+              <div style="border:2px solid var(--color-divider);border-bottom:0">
+                <div style="display:grid;grid-template-columns:76px minmax(0,1.6fr) minmax(0,1fr);background:var(--color-neutral-100);border-bottom:2px solid var(--color-divider);font-family:var(--font-heading);font-weight:800;font-size:10.5px;text-transform:uppercase;letter-spacing:.08em">
+                  <div style="padding:10px 12px">Foto</div>
+                  <div style="padding:10px 12px">Docente</div>
+                  <div style="padding:10px 12px" title="Horas de ausencia ÷ horas programadas en el mes × 100">Tasa de ausentismo</div>
+                </div>
+                <sc-for list="{{ evFilas }}" as="d" hint-placeholder-count="8">
+                  <div style="border-bottom:2px solid var(--color-divider);display:grid;grid-template-columns:76px minmax(0,1.6fr) minmax(0,1fr);align-items:center">
+                    <div style="padding:8px 12px">
+                      <sc-if value="{{ d.hayFoto }}" hint-placeholder-val="{{ false }}">
+                        <div style="{{ d.estiloFoto }}"></div>
+                      </sc-if>
+                      <sc-if value="{{ d.sinFoto }}" hint-placeholder-val="{{ true }}">
+                        <div style="width:44px;height:56px;border:1.5px solid var(--color-divider);background:var(--color-neutral-100);display:flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-weight:800;font-size:15px;color:var(--color-neutral-600)">{{ d.iniciales }}</div>
+                      </sc-if>
+                    </div>
+                    <div style="padding:8px 12px;min-width:0;font-family:var(--font-heading);font-weight:800;font-size:14px">{{ d.nombre }}</div>
+                    <div style="padding:8px 12px;line-height:1.35;display:flex;align-items:center;gap:12px">
+                      <span style="font-family:var(--font-heading);font-weight:800;font-size:18px;min-width:68px;color:{{ d.tonoTasa }}">{{ d.tasa }}</span>
+                      <div style="min-width:0">
+                        <div style="font-size:10.5px;font-family:var(--font-heading);font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:{{ d.tonoTasa }}">{{ d.nivel }}</div>
+                        <div class="text-muted" style="font-size:11px;margin-top:2px">{{ d.detalle }}</div>
+                      </div>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+              <p class="text-muted" style="margin:12px 0 0;font-size:12px;line-height:1.5;max-width:82ch">Tasa de ausentismo = (horas de ausencia ÷ horas programadas) × 100. Las horas de ausencia son las horas afectadas registradas en Ausencias docentes; las programadas salen del horario del docente en el ciclo elegido, día por día del mes (hasta hoy si es el mes en curso). Más de 5 % mensual es alerta; más de 7 %, alerta roja.</p>
+            </sc-if>
+
+            <sc-if value="{{ evTabIncid }}" hint-placeholder-val="{{ false }}">
+              <div style="border:2px solid var(--color-divider);border-bottom:0">
+                <div style="display:grid;grid-template-columns:76px minmax(0,1.6fr) 200px 200px;background:var(--color-neutral-100);border-bottom:2px solid var(--color-divider);font-family:var(--font-heading);font-weight:800;font-size:10.5px;text-transform:uppercase;letter-spacing:.08em">
+                  <div style="padding:10px 12px">Foto</div>
+                  <div style="padding:10px 12px">Docente</div>
+                  <div style="padding:10px 12px">Ausencias registradas</div>
+                  <div style="padding:10px 12px"></div>
+                </div>
+                <sc-for list="{{ evFilas }}" as="d" hint-placeholder-count="8">
+                  <div style="border-bottom:2px solid var(--color-divider);display:grid;grid-template-columns:76px minmax(0,1.6fr) 200px 200px;align-items:center">
+                    <div style="padding:8px 12px">
+                      <sc-if value="{{ d.hayFoto }}" hint-placeholder-val="{{ false }}">
+                        <div style="{{ d.estiloFoto }}"></div>
+                      </sc-if>
+                      <sc-if value="{{ d.sinFoto }}" hint-placeholder-val="{{ true }}">
+                        <div style="width:44px;height:56px;border:1.5px solid var(--color-divider);background:var(--color-neutral-100);display:flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-weight:800;font-size:15px;color:var(--color-neutral-600)">{{ d.iniciales }}</div>
+                      </sc-if>
+                    </div>
+                    <div style="padding:8px 12px;min-width:0">
+                      <button onClick="{{ d.verRegistro }}" title="Ver el registro de ausencias" style="border:0;background:none;padding:0;cursor:pointer;text-align:left;font-family:var(--font-heading);font-weight:800;font-size:14px;color:var(--color-text);text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--color-divider)" style-hover="text-decoration-color:currentColor">{{ d.nombre }}</button>
+                    </div>
+                    <div style="padding:8px 12px;line-height:1.35">
+                      <div style="font-family:var(--font-heading);font-weight:800;font-size:18px">{{ d.incidencias }}</div>
+                      <div class="text-muted" style="font-size:11px;margin-top:2px">{{ d.incidenciasCiclo }}</div>
+                    </div>
+                    <div style="padding:8px 12px">
+                      <button class="btn btn-secondary" onClick="{{ d.registrar }}" disabled="{{ evBloqueado }}" title="{{ evLeyendaBloqueo }}">Registrar ausencia</button>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+          </sc-if>
+
+          <sc-if value="{{ evEnRegistro }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px">
+              <button class="btn btn-ghost" onClick="{{ evVolver }}">← Volver al listado</button>
+            </div>
+            <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+              <sc-if value="{{ evSelHayFoto }}" hint-placeholder-val="{{ false }}">
+                <div style="{{ evSelEstiloFoto }}"></div>
+              </sc-if>
+              <sc-if value="{{ evSelSinFoto }}" hint-placeholder-val="{{ true }}">
+                <div style="width:56px;height:72px;border:2px solid var(--color-divider);background:var(--color-neutral-100);display:flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-weight:800;font-size:18px;color:var(--color-neutral-600)">{{ evSelIniciales }}</div>
+              </sc-if>
+              <div>
+                <h6 style="margin:0 0 4px" class="text-muted">Registro de ausencia · {{ evCiclo }}</h6>
+                <h2 style="margin:0">{{ evSelNombre }}</h2>
+              </div>
+            </div>
+            <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;margin:20px 0 6px">
+              <div class="field" style="margin:0">
+                <label>Día de ausencia</label>
+                <input class="input" type="date" value="{{ evRegFecha }}" onChange="{{ setEvRegFecha }}" style="min-width:180px">
+              </div>
+              <div style="line-height:1.35;padding-bottom:4px">
+                <div style="font-family:var(--font-heading);font-weight:800;font-size:15px">{{ evRegDiaLargo }}</div>
+                <div class="text-muted" style="font-size:11.5px">{{ evRegResumen }}</div>
+              </div>
+              <div style="margin-left:auto;line-height:1.35;padding-bottom:4px;text-align:right">
+                <div class="text-muted" style="font-size:10.5px;font-family:var(--font-heading);font-weight:800;text-transform:uppercase;letter-spacing:.08em">No. Oficio</div>
+                <div style="font-family:var(--font-heading);font-weight:800;font-size:14px">{{ evRegOficio }}</div>
+              </div>
+            </div>
+            <sc-if value="{{ evRegSinClases }}" hint-placeholder-val="{{ false }}">
+              <div class="text-muted" style="border:2px dashed var(--color-divider);padding:30px;text-align:center;font-size:13.5px;margin-top:14px">{{ evRegMensaje }}</div>
+            </sc-if>
+            <div style="display:flex;flex-direction:column;gap:12px;margin-top:14px">
+              <sc-for list="{{ evRegMaterias }}" as="m" hint-placeholder-count="2">
+                <div style="border:2px solid var(--color-divider);padding:14px 16px">
+                  <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:baseline">
+                    <div style="font-family:var(--font-heading);font-weight:800;font-size:15px">{{ m.materiaGrupo }}</div>
+                    <span class="tag tag-outline">{{ m.horasTexto }}</span>
+                    <span class="text-muted" style="font-size:12px">{{ m.bloques }}</span>
+                  </div>
+                  <sc-if value="{{ m.yaRegistrada }}" hint-placeholder-val="{{ false }}">
+                    <div class="text-muted" style="margin-top:8px;font-size:12.5px">Ya registrada en {{ m.oficio }}.</div>
+                  </sc-if>
+                  <sc-if value="{{ m.porRegistrar }}" hint-placeholder-val="{{ true }}">
+                    <div class="field" style="margin:10px 0 0">
+                      <label>Estrategia de regularización</label>
+                      <textarea class="input" rows="2" value="{{ m.estrategia }}" onChange="{{ m.setEstrategia }}" placeholder="Actividades o indicaciones que dejó el docente para que los estudiantes continúen su aprendizaje" style="width:100%;resize:vertical"></textarea>
+                    </div>
+                  </sc-if>
+                </div>
+              </sc-for>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;margin-top:20px;flex-wrap:wrap">
+              <button class="btn btn-primary" onClick="{{ evGuardarAusencia }}" disabled="{{ evNoGuardable }}">Guardar ausencia</button>
+              <button class="btn btn-ghost" onClick="{{ evVolver }}">Cancelar</button>
+              <span style="font-size:12px;color:{{ evAvisoColor }}">{{ evAviso }}</span>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ evEnHistorial }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px">
+              <button class="btn btn-ghost" onClick="{{ evVolver }}">← Volver al listado</button>
+              <button class="btn btn-secondary" onClick="{{ evIrRegistrar }}" disabled="{{ evBloqueado }}" style="margin-left:auto">Registrar ausencia</button>
+            </div>
+            <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+              <sc-if value="{{ evSelHayFoto }}" hint-placeholder-val="{{ false }}">
+                <div style="{{ evSelEstiloFoto }}"></div>
+              </sc-if>
+              <sc-if value="{{ evSelSinFoto }}" hint-placeholder-val="{{ true }}">
+                <div style="width:56px;height:72px;border:2px solid var(--color-divider);background:var(--color-neutral-100);display:flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-weight:800;font-size:18px;color:var(--color-neutral-600)">{{ evSelIniciales }}</div>
+              </sc-if>
+              <div>
+                <h6 style="margin:0 0 4px" class="text-muted">Registro de ausencias</h6>
+                <h2 style="margin:0">{{ evSelNombre }}</h2>
+              </div>
+            </div>
+            <sc-if value="{{ evHayAviso }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;align-items:center;gap:8px;margin-top:10px;font-size:11.5px;color:{{ evAvisoColor }}">
+                <span style="width:7px;height:7px;background:currentColor;flex:none"></span>
+                <span>{{ evAviso }}</span>
+              </div>
+            </sc-if>
+            <div style="display:flex;flex-direction:column;gap:22px;margin-top:22px">
+              <sc-for list="{{ evHistCiclos }}" as="c" hint-placeholder-count="2">
+                <div style="border:2px solid var(--color-divider)">
+                  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);flex-wrap:wrap">
+                    <h5 style="margin:0">{{ c.periodo }}</h5>
+                    <sc-if value="{{ c.enCurso }}" hint-placeholder-val="{{ false }}">
+                      <span class="tag tag-outline">En curso</span>
+                    </sc-if>
+                    <span class="text-muted" style="margin-left:auto;font-size:12px">{{ c.resumen }}</span>
+                  </div>
+                  <sc-if value="{{ c.vacio }}" hint-placeholder-val="{{ false }}">
+                    <div class="text-muted" style="padding:16px;font-size:13px">Sin ausencias registradas en este ciclo.</div>
+                  </sc-if>
+                  <sc-for list="{{ c.quincenas }}" as="q" hint-placeholder-count="1">
+                    <div style="padding:14px 16px;border-top:1px solid var(--color-divider)">
+                      <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:10px">
+                        <div style="font-family:var(--font-heading);font-weight:800;font-size:15px">{{ q.nombre }}</div>
+                        <span class="text-muted" style="font-size:12px">{{ q.rango }}</span>
+                        <span style="font-size:12.5px"><b>No. Oficio:</b> {{ q.oficio }}</span>
+                        <button class="btn btn-secondary" onClick="{{ q.descargar }}" style="margin-left:auto">Oficio de reporte de ausencia personal</button>
+                      </div>
+                      <div style="overflow-x:auto">
+                        <table style="border-collapse:collapse;width:100%;min-width:720px;font-size:12.5px">
+                          <thead>
+                            <tr style="text-align:left;font-family:var(--font-heading);font-weight:800;font-size:10.5px;text-transform:uppercase;letter-spacing:.08em">
+                              <th style="padding:6px 8px;border-bottom:2px solid var(--color-divider)">Día</th>
+                              <th style="padding:6px 8px;border-bottom:2px solid var(--color-divider)">Materia</th>
+                              <th style="padding:6px 8px;border-bottom:2px solid var(--color-divider)">Grupo</th>
+                              <th style="padding:6px 8px;border-bottom:2px solid var(--color-divider)">Horas afectadas</th>
+                              <th style="padding:6px 8px;border-bottom:2px solid var(--color-divider)">Estrategia de regularización</th>
+                              <th style="padding:6px 8px;border-bottom:2px solid var(--color-divider)"></th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <sc-for list="{{ q.filas }}" as="f" hint-placeholder-count="2">
+                              <tr style="vertical-align:top">
+                                <td style="padding:7px 8px;border-bottom:1px solid var(--color-divider);white-space:nowrap">{{ f.dia }}</td>
+                                <td style="padding:7px 8px;border-bottom:1px solid var(--color-divider)">{{ f.materia }}</td>
+                                <td style="padding:7px 8px;border-bottom:1px solid var(--color-divider);white-space:nowrap">{{ f.grupo }}</td>
+                                <td style="padding:7px 8px;border-bottom:1px solid var(--color-divider);white-space:nowrap">{{ f.horas }}</td>
+                                <td style="padding:7px 8px;border-bottom:1px solid var(--color-divider);line-height:1.45">{{ f.estrategia }}</td>
+                                <td style="padding:5px 8px;border-bottom:1px solid var(--color-divider)">
+                                  <button class="btn btn-ghost" onClick="{{ f.quitar }}" disabled="{{ evBloqueado }}" style="font-size:11px">Quitar</button>
+                                </td>
+                              </tr>
+                            </sc-for>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </sc-for>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+
         </div>
       </sc-if>
 
@@ -2449,22 +2851,26 @@ Vázquez Ledesma, Iván	MG-25-0092" style="width:100%;font-family:var(--font-bod
       </sc-if>
 
       <sc-if value="{{ esElegirPrograma }}" hint-placeholder-val="{{ false }}">
-        <div style="padding:48px 28px 64px;max-width:980px">
+        <div style="position:fixed;inset:0;z-index:500;background:var(--color-bg);overflow:auto;display:flex;align-items:center;justify-content:center">
+        <div style="padding:48px 28px 64px;max-width:980px;width:100%">
+          <div style="transition:opacity .3s ease;opacity:{{ epOpTexto }}">
           <h6 style="margin:0 0 6px" class="text-muted">{{ epInstitucion }}</h6>
           <h2 style="margin:0 0 8px">¿En qué plan de estudios va a trabajar?</h2>
           <p class="text-muted" style="margin:0 0 26px;font-size:14px;max-width:62ch;text-wrap:pretty">Todo lo que verá en el sistema (inicio, admisión, trayectoria, indicadores, contabilidad y fichas) corresponde al plan que elija. Puede cambiarlo en cualquier momento desde la barra superior.</p>
+          </div>
           <sc-if value="{{ epSinProgramas }}" hint-placeholder-val="{{ false }}">
             <div style="border:2px dashed var(--color-divider);padding:26px;font-size:13px" class="text-muted">Esta institución no tiene planes de estudio registrados. Agréguelos en Sistema → Instituciones.</div>
           </sc-if>
           <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr));gap:14px">
             <sc-for list="{{ epProgramas }}" as="p" hint-placeholder-count="3">
-              <button onClick="{{ p.elegir }}" style="text-align:left;border:2px solid {{ p.borde }};background:var(--color-bg);padding:18px 20px;cursor:pointer;display:flex;flex-direction:column;gap:8px;color:var(--color-text)" style-hover="border-color:var(--color-accent)">
+              <button onClick="{{ p.elegir }}" style="text-align:left;border:2px solid {{ p.borde }};background:var(--color-bg);padding:18px 20px;cursor:pointer;display:flex;flex-direction:column;gap:8px;color:var(--color-text);transition:transform .2s ease,opacity .3s ease,border-color .2s;opacity:{{ p.opacidad }};transform:{{ p.escala }};pointer-events:{{ p.eventos }}" style-hover="border-color:var(--color-accent);transform:scale(1.04)">
                 <span style="font-family:var(--font-mono, monospace);font-weight:800;font-size:13px;color:var(--color-accent-700)">{{ p.siglas }}</span>
                 <span style="font-family:var(--font-heading);font-weight:800;font-size:18px;line-height:1.2">{{ p.nombre }}</span>
                 <span class="text-muted" style="font-size:12px">{{ p.detalle }}</span>
               </button>
             </sc-for>
           </div>
+        </div>
         </div>
       </sc-if>
 
@@ -2526,37 +2932,123 @@ Vázquez Ledesma, Iván	MG-25-0092" style="width:100%;font-family:var(--font-bod
               </div>
             </div>
           </sc-if>
-          <p class="text-muted" style="margin:10px 0 0;max-width:78ch;font-size:14px;text-wrap:pretty">Un renglón por generación, desde el proceso de admisión hasta la titulación. El foco verde señala que la base de datos de esa etapa ya está cargada; el apagado, que falta. De aquí salen los indicadores de ingreso, permanencia, deserción, egreso y titulación.</p>
+          <p class="text-muted" style="margin:10px 0 0;max-width:78ch;font-size:14px;text-wrap:pretty">Un renglón por generación, desde el proceso de admisión hasta la titulación. Al pasar el mouse por una generación se traza su recorrido: cada punto verde es una etapa con listado cargado. De aquí salen los indicadores de ingreso, permanencia, deserción, egreso y titulación.</p>
           <hr class="hr">
 
+          <sc-if value="{{ trayVerGraf }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap;margin-bottom:16px">
+              <div>
+                <h6 style="margin:0 0 4px" class="text-muted">Trayectoria de la generación</h6>
+                <h3 style="margin:0">{{ grafNombre }}</h3>
+              </div>
+              <button class="btn btn-secondary" onClick="{{ cerrarGraf }}" style="margin-left:auto">Volver a generaciones</button>
+            </div>
+            <div style="border:2px solid var(--color-divider);padding:20px 18px 14px;overflow-x:auto">
+              <div style="position:relative;display:flex;height:380px;min-width:900px">
+                <svg viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;left:0;top:0;width:100%;height:calc(100% - 76px);pointer-events:none;overflow:visible">
+                  <polyline points="{{ grafPuntos }}" fill="none" stroke="var(--color-accent)" stroke-width="2.5" vector-effect="non-scaling-stroke" stroke-linejoin="round"></polyline>
+                </svg>
+                <sc-for list="{{ grafCols }}" as="c" hint-placeholder-count="14">
+                  <div onClick="{{ c.abrir }}" style="flex:1;min-width:52px;display:flex;flex-direction:column;height:100%;cursor:pointer" style-hover="background:var(--color-neutral-100)" title="{{ c.titulo }}">
+                    <div style="flex:1;position:relative;border-bottom:2px solid var(--color-text)">
+                      <div style="position:absolute;left:50%;bottom:{{ c.alto }};transform:translate(-50%,50%);width:13px;height:13px;border-radius:50%;background:{{ c.color }};border:2px solid var(--color-bg);display:{{ c.dispPunto }}"></div>
+                      <div style="position:absolute;left:0;right:0;bottom:calc({{ c.alto }} + 12px);display:flex;flex-direction:column;align-items:center;font-family:var(--font-heading);font-weight:800;line-height:1.25">
+                        <span style="color:#2e7d32;font-size:12.5px">{{ c.ingresos }}</span>
+                        <span style="color:#c62828;font-size:12.5px">{{ c.bajas }}</span>
+                        <span style="font-size:15px;color:var(--color-text)">{{ c.total }}</span>
+                      </div>
+                    </div>
+                    <div style="height:74px;box-sizing:border-box">
+                      <div style="padding-top:8px;text-align:center;font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;color:{{ c.colorEtiqueta }}">{{ c.etiqueta }}</div>
+                      <div style="padding-top:3px;text-align:center;font-family:var(--font-heading);font-weight:800;font-size:11px;white-space:nowrap;color:{{ c.colorEtiqueta }}">{{ c.ciclo }}</div>
+                      <div class="text-muted" style="text-align:center;font-size:10px;line-height:1.3">{{ c.periodo }}</div>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+            <div style="display:flex;gap:20px;flex-wrap:wrap;margin-top:12px;font-size:11.5px" class="text-muted">
+              <span style="display:flex;align-items:center;gap:7px"><b style="color:#2e7d32">+N</b>Ingresan respecto a la lista anterior</span>
+              <span style="display:flex;align-items:center;gap:7px"><b style="color:#c62828">−N</b>Bajas: estaban en la lista anterior y ya no aparecen</span>
+              <span>Los que se titulan en un año posterior no cuentan como baja.</span>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ trayVerGrafDet }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap;margin-bottom:8px">
+              <div>
+                <h6 style="margin:0 0 6px" class="text-muted">{{ gdGen }}</h6>
+                <h2 style="margin:0">{{ gdTitulo }}</h2>
+                <div style="font-family:var(--font-heading);font-weight:800;font-size:17px;margin-top:6px">{{ gdPromo }}</div>
+                <div class="text-muted" style="font-size:14px;margin-top:2px">{{ gdCiclo }}</div>
+              </div>
+              <button class="btn btn-secondary" onClick="{{ cerrarGrafDet }}" style="margin-left:auto">Volver a la gráfica</button>
+            </div>
+            <sc-if value="{{ gdVacio }}" hint-placeholder-val="{{ false }}">
+              <div style="border:2px solid var(--color-divider);padding:26px 20px;text-align:center;font-size:13px;margin-top:16px" class="text-muted">Esta etapa todavía no tiene listado cargado.</div>
+            </sc-if>
+            <sc-if value="{{ gdHay }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex;justify-content:center;margin:6px 0 26px">{{ gdPastel }}</div>
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:20px;align-items:start">
+                <sc-for list="{{ gdListas }}" as="l" hint-placeholder-count="2">
+                  <div style="border:2px solid var(--color-divider);min-width:0">
+                    <div style="padding:10px 14px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);display:flex;flex-direction:column;align-items:center;gap:3px;text-align:center">
+                      <div style="display:flex;align-items:center;gap:8px"><span style="width:12px;height:12px;background:{{ l.color }};flex:none"></span><h5 style="margin:0">{{ l.titulo }}</h5></div>
+                      <span class="text-muted" style="font-size:12px">{{ l.cuenta }}</span>
+                    </div>
+                    <table style="border-collapse:collapse;width:100%;font-size:12.5px">
+                      <thead><tr>
+                        <th style="text-align:left;padding:8px 12px;border-bottom:2px solid var(--color-divider);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;width:110px">Matrícula</th>
+                        <th style="text-align:left;padding:8px 12px;border-bottom:2px solid var(--color-divider);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em">Apellidos</th>
+                        <th style="text-align:left;padding:8px 12px;border-bottom:2px solid var(--color-divider);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em">Nombres</th>
+                      </tr></thead>
+                      <tbody>
+                        <sc-for list="{{ l.filas }}" as="a" hint-placeholder-count="6">
+                          <tr>
+                            <td style="padding:7px 12px;border-bottom:1px solid var(--color-divider);font-family:var(--font-mono, monospace);white-space:nowrap">{{ a.mat }}</td>
+                            <td style="padding:7px 12px;border-bottom:1px solid var(--color-divider)">{{ a.apellidos }}</td>
+                            <td style="padding:7px 12px;border-bottom:1px solid var(--color-divider)">{{ a.nombres }}</td>
+                          </tr>
+                        </sc-for>
+                      </tbody>
+                    </table>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+          </sc-if>
+
           <sc-if value="{{ trayVistaGeneral }}" hint-placeholder-val="{{ true }}">
-            <div style="border:2px solid var(--color-divider);padding:14px 16px;margin-bottom:20px;display:grid;grid-template-columns:minmax(0,1fr) minmax(240px,320px);gap:20px;align-items:center">
+            <div style="padding:14px 0;margin-bottom:20px;display:grid;grid-template-columns:minmax(0,1fr) minmax(240px,320px) auto;gap:24px;align-items:center">
               <div>
                 <h6 style="margin:0 0 5px">Carga masiva por generación</h6>
                 <p class="text-muted" style="margin:0;font-size:12.5px;line-height:1.55">Un solo archivo .csv o .xlsx con las columnas matrícula, apellidos, nombres, grupo y generación de ingreso. Cada renglón se acomoda en su generación y en el semestre que indica el número del grupo (1A va a primer semestre, 3B a tercero). Las generaciones que falten se crean solas.</p>
               </div>
               <div>
                 <input class="input" type="file" accept=".csv,.xlsx,.xls" onChange="{{ importarPorGeneracion }}" style="width:100%;font-size:12px">
-                <button class="btn btn-secondary" onClick="{{ descargarFormatoMasivo }}" style="width:100%;margin-top:8px;font-size:12px" title="Libro de Excel con las columnas que necesita esta carga y una hoja de instrucciones">Descargar formato</button>
                 <div style="font-size:12px;margin-top:8px;font-weight:600;color:{{ colorTrayImport }}">{{ trayImportAviso }}</div>
               </div>
+              <button onClick="{{ descargarFormatoMasivo }}" title="Libro de Excel con las columnas que necesita esta carga y una hoja de instrucciones" style="border:0;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;padding:4px;color:var(--color-text);transition:transform .2s ease" style-hover="transform:scale(1.08)">
+                <svg width="46" height="46" viewBox="0 0 48 48" aria-hidden="true"><path d="M14 4h22l8 8v30a2 2 0 0 1-2 2H14a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" fill="#fff" stroke="#1D6F42" stroke-width="2"></path><path d="M36 4v8h8" fill="none" stroke="#1D6F42" stroke-width="2"></path><rect x="4" y="15" width="22" height="22" rx="2" fill="#1D6F42"></rect><path d="M9.5 20.5l11 11M20.5 20.5l-11 11" stroke="#fff" stroke-width="3" stroke-linecap="round"></path><path d="M30 20h10M30 26h10M30 32h10" stroke="#1D6F42" stroke-width="2"></path></svg>
+                <span style="font-size:11.5px;font-weight:600;white-space:nowrap">Descargar formato</span>
+              </button>
             </div>
-            <div style="border:2px solid var(--color-divider);overflow-x:auto">
-              <table style="border-collapse:collapse;width:100%;min-width:1180px;font-size:12.5px">
+            <div style="border:2px solid var(--color-divider);overflow:auto;max-height:calc(100vh - 120px)">
+              <table style="border-collapse:separate;border-spacing:0;width:100%;min-width:1000px;font-size:12.5px;table-layout:fixed">
                 <thead>
                   <tr>
-                    <th style="position:sticky;left:0;z-index:2;background:var(--color-neutral-100);text-align:left;padding:10px 12px;border-bottom:2px solid var(--color-divider);font-family:var(--font-heading);font-size:11px;text-transform:uppercase;letter-spacing:.08em;min-width:210px">Generación</th>
+                    <th style="position:sticky;left:0;top:0;z-index:6;background:var(--color-neutral-100);text-align:left;padding:10px 12px;border-bottom:2px solid var(--color-divider);font-family:var(--font-heading);font-size:11px;text-transform:uppercase;letter-spacing:.08em;width:210px">Generación</th>
                     <sc-for list="{{ trayEtapas }}" as="e" hint-placeholder-count="14">
-                      <th style="padding:10px 8px;border-bottom:2px solid var(--color-divider);border-left:1px solid var(--color-divider);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap" title="{{ e.nombre }}">{{ e.corto }}</th>
+                      <th style="position:sticky;top:0;z-index:5;background:var(--color-neutral-100);padding:10px 8px;border-bottom:2px solid var(--color-divider);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap" title="{{ e.nombre }}">{{ e.abrev }}</th>
                     </sc-for>
                   </tr>
                 </thead>
                 <tbody>
                   <sc-for list="{{ trayFilas }}" as="f" hint-placeholder-count="1">
-                    <tr>
+                    <tr onMouseEnter="{{ f.entrar }}" onMouseLeave="{{ f.salir }}" style="position:relative;transition:transform .2s ease, box-shadow .2s ease" style-hover="transform:scale(1.012);box-shadow:0 10px 24px rgba(0,0,0,.16);z-index:3;background:var(--color-bg)">
                       <th style="position:sticky;left:0;z-index:1;background:{{ f.fondoNombre }};text-align:left;padding:11px 12px;border-bottom:1px solid var(--color-divider);vertical-align:top">
                         <div style="display:flex;align-items:center;gap:8px">
-                          <span style="font-family:var(--font-heading);font-weight:800;font-size:14px">{{ f.nombre }}</span>
+                          <button onClick="{{ f.verGrafica }}" title="Ver la trayectoria de esta generación en gráfica" style="border:0;background:transparent;padding:0;cursor:pointer;font-family:var(--font-heading);font-weight:800;font-size:14px;color:inherit;text-decoration:underline;text-underline-offset:3px">{{ f.nombre }}</button>
                           <span class="tag {{ f.claseEstado }}" style="font-size:9.5px">{{ f.estado }}</span>
                         </div>
                         <div style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap">
@@ -2565,23 +3057,21 @@ Vázquez Ledesma, Iván	MG-25-0092" style="width:100%;font-family:var(--font-bod
                           <button class="btn btn-ghost" style="font-size:11px;padding:3px 8px" onClick="{{ f.borrar }}">{{ f.textoBorrar }}</button>
                         </div>
                       </th>
-                      <sc-for list="{{ f.celdas }}" as="c" hint-placeholder-count="14">
-                        <td style="padding:0;border-bottom:1px solid var(--color-divider);border-left:1px solid var(--color-divider);text-align:center">
-                          <button onClick="{{ c.abrir }}" title="{{ c.titulo }}" style="width:100%;border:0;background:{{ c.fondo }};cursor:pointer;padding:12px 6px;display:flex;flex-direction:column;align-items:center;gap:5px;font:inherit;color:inherit">
-                            <span style="width:11px;height:11px;background:{{ c.luz }};border:1px solid {{ c.borde }};flex:none"></span>
-                            <span style="font-family:var(--font-heading);font-weight:800;font-size:13px;color:{{ c.colorTexto }}">{{ c.cuenta }}</span>
-                          </button>
-                        </td>
-                      </sc-for>
+                      <td colSpan="13" style="padding:0;height:96px;position:relative;border-bottom:1px solid var(--color-divider)">
+                        <div style="position:absolute;inset:0;display:grid;grid-template-columns:repeat(13,minmax(0,1fr))">
+                          <sc-for list="{{ f.celdas }}" as="c" hint-placeholder-count="13">
+                            <button onClick="{{ c.abrir }}" title="{{ c.titulo }}" style="border:0;background:transparent;cursor:pointer;padding:0" style-hover="background:var(--color-neutral-100)"></button>
+                          </sc-for>
+                        </div>
+                        {{ f.linea }}
+                      </td>
                     </tr>
                   </sc-for>
                 </tbody>
               </table>
             </div>
             <div style="display:flex;gap:20px;flex-wrap:wrap;margin-top:12px;font-size:11.5px" class="text-muted">
-              <span style="display:flex;align-items:center;gap:7px"><span style="width:11px;height:11px;background:var(--color-success, #2e7d32);border:1px solid rgba(0,0,0,.25)"></span>Base cargada</span>
-              <span style="display:flex;align-items:center;gap:7px"><span style="width:11px;height:11px;background:var(--color-neutral-300);border:1px solid var(--color-divider)"></span>Sin cargar</span>
-              <span>Clic en cualquier celda para ver el listado de esa etapa.</span>
+              <span>Pase el mouse por una generación para ver su trayectoria. Clic en una etapa para abrir su listado; clic en el nombre para ver la gráfica completa.</span>
             </div>
 
             <h3 style="margin:40px 0 4px">Indicadores</h3>
@@ -2758,6 +3248,9 @@ Vázquez Ledesma, Iván	MG-25-0092" style="width:100%;font-family:var(--font-bod
                               </sc-for>
                             </select>
                           </td>
+                          <td style="padding:6px 12px;border-bottom:1px solid var(--color-divider)">
+                            <input class="input" inputmode="numeric" value="{{ a.anioTit }}" placeholder="{{ a.anioTitPista }}" onChange="{{ a.setAnioTit }}" disabled="{{ a.soloLectura }}" style="padding:3px 6px;font-size:11.5px;width:64px">
+                          </td>
                           <td style="padding:6px 12px;border-bottom:1px solid var(--color-divider);white-space:nowrap">
                             <button class="btn {{ a.claseConcluido }}" style="font-size:11px;padding:3px 9px" onClick="{{ a.alternarConcluido }}">{{ a.textoConcluido }}</button>
                           </td>
@@ -2827,7 +3320,7 @@ const AREAS = [
   {id:'doc', nombre:'Coordinación Docente', perfiles:['super','admin_inst','admin','direccion','docencia','docente'], modulos:[
     {id:'expediente', nombre:'Expediente docente', listo:true},
     {id:'planeaciones', nombre:'Planeaciones'},
-    {id:'evaldocente', nombre:'Evaluación docente'},
+    {id:'evaldocente', nombre:'Evaluación docente', listo:true},
     {id:'nomina', nombre:'Nómina'}]},
   {id:'adm2', nombre:'Administración y Finanzas', perfiles:['super','admin_inst','admin','direccion','control'], modulos:[
     {id:'contabilidad', nombre:'Contabilidad', listo:true}]},
@@ -2847,6 +3340,110 @@ const AREAS = [
 ];
 
 const COLORES_POR_DEFECTO = ['#7a1f2b','#2C5F8A','#D9A441'];
+
+// Pastel de matrícula activa. Con intro: pantalla blanca, esfera, anillos girando,
+// líneas con conteo, latido y traslado a su lugar en la página.
+function PastelMatricula(p) {
+  const h = React.createElement, secs = p.secs, total = p.total;
+  const FIN = 6600;
+  const [t, setT] = React.useState(p.intro ? 0 : FIN);
+  const ref = React.useRef(null), destino = React.useRef(null);
+  React.useEffect(() => {
+    if (!p.intro) return;
+    let raf, t0 = null;
+    const paso = ts => {
+      if (t0 === null) t0 = ts;
+      const v = Math.min(FIN, ts - t0);
+      if (v >= 5500 && !destino.current && ref.current) destino.current = ref.current.getBoundingClientRect();
+      setT(v);
+      if (v < FIN) raf = requestAnimationFrame(paso); else if (p.onFin) p.onFin();
+    };
+    raf = requestAnimationFrame(paso);
+    return () => cancelAnimationFrame(raf);
+  }, []);
+  const cl = x => Math.max(0, Math.min(1, x));
+  const pr = (a, b) => cl((t - a) / (b - a));
+  const eo = x => 1 - Math.pow(1 - x, 3);
+  const eback = x => { const c = 1.7; return 1 + (c + 1) * Math.pow(x - 1, 3) + c * Math.pow(x - 1, 2); };
+  const W = 1100, H = 560, cx = W / 2, cy = H / 2, r0 = 92, r1 = 165, R = 235;
+  const pt = (rad, a) => [cx + rad * Math.cos(a), cy + rad * Math.sin(a)];
+  const arco = (ra, rb, a0, a1) => {
+    if (a1 - a0 >= 2 * Math.PI - 1e-6) a1 = a0 + 2 * Math.PI - 1e-4;
+    const lg = a1 - a0 > Math.PI ? 1 : 0;
+    const [x0, y0] = pt(rb, a0), [x1, y1] = pt(rb, a1), [x2, y2] = pt(ra, a1), [x3, y3] = pt(ra, a0);
+    return 'M' + x0 + ' ' + y0 + ' A' + rb + ' ' + rb + ' 0 ' + lg + ' 1 ' + x1 + ' ' + y1 + ' L' + x2 + ' ' + y2 + ' A' + ra + ' ' + ra + ' 0 ' + lg + ' 0 ' + x3 + ' ' + y3 + ' Z';
+  };
+  const COL = ['var(--color-accent)', 'var(--color-accent-2)', '#2e7d32', '#D9A441', '#5b5b5b', '#8a4f9e', '#1f6f8b'];
+  const kEsf = eback(pr(0, 800)), kTot = pr(600, 1000);
+  const kInt = eo(pr(1000, 2300)), kExt = eo(pr(2200, 3500));
+  const kLin = eo(pr(3500, 4100)), kNum = eo(pr(3700, 4600));
+  const uLat = pr(4600, 5400);
+  const lat = uLat > 0 && uLat < 1 ? 1 + 0.38 * Math.pow(Math.abs(Math.sin(uLat * Math.PI * 2)), 1.5) * (1 - uLat * 0.35) : 1;
+  const giro = (k, dir, s0) => 'translate(' + cx + ' ' + cy + ') rotate(' + (dir * 220 * (1 - k)) + ') scale(' + (s0 + (1 - s0) * k) + ') translate(' + (-cx) + ' ' + (-cy) + ')';
+  const anInt = [], anExt = [], rot = [];
+  let ang = -Math.PI / 2;
+  secs.forEach((s, i) => {
+    const a0 = ang, a1 = ang + s.n / total * 2 * Math.PI; ang = a1;
+    const col = COL[i % COL.length];
+    anInt.push(h('path', {key: 's' + i, d: arco(r0, r1, a0, a1), fill: col, stroke: 'var(--color-bg)', strokeWidth: 3}));
+    const [sx, sy] = pt((r0 + r1) / 2, (a0 + a1) / 2);
+    anInt.push(h('text', {key: 'st' + i, x: sx, y: sy, textAnchor: 'middle', dominantBaseline: 'central', fill: '#fff', fontSize: s.etq.length > 2 ? 17 : 26, fontWeight: 800, fontFamily: 'var(--font-heading)'}, s.etq));
+    let b = a0;
+    s.grupos.forEach((g, j) => {
+      const g0 = b, g1 = b + g.n / total * 2 * Math.PI; b = g1;
+      anExt.push(h('path', {key: 'g' + i + j, d: arco(r1, R, g0, g1), fill: col, fillOpacity: j % 2 ? 0.62 : 0.82, stroke: 'var(--color-bg)', strokeWidth: 3}));
+      const am = (g0 + g1) / 2;
+      const [gx, gy] = pt((r1 + R) / 2, am);
+      anExt.push(h('text', {key: 'gt' + i + j, x: gx, y: gy, textAnchor: 'middle', dominantBaseline: 'central', fill: '#fff', fontSize: 20, fontWeight: 800, fontFamily: 'var(--font-heading)'}, g.l));
+      const der = Math.cos(am) >= 0;
+      const [ax, ay] = pt(R + 4, am), [bx, by] = pt(R + 44, am), ex = bx + (der ? 46 : -46), tx = ex + (der ? 8 : -8);
+      rot.push(h('polyline', {key: 'l' + i + j, points: ax + ',' + ay + ' ' + bx + ',' + by + ' ' + ex + ',' + by, pathLength: 1, strokeDasharray: 1, strokeDashoffset: 1 - kLin, fill: 'none', stroke: 'var(--color-text)', strokeWidth: 1.5}));
+      rot.push(h('text', {key: 'n' + i + j, x: tx, y: by, textAnchor: der ? 'start' : 'end', dominantBaseline: 'central', fill: 'var(--color-text)', fontFamily: 'var(--font-heading)', fontSize: 24, fontWeight: 800,
+        opacity: cl(kLin * 2), transform: 'translate(' + tx + ' ' + by + ') scale(' + lat + ') translate(' + (-tx) + ' ' + (-by) + ')'}, String(Math.round(g.n * kNum))));
+    });
+  });
+  const svg = h('svg', {viewBox: '0 0 ' + W + ' ' + H, style: {width: '100%', height: 'auto', display: 'block', overflow: 'visible'}},
+    h('defs', null, h('radialGradient', {id: 'esferaRoja', cx: '38%', cy: '34%', r: '70%'},
+      h('stop', {offset: '0%', stopColor: '#ff6b5e'}), h('stop', {offset: '55%', stopColor: '#c62828'}), h('stop', {offset: '100%', stopColor: '#6d0f0f'}))),
+    h('g', {transform: giro(kExt, -1, 0.55), opacity: cl(kExt * 3)}, anExt),
+    h('g', {transform: giro(kInt, 1, 0.45), opacity: cl(kInt * 3)}, anInt),
+    h('g', {transform: 'translate(' + cx + ' ' + cy + ') scale(' + Math.max(0, kEsf) + ') translate(' + (-cx) + ' ' + (-cy) + ')'},
+      h('circle', {cx, cy, r: r0 - 6, fill: 'url(#esferaRoja)'}),
+      h('text', {x: cx, y: cy - 8, textAnchor: 'middle', dominantBaseline: 'central', fill: '#fff', fontSize: 46, fontWeight: 800, fontFamily: 'var(--font-heading)', opacity: kTot}, String(total)),
+      h('text', {x: cx, y: cy + 26, textAnchor: 'middle', fill: '#fff', fontSize: 12, letterSpacing: '.08em', opacity: kTot}, 'ESTUDIANTES')),
+    rot);
+  const enPagina = h('div', {ref, style: {width: '100%', maxWidth: W + 'px', visibility: t >= FIN ? 'visible' : 'hidden'}}, t >= FIN ? svg : h('div', {style: {aspectRatio: W + '/' + H}}));
+  if (t >= FIN) return enPagina;
+  // Capa de intro: centrada a pantalla completa y, al final, viaja al lugar del pastel en la página.
+  const vw = window.innerWidth, vh = window.innerHeight;
+  const w0 = Math.min(vw * 0.94, vh * 0.9 * W / H), r0x = {left: (vw - w0) / 2, top: (vh - w0 * H / W) / 2, width: w0};
+  const d = destino.current, kMov = eo(pr(5500, 6500));
+  const caja = d ? {left: r0x.left + (d.left - r0x.left) * kMov, top: r0x.top + (d.top - r0x.top) * kMov, width: r0x.width + (d.width - r0x.width) * kMov} : r0x;
+  return h(React.Fragment, null, enPagina,
+    h('div', {style: {position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(255,255,255,' + (1 - kMov) + ')', pointerEvents: kMov > 0.6 ? 'none' : 'auto'}},
+      h('div', {style: {position: 'absolute', left: caja.left + 'px', top: caja.top + 'px', width: caja.width + 'px'}}, svg)));
+}
+
+// Línea que recorre la trayectoria de una generación al pasar el mouse por su renglón.
+function LineaTray(p) {
+  const h = React.createElement, N = p.n, pts = p.puntos;
+  if (!pts.length) return h('div', {style:{position:'absolute', inset:0, display:'flex', alignItems:'center', paddingLeft:'14px', pointerEvents:'none', fontSize:'12px', color:'var(--color-neutral-500, #888)'}}, 'Sin listados cargados');
+  const x = i => (i + 0.5) / N * 100;
+  const y = a => 80 - a * 0.42;
+  const x0 = x(pts[0].i), x1 = x(pts[pts.length - 1].i), span = Math.max(0.001, x1 - x0);
+  const D = 0.3 + 0.13 * (pts[pts.length - 1].i - pts[0].i);
+  const delay = i => pts.length === 1 ? 0 : (x(i) - x0) / span * D;
+  const linea = pts.length > 1 ? h('svg', {viewBox:'0 0 100 100', preserveAspectRatio:'none',
+      style:{position:'absolute', inset:0, width:'100%', height:'100%', overflow:'visible', pointerEvents:'none',
+        '--c0': (100 - x0) + '%', '--c1': (100 - x1) + '%', clipPath:'inset(-20px ' + (100 - x1) + '% -20px -20px)', animation:'trTrazar ' + D + 's linear both'}},
+    h('polyline', {points: pts.map(q => x(q.i) + ',' + y(q.alto)).join(' '), fill:'none', stroke:'var(--color-text)', strokeWidth:2, vectorEffect:'non-scaling-stroke', strokeLinejoin:'round'})) : null;
+  const marcas = pts.map(q => h('div', {key: q.i, style:{position:'absolute', left: x(q.i) + '%', top: y(q.alto) + '%', pointerEvents:'none'}},
+    h('span', {style:{position:'absolute', left:0, top:0, width:'12px', height:'12px', borderRadius:'50%', background:'#2e7d32', boxShadow:'0 0 0 4px rgba(46,125,50,.22)', animation:'trEncender .25s ease-out both', animationDelay: delay(q.i) + 's'}}),
+    h('span', {style:{position:'absolute', left:0, bottom:'10px', textAlign:'center', whiteSpace:'nowrap', lineHeight:1.15, animation:'trAparecer .3s ease-out both', animationDelay: delay(q.i) + 's'}},
+      h('b', {style:{display:'block', fontFamily:'var(--font-heading)', fontSize:'14px', color:'var(--color-text)'}}, String(q.total)),
+      q.promo ? h('span', {style:{display:'block', fontSize:'10px', color:'var(--color-neutral-600, #666)'}}, q.promo) : null)));
+  return h('div', {style:{position:'absolute', inset:0, pointerEvents:'none'}}, linea, marcas);
+}
 
 // Las catorce etapas por las que pasa una generación, en orden.
 const ETAPAS_TRAY = [
@@ -2962,7 +3559,7 @@ const titulo = t => (t || '').split('.').map(w => w.charAt(0).toUpperCase() + w.
 
 // ---------- Control Escolar · padrón, promociones y grupos ----------
 const ANIO_BASE = 2022, ANIO_TOPE = 2032;
-const MESES = {A:'enero–julio', B:'agosto–diciembre'};
+const MESES = {A:'enero–julio', B:'agosto–enero'};
 const PERIODOS = (() => {
   const l = [];
   for (let y = ANIO_BASE; y <= ANIO_TOPE; y++) ['A','B'].forEach(p => l.push({
@@ -3002,8 +3599,8 @@ class Component extends DCLogic {
     trayPidiendoAnio:false, trayAnioNuevo:'', trayAvisoAnio:'', trayPrecargar:false, trayImportAviso:'',
     trayEditFila:null, trayEditMat:'', trayEditApellidos:'', trayEditNombres:'', trayEditGrupo:'', trayBusca:'',
     contCuentas:{}, contAviso:'Sin capturar', contAvisoError:false, contGrupoSel:'', contBusca:'',
-    contPestana:'actual', contFiltroEstado:'', contConfirmaMarcar:false, cicloSel:'',
-    menuVisible:true,
+    contPestana:'actual', contCostos:{}, contCostosAviso:'', contInvVista:'estudiante', contAvVista:'grupo', contFiltroEstado:'', contConfirmaMarcar:false, cicloSel:'',
+    menuVisible:false,
     expDatos:{}, expCtx:[], expCargado:false, expSel:'', expBusca:'', expPrograma:'',
     expCiclo:'', expCicloAbierto:'', expAviso:'', expGuardando:'',
     contImportAviso:'', contFormatoAviso:'',
@@ -3702,6 +4299,511 @@ class Component extends DCLogic {
 
   quitarFotoDoc = (slug) => () => this.cambiarExpediente(slug, {foto:''});
 
+  /* ================= Evaluación docente =================
+     Los docentes salen del Expediente docente (y éste de Carga horaria). Las
+     ausencias viven en una llave propia:
+       {ausencias:{slug:[…]}, oficios:{'slug|quincena':'UJM/LMG/AU/0001/2026'},
+        consecutivos:{'2026':1}, config:{…}}
+     Cada registro es una materia de un día; el oficio es uno por docente y
+     quincena, y se numera al registrar la primera ausencia de esa quincena. */
+  CLAVE_AUS = 'evaldocente:ausencias';
+  DIAS_EV = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+  MESES_EV = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  CONFIG_AUS = {
+    prefijo:'UJM/LMG/AU', lugar:'Colima, Col.',
+    destinatario:'Mtra. Aurora Ileana Cruz Alcaraz', cargoDest:'Coordinadora General Académica',
+    firmante:'Dr. Ramses Rodrigo Castañeda Valenzuela', cargoFirm:'Director de la Licenciatura en Medicina General',
+    ccp:'Licda. Arcelia del Carmen García Hernández – Recursos Humanos'
+  };
+
+  async cargarIncidencias() {
+    if (!this.cliente || !this.state.instActiva) return;
+    try {
+      const {data} = await this.cliente.from('horarios_almacen').select('valor')
+        .eq('clave', this.CLAVE_AUS).eq('institucion_id', this.state.instActiva).maybeSingle();
+      this.setState({ausDatos: (data && data.valor) ? (JSON.parse(data.valor) || {}) : {}});
+    } catch (e) { this.setState({ausDatos:{}}); }
+  }
+
+  async persistirAusencias(datos, aviso) {
+    this.setState({ausDatos:datos, evAviso:'Guardando…', evError:false});
+    if (!this.cliente || !this.state.instActiva) { this.setState({evAviso:'Sin conexión: el cambio no quedó en la base.', evError:true}); return false; }
+    const {error} = await this.cliente.from('horarios_almacen').upsert({
+      clave: this.CLAVE_AUS, valor: JSON.stringify(datos), institucion_id: this.state.instActiva,
+      actualizado_en: new Date().toISOString(), actualizado_por: this.usuarioId
+    }, {onConflict:'clave,institucion_id'});
+    if (error) { this.setState({evAviso:'No se pudo guardar: ' + error.message, evError:true}); return false; }
+    this.setState({evAviso:(aviso || 'Guardado') + ' · ' + new Date().toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit'}), evError:false});
+    return true;
+  }
+
+  configAus() { return Object.assign({}, this.CONFIG_AUS, (this.state.ausDatos || {}).config || {}); }
+
+  cambiarConfigAus(k, v) {
+    if (!this.puedeEditarAhora('evaldocente')) { this.setState({evAviso:this.motivoBloqueo('evaldocente'), evError:true}); return; }
+    const d = Object.assign({}, this.state.ausDatos);
+    d.config = Object.assign({}, d.config, {[k]: v});
+    this.setState({ausDatos:d});
+    clearTimeout(this.tempAus);
+    this.tempAus = setTimeout(() => this.persistirAusencias(this.state.ausDatos, 'Datos del oficio guardados'), 700);
+  }
+
+  fechaISO(d) {
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  }
+  fechaDe(iso) { const [y, m, d] = iso.split('-').map(n => parseInt(n, 10)); return new Date(y, m - 1, d); }
+  diaDeFecha(iso) { return /^\d{4}-\d{2}-\d{2}$/.test(iso || '') ? this.DIAS_EV[this.fechaDe(iso).getDay()] : ''; }
+  fechaLarga(iso) {
+    const d = this.fechaDe(iso);
+    return d.getDate() + ' de ' + this.MESES_EV[d.getMonth()] + ' de ' + d.getFullYear();
+  }
+  quincenaDe(iso) { return iso.slice(0, 7) + '-' + (parseInt(iso.slice(8, 10), 10) <= 15 ? '1' : '2'); }
+  nombreQuincena(q) {
+    const m = parseInt(q.slice(5, 7), 10) - 1;
+    const mes = this.MESES_EV[m];
+    return mes.charAt(0).toUpperCase() + mes.slice(1, 3) + ': ' + q.slice(-1) + '/2';
+  }
+  rangoQuincena(q) {
+    const y = parseInt(q.slice(0, 4), 10), m = parseInt(q.slice(5, 7), 10);
+    const fin = q.slice(-1) === '1' ? 15 : new Date(y, m, 0).getDate();
+    return (q.slice(-1) === '1' ? 1 : 16) + '–' + fin + ' de ' + this.MESES_EV[m - 1] + ' de ' + y;
+  }
+
+  inicioBloque(b) {
+    const m = String(b || '').match(/(\d{1,2}):(\d{2})/);
+    return m ? parseInt(m[1], 10) * 60 + parseInt(m[2], 10) : 9999;
+  }
+
+  // Clases del docente en un ciclo: una entrada por día y bloque.
+  horarioDocente(slug, periodo) {
+    const out = {};
+    const np = this.normalizaTexto(periodo);
+    (this.state.expCtx || []).forEach(c => {
+      if (this.normalizaTexto(c.periodo) !== np) return;
+      const porId = {};
+      (c.docentes || []).forEach(d => { porId[d.id] = d; });
+      (c.grupos || []).forEach(g => {
+        const celdas = g.celdas || {};
+        Object.keys(celdas).forEach(k => {
+          const cel = celdas[k];
+          if (!cel || cel.tipo !== 'clase' || !cel.docenteId) return;
+          const d = porId[cel.docenteId];
+          if (!d || this.slugDoc(d.nombre) !== slug) return;
+          const i = k.lastIndexOf('|');
+          const dia = k.slice(0, i), bloque = k.slice(i + 1);
+          const grupo = g.semestre ? String(g.semestre).trim() + '°' + String(g.grupo || '').trim() : (g.grupo || g.nombre || '');
+          if (!out[dia + '|' + bloque]) out[dia + '|' + bloque] = {dia, bloque, materia:(cel.materia || 'Sin materia').trim(),
+            grupo, programa:c.programa || '', periodo:c.periodo || ''};
+        });
+      });
+    });
+    return Object.keys(out).map(k => out[k]);
+  }
+
+  // Materias que el docente tiene un día, con las horas (bloques) de cada una.
+  materiasDelDia(slug, periodo, iso) {
+    const dia = this.normalizaTexto(this.diaDeFecha(iso));
+    const g = {};
+    this.horarioDocente(slug, periodo).filter(x => this.normalizaTexto(x.dia) === dia).forEach(x => {
+      const k = x.materia + '|' + x.grupo;
+      if (!g[k]) g[k] = {clave:k, materia:x.materia, grupo:x.grupo, programa:x.programa, periodo:x.periodo, bloques:[]};
+      g[k].bloques.push(x.bloque);
+    });
+    return Object.keys(g).map(k => {
+      const m = g[k];
+      m.bloques.sort((a, b) => this.inicioBloque(a) - this.inicioBloque(b));
+      m.horas = m.bloques.length;
+      return m;
+    }).sort((a, b) => this.inicioBloque(a.bloques[0]) - this.inicioBloque(b.bloques[0]));
+  }
+
+  horasProgramadasMes(slots, mes) {
+    if (!mes || !slots.length) return 0;
+    const porDia = {};
+    slots.forEach(x => { const d = this.normalizaTexto(x.dia); porDia[d] = (porDia[d] || 0) + 1; });
+    const [y, m] = mes.split('-').map(n => parseInt(n, 10));
+    const hoy = this.fechaISO(new Date());
+    let total = 0;
+    for (let d = new Date(y, m - 1, 1); d.getMonth() === m - 1; d.setDate(d.getDate() + 1)) {
+      if (this.fechaISO(d) > hoy) break;
+      total += porDia[this.normalizaTexto(this.DIAS_EV[d.getDay()])] || 0;
+    }
+    return total;
+  }
+
+  // Número de oficio del docente en la quincena; sin guardar, se muestra el que le tocaría.
+  oficioDe(datos, slug, q) {
+    const ya = (datos.oficios || {})[slug + '|' + q];
+    if (ya) return {num:ya, nuevo:false};
+    const anio = q.slice(0, 4);
+    const n = ((datos.consecutivos || {})[anio] || 0) + 1;
+    return {num:this.configAus().prefijo + '/' + String(n).padStart(4, '0') + '/' + anio, nuevo:true, n, anio};
+  }
+
+  guardarAusencia = async () => {
+    const s = this.state;
+    if (!this.puedeEditarAhora('evaldocente')) { this.setState({evAviso:this.motivoBloqueo('evaldocente'), evError:true}); return; }
+    if (!s.evDoc || !s.evFecha) { this.setState({evAviso:'Indique el día de ausencia.', evError:true}); return; }
+    const datos = JSON.parse(JSON.stringify(s.ausDatos || {}));
+    datos.ausencias = datos.ausencias || {}; datos.oficios = datos.oficios || {}; datos.consecutivos = datos.consecutivos || {};
+    const propias = datos.ausencias[s.evDoc] || [];
+    const materias = this.materiasDelDia(s.evDoc, s.evCicloReg, s.evFecha)
+      .filter(m => !propias.some(a => a.fecha === s.evFecha && a.materia === m.materia && a.grupo === m.grupo));
+    if (!materias.length) { this.setState({evAviso:'No hay materias por registrar ese día.', evError:true}); return; }
+    const estr = s.evEstr || {};
+    if (materias.some(m => !(estr[m.clave] || '').trim())) {
+      this.setState({evAviso:'Escriba la estrategia de regularización de cada materia.', evError:true}); return;
+    }
+    const q = this.quincenaDe(s.evFecha);
+    const of = this.oficioDe(datos, s.evDoc, q);
+    if (of.nuevo) { datos.oficios[s.evDoc + '|' + q] = of.num; datos.consecutivos[of.anio] = of.n; }
+    materias.forEach((m, i) => propias.push({
+      id: Date.now().toString(36) + i, fecha:s.evFecha, dia:this.diaDeFecha(s.evFecha), quincena:q, oficio:of.num,
+      materia:m.materia, grupo:m.grupo, programa:m.programa, periodo:m.periodo,
+      horas:m.horas, bloques:m.bloques.join(', '), estrategia:estr[m.clave].trim(),
+      registradoEn:new Date().toISOString(), registradoPor:s.usuario || ''
+    }));
+    datos.ausencias[s.evDoc] = propias;
+    const ok = await this.persistirAusencias(datos, 'Ausencia registrada en ' + of.num);
+    if (ok) this.setState({evPaso:'historial', evEstr:{}});
+  };
+
+  quitarAusencia(slug, id) {
+    if (!this.puedeEditarAhora('evaldocente')) { this.setState({evAviso:this.motivoBloqueo('evaldocente'), evError:true}); return; }
+    const datos = JSON.parse(JSON.stringify(this.state.ausDatos || {}));
+    const lista = ((datos.ausencias || {})[slug] || []).filter(a => a.id !== id);
+    datos.ausencias[slug] = lista;
+    // El número de oficio se conserva aunque la quincena quede vacía: ya pudo imprimirse.
+    this.persistirAusencias(datos, 'Registro quitado');
+  }
+
+  /* ---------- Oficio en Word (.docx) ---------- */
+  xmlEsc(t) { return String(t || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+  parrafoDocx(runs, o) {
+    o = o || {};
+    const sp = '<w:spacing w:before="' + (o.before || 0) + '" w:after="' + (o.after || 0) + '" w:line="' + (o.line || 240) + '" w:lineRule="auto"/>';
+    const r = (runs || []).map(x => {
+      const t = typeof x === 'string' ? {t:x} : x;
+      return '<w:r><w:rPr><w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial"/>' + (t.b ? '<w:b/><w:bCs/>' : '') +
+        '<w:sz w:val="' + (o.sz || 22) + '"/><w:szCs w:val="' + (o.sz || 22) + '"/></w:rPr><w:t xml:space="preserve">' + this.xmlEsc(t.t) + '</w:t></w:r>';
+    }).join('');
+    return '<w:p><w:pPr>' + (o.salto ? '<w:pageBreakBefore/>' : '') + sp + (o.jc ? '<w:jc w:val="' + o.jc + '"/>' : '') + '</w:pPr>' + r + '</w:p>';
+  }
+
+  // Un oficio: docente, número y sus ausencias de la quincena (una por materia).
+  oficioDocx(nombre, num, ausencias, salto) {
+    const c = this.configAus();
+    const p = (r, o) => this.parrafoDocx(r, o);
+    const B = t => ({t, b:true});
+    const hoy = this.fechaISO(new Date());
+    const x = [];
+    x.push(p([B(c.lugar + ', a ' + this.fechaLarga(hoy))], {jc:'right', salto}));
+    x.push(p([B('Asunto: '), 'Informe de ausencia'], {jc:'right'}));
+    x.push(p([B('Oficio: '), num], {jc:'right'}));
+    x.push(p([], {jc:'both'}));
+    x.push(p([B(c.destinatario)]));
+    x.push(p([B(c.cargoDest)]));
+    x.push(p([B('P R E S E N T E ')], {before:240, line:360}));
+    x.push(p(['Por este medio me es grato saludarle y al mismo tiempo, en seguimiento a las actividades académicas que se tienen programadas dentro de la Universidad, le informo el registro de ausencia del docente:'], {jc:'both', line:360, after:160}));
+    x.push(p([], {jc:'both', line:360}));
+    x.push(p([B(nombre)], {jc:'both', line:360, after:160}));
+    ausencias.forEach((a, i) => {
+      if (i) x.push(p([], {jc:'both', line:360}));
+      x.push(p([B('Día: '), a.dia + ' ' + this.fechaLarga(a.fecha)], {jc:'both', line:360, after:160}));
+      x.push(p([B('Materia y Grupo: '), a.materia + ' – ' + a.grupo], {jc:'both', line:360, after:160}));
+      x.push(p([B('Estrategia de regularización: '), a.estrategia], {jc:'both', line:360, after:160}));
+    });
+    x.push(p([], {jc:'both', line:360}));
+    x.push(p(['Sin otro particular y seguro de su valioso apoyo, le envío un cordial saludo.'], {jc:'both', before:240, line:360, after:160}));
+    for (let i = 0; i < 3; i++) x.push(p([], {jc:'center', line:360}));
+    x.push(p([B('A T E N T A M E N T E')], {jc:'center', line:360, sz:24}));
+    x.push(p([], {jc:'center', sz:24}));
+    x.push(p(['____________________________________'], {jc:'center', line:360, sz:24}));
+    x.push(p([B(c.firmante)], {jc:'center'}));
+    x.push(p([B(c.cargoFirm)], {jc:'center'}));
+    for (let i = 0; i < 4; i++) x.push(p([], {sz:14}));
+    x.push(p(['C.c.p. ' + c.ccp], {sz:16}));
+    return x.join('');
+  }
+
+  /* La hoja membretada vertical de Identidad institucional va al fondo de cada
+     página: una imagen en el encabezado, detrás del texto, a lo ancho de la hoja. */
+  async membreteDocx() {
+    const src = this.state.idMembrete || '';
+    const m = /^data:image\/(png|jpe?g);base64,(.+)$/i.exec(src);
+    if (!m) return null;
+    const ext = m[1].toLowerCase() === 'png' ? 'png' : 'jpeg';
+    const bin = atob(m[2]);
+    const bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    const dim = await new Promise(res => {
+      const img = new Image();
+      img.onload = () => res({w:img.naturalWidth, h:img.naturalHeight});
+      img.onerror = () => res(null);
+      img.src = src;
+    });
+    if (!dim || !dim.w) return null;
+    const cx = 7772400, cy = Math.round(cx * dim.h / dim.w);
+    return {ext, bytes, cx, cy};
+  }
+
+  crearDocx(cuerpo, memb) {
+    const R = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships';
+    const W = 'http://schemas.openxmlformats.org/wordprocessingml/2006/main';
+    const cab = memb ? '<w:headerReference w:type="default" r:id="rId1"/>' : '';
+    const doc = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="' + W + '" xmlns:r="' + R + '"><w:body>' + cuerpo +
+      '<w:sectPr>' + cab + '<w:pgSz w:w="12240" w:h="15840"/><w:pgMar w:top="2268" w:right="1701" w:bottom="1417" w:left="1701" w:header="708" w:footer="708" w:gutter="0"/></w:sectPr></w:body></w:document>';
+    const tipos = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/>' +
+      (memb ? '<Default Extension="' + memb.ext + '" ContentType="image/' + memb.ext + '"/><Override PartName="/word/header1.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.header+xml"/>' : '') +
+      '<Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>';
+    const archivos = [
+      ['[Content_Types].xml', tipos],
+      ['_rels/.rels', '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="' + R + '/officeDocument" Target="word/document.xml"/></Relationships>'],
+      ['word/document.xml', doc]
+    ];
+    if (memb) {
+      const ext = '<a:ext cx="' + memb.cx + '" cy="' + memb.cy + '"/>';
+      const header = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:hdr xmlns:w="' + W + '" xmlns:r="' + R + '" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture">' +
+        '<w:p><w:r><w:drawing><wp:anchor distT="0" distB="0" distL="0" distR="0" simplePos="0" relativeHeight="0" behindDoc="1" locked="1" layoutInCell="1" allowOverlap="1">' +
+        '<wp:simplePos x="0" y="0"/><wp:positionH relativeFrom="page"><wp:posOffset>0</wp:posOffset></wp:positionH><wp:positionV relativeFrom="page"><wp:posOffset>0</wp:posOffset></wp:positionV>' +
+        '<wp:extent cx="' + memb.cx + '" cy="' + memb.cy + '"/><wp:effectExtent l="0" t="0" r="0" b="0"/><wp:wrapNone/><wp:docPr id="1" name="Membrete"/><wp:cNvGraphicFramePr/>' +
+        '<a:graphic><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic><pic:nvPicPr><pic:cNvPr id="0" name="membrete.' + memb.ext + '"/><pic:cNvPicPr/></pic:nvPicPr>' +
+        '<pic:blipFill><a:blip r:embed="rId1"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill><pic:spPr><a:xfrm><a:off x="0" y="0"/>' + ext + '</a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic>' +
+        '</wp:anchor></w:drawing></w:r></w:p></w:hdr>';
+      archivos.push(['word/_rels/document.xml.rels', '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="' + R + '/header" Target="header1.xml"/></Relationships>']);
+      archivos.push(['word/header1.xml', header]);
+      archivos.push(['word/_rels/header1.xml.rels', '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="' + R + '/image" Target="media/membrete.' + memb.ext + '"/></Relationships>']);
+      archivos.push(['word/media/membrete.' + memb.ext, memb.bytes]);
+    }
+    const enc = new TextEncoder();
+    const tabla = this.tablaCrc || (this.tablaCrc = Array.from({length:256}, (_, n) => {
+      let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; return c >>> 0;
+    }));
+    const crc = b => { let c = 0xFFFFFFFF; for (let i = 0; i < b.length; i++) c = tabla[(c ^ b[i]) & 0xFF] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; };
+    const partes = [], central = [];
+    let off = 0;
+    archivos.forEach(([nombre, txt]) => {
+      const nb = enc.encode(nombre), data = typeof txt === 'string' ? enc.encode(txt) : txt, c = crc(data);
+      const lh = new DataView(new ArrayBuffer(30));
+      lh.setUint32(0, 0x04034b50, true); lh.setUint16(4, 20, true); lh.setUint16(6, 0x0800, true);
+      lh.setUint32(14, c, true); lh.setUint32(18, data.length, true); lh.setUint32(22, data.length, true); lh.setUint16(26, nb.length, true);
+      const ch = new DataView(new ArrayBuffer(46));
+      ch.setUint32(0, 0x02014b50, true); ch.setUint16(4, 20, true); ch.setUint16(6, 20, true); ch.setUint16(8, 0x0800, true);
+      ch.setUint32(16, c, true); ch.setUint32(20, data.length, true); ch.setUint32(24, data.length, true); ch.setUint16(28, nb.length, true);
+      ch.setUint32(42, off, true);
+      partes.push(new Uint8Array(lh.buffer), nb, data);
+      central.push(new Uint8Array(ch.buffer), nb);
+      off += 30 + nb.length + data.length;
+    });
+    const tam = central.reduce((t, b) => t + b.length, 0);
+    const fin = new DataView(new ArrayBuffer(22));
+    fin.setUint32(0, 0x06054b50, true); fin.setUint16(8, archivos.length, true); fin.setUint16(10, archivos.length, true);
+    fin.setUint32(12, tam, true); fin.setUint32(16, off, true);
+    return new Blob(partes.concat(central, [new Uint8Array(fin.buffer)]), {type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
+  }
+
+  async ofrecerDocx(cuerpo, nombre) {
+    const memb = await this.membreteDocx();
+    const url = URL.createObjectURL(this.crearDocx(cuerpo, memb));
+    if (this.state.descargaUrl) URL.revokeObjectURL(this.state.descargaUrl);
+    this.setState({descargaUrl:url, descargaNombre:nombre});
+  }
+
+  descargarOficio(slug, q) {
+    const d = this.indiceDocentes()[slug];
+    const datos = this.state.ausDatos || {};
+    const lista = (((datos.ausencias || {})[slug]) || []).filter(a => a.quincena === q)
+      .sort((a, b) => a.fecha.localeCompare(b.fecha) || this.inicioBloque(a.bloques) - this.inicioBloque(b.bloques));
+    if (!d || !lista.length) return;
+    const num = (datos.oficios || {})[slug + '|' + q] || lista[0].oficio;
+    this.ofrecerDocx(this.oficioDocx(d.nombre, num, lista, false), 'Oficio_ausencia_' + num.replace(/\//g, '-') + '.docx');
+  }
+
+  descargarAusenciasQuincena(q) {
+    const idx = this.indiceDocentes();
+    const datos = this.state.ausDatos || {};
+    const aus = datos.ausencias || {};
+    const slugs = Object.keys(aus).filter(sl => idx[sl] && aus[sl].some(a => a.quincena === q))
+      .sort((a, b) => idx[a].nombre.localeCompare(idx[b].nombre, 'es'));
+    if (!slugs.length) { this.setState({evAviso:'No hay ausencias en esa quincena.', evError:true}); return; }
+    const cuerpo = slugs.map((sl, i) => {
+      const lista = aus[sl].filter(a => a.quincena === q)
+        .sort((a, b) => a.fecha.localeCompare(b.fecha) || this.inicioBloque(a.bloques) - this.inicioBloque(b.bloques));
+      return this.oficioDocx(idx[sl].nombre, (datos.oficios || {})[sl + '|' + q] || lista[0].oficio, lista, i > 0);
+    }).join('');
+    this.ofrecerDocx(cuerpo, 'Ausencias_docentes_' + q + '.docx');
+  }
+
+  valsEvalDocente() {
+    const s = this.state;
+    if (s.vista !== 'evaldocente') return {esEvalDoc:false};
+    const idx = this.indiceDocentes();
+    let todos = Object.keys(idx).map(k => idx[k]);
+    const vigentes = {};
+    (s.idProgramas || []).forEach(p => {
+      const n = this.normalizaTexto((p && p.nombre) || String(p || ''));
+      if (n) vigentes[n] = true;
+    });
+    if (Object.keys(vigentes).length) {
+      todos.forEach(d => { d.ciclos = d.ciclos.filter(c => vigentes[this.normalizaTexto(c.programa)]); });
+      todos = todos.filter(d => d.ciclos.length);
+    }
+    todos.sort((a, b) => a.nombre.localeCompare(b.nombre, 'es'));
+    const ciclos = {}, horas = {};
+    todos.forEach(d => d.ciclos.forEach(c => { ciclos[c.periodo] = c.orden; horas[c.periodo] = (horas[c.periodo] || 0) + c.horas; }));
+    const opcCiclos = Object.keys(ciclos).sort((a, b) => ciclos[b] - ciclos[a] || a.localeCompare(b, 'es'));
+    const enCurso = opcCiclos.find(p => horas[p] > 0) || opcCiclos[0] || '';
+    const ciclo = (s.evCiclo && ciclos[s.evCiclo] !== undefined) ? s.evCiclo : enCurso;
+    const mes = s.evMes || this.fechaISO(new Date()).slice(0, 7);
+    const tab = s.evTab || 'general';
+    const editable = this.puedeEditarAhora('evaldocente');
+    const datos = s.ausDatos || {};
+    const aus = datos.ausencias || {};
+    const foto = (d, w, h) => ({width:w, height:h, border:'1.5px solid var(--color-divider)',
+      backgroundImage:'url(' + d.foto + ')', backgroundSize:'cover', backgroundPosition:'center'});
+    const nomMes = (() => {
+      const [y, m] = mes.split('-').map(n => parseInt(n, 10));
+      return y && m ? this.MESES_EV[m - 1] + ' ' + y : mes;
+    })();
+    const irRegistrar = slug => this.setState({evDoc:slug, evPaso:'registro', evCicloReg:ciclo,
+      evFecha:this.fechaISO(new Date()), evEstr:{}, evAviso:''});
+    const comunes = {
+      esEvalDoc:true, evCiclo:ciclo, evBloqueado:!editable,
+      evLeyendaBloqueo: editable ? '' : this.motivoBloqueo('evaldocente'),
+      evAviso: s.evAviso || '', evHayAviso: !!s.evAviso,
+      evAvisoColor: s.evError ? '#b3261e' : 'var(--color-accent-700)',
+      evVolver: () => this.setState({evPaso:'', evDoc:'', evEstr:{}, evAviso:''}),
+      evEnLista:false, evEnRegistro:false, evEnHistorial:false
+    };
+
+    const sel = s.evDoc ? todos.find(d => d.slug === s.evDoc) : null;
+    if (sel && s.evPaso) {
+      Object.assign(comunes, {evSelNombre:sel.nombre, evSelHayFoto:!!sel.foto, evSelSinFoto:!sel.foto,
+        evSelIniciales:this.iniciales(sel.nombre), evSelEstiloFoto: foto(sel, '56px', '72px')});
+      const propias = aus[sel.slug] || [];
+
+      if (s.evPaso === 'registro') {
+        const cicloReg = s.evCicloReg || ciclo;
+        const fecha = s.evFecha || '';
+        const valida = /^\d{4}-\d{2}-\d{2}$/.test(fecha);
+        const mats = valida ? this.materiasDelDia(sel.slug, cicloReg, fecha) : [];
+        const estr = s.evEstr || {};
+        const filas = mats.map(m => {
+          const ya = propias.find(a => a.fecha === fecha && a.materia === m.materia && a.grupo === m.grupo);
+          return {materiaGrupo: m.materia + ' – ' + m.grupo, horasTexto: m.horas + (m.horas === 1 ? ' hora afectada' : ' horas afectadas'),
+            bloques: m.bloques.join(' · '), yaRegistrada: !!ya, porRegistrar: !ya, oficio: ya ? ya.oficio : '',
+            estrategia: estr[m.clave] || '',
+            setEstrategia: e => this.setState({evEstr: Object.assign({}, this.state.evEstr, {[m.clave]: e.target.value})})};
+        });
+        const pendientes = filas.filter(f => f.porRegistrar).length;
+        const totalH = mats.reduce((t, m) => t + m.horas, 0);
+        return Object.assign(comunes, {
+          evEnRegistro:true, evCiclo:cicloReg,
+          evRegFecha: fecha, setEvRegFecha: e => this.setState({evFecha:e.target.value, evEstr:{}, evAviso:''}),
+          evRegDiaLargo: valida ? this.diaDeFecha(fecha) + ' ' + this.fechaLarga(fecha) : 'Elija el día',
+          evRegResumen: mats.length ? mats.length + ' materia(s) · ' + totalH + ' hora(s) afectadas · ' + cicloReg : '',
+          evRegOficio: valida ? this.oficioDe(datos, sel.slug, this.quincenaDe(fecha)).num + (valida && !(datos.oficios || {})[sel.slug + '|' + this.quincenaDe(fecha)] ? ' (nuevo)' : '') : '—',
+          evRegSinClases: !mats.length,
+          evRegMensaje: valida ? 'El docente no tiene clases el ' + this.diaDeFecha(fecha).toLowerCase() + ' en ' + cicloReg + '.' : 'Elija el día de la ausencia.',
+          evRegMaterias: filas,
+          evNoGuardable: !editable || !pendientes,
+          evGuardarAusencia: this.guardarAusencia
+        });
+      }
+
+      // Registro por ciclo: el más reciente arriba; dentro, quincenas en orden.
+      const porCiclo = {};
+      sel.ciclos.forEach(c => { porCiclo[c.periodo] = {periodo:c.periodo, orden:c.orden, lista:[]}; });
+      propias.forEach(a => {
+        const p = a.periodo || 'Sin ciclo';
+        if (!porCiclo[p]) porCiclo[p] = {periodo:p, orden:this.ordenPeriodo(p), lista:[]};
+        porCiclo[p].lista.push(a);
+      });
+      const listaC = Object.keys(porCiclo).map(k => porCiclo[k]).sort((a, b) => b.orden - a.orden);
+      return Object.assign(comunes, {
+        evEnHistorial:true,
+        evIrRegistrar: () => irRegistrar(sel.slug),
+        evHistCiclos: listaC.map(c => {
+          const qs = {};
+          c.lista.forEach(a => { (qs[a.quincena] = qs[a.quincena] || []).push(a); });
+          const hrs = c.lista.reduce((t, a) => t + (a.horas || 0), 0);
+          const dias = new Set(c.lista.map(a => a.fecha)).size;
+          return {
+            periodo:c.periodo, enCurso: c.periodo === enCurso, vacio: !c.lista.length,
+            resumen: c.lista.length ? dias + ' día(s) · ' + hrs + ' hora(s) afectadas' : '',
+            quincenas: Object.keys(qs).sort().map(q => ({
+              nombre: this.nombreQuincena(q), rango: this.rangoQuincena(q),
+              oficio: (datos.oficios || {})[sel.slug + '|' + q] || qs[q][0].oficio,
+              descargar: () => this.descargarOficio(sel.slug, q),
+              filas: qs[q].slice().sort((a, b) => a.fecha.localeCompare(b.fecha) || this.inicioBloque(a.bloques) - this.inicioBloque(b.bloques))
+                .map(a => ({dia: a.dia + ' ' + this.fechaLarga(a.fecha), materia:a.materia, grupo:a.grupo,
+                  horas: (a.horas || 0) + ' h · ' + (a.bloques || ''), estrategia:a.estrategia,
+                  quitar: () => this.quitarAusencia(sel.slug, a.id)}))
+            }))
+          };
+        })
+      });
+    }
+
+    const busca = this.normalizaTexto((s.evBusca || '').trim());
+    const lista = todos.filter(d => !busca || this.normalizaTexto(d.nombre).indexOf(busca) !== -1);
+    const qSet = {};
+    Object.keys(aus).forEach(sl => (aus[sl] || []).forEach(a => { qSet[a.quincena] = true; }));
+    const qOpc = Object.keys(qSet).sort().reverse();
+    const quincena = qSet[s.evQuincena] ? s.evQuincena : (qOpc[0] || '');
+    const cfg = this.configAus();
+    const CAMPOS = [['prefijo','Nomenclatura del oficio'], ['lugar','Lugar'], ['destinatario','Destinatario'],
+      ['cargoDest','Cargo del destinatario'], ['firmante','Firma'], ['cargoFirm','Cargo de quien firma'], ['ccp','Con copia para']];
+    return Object.assign(comunes, {
+      evEnLista:true,
+      evTabs: [{id:'general', nombre:'General'}, {id:'incid', nombre:'Ausencias docentes'}].map(t => ({
+        nombre:t.nombre, clase: t.id === tab ? 'btn-primary' : 'btn-secondary',
+        abrir: () => this.setState({evTab:t.id, evAviso:''})})),
+      evTabGeneral: tab === 'general', evTabIncid: tab === 'incid',
+      evDescripcion: tab === 'general'
+        ? 'Resumen de la evaluación de cada docente registrado en el Expediente docente.'
+        : 'Ausencias registradas por docente. Al registrar se elige el día; las materias y las horas afectadas salen de su horario. Dé clic en el nombre para ver su registro por ciclo.',
+      evCiclosOpc: opcCiclos, setEvCiclo: e => this.setState({evCiclo:e.target.value}),
+      evMes: mes, setEvMes: e => this.setState({evMes:e.target.value}),
+      evBusca: s.evBusca || '', setEvBusca: e => this.setState({evBusca:e.target.value}),
+      evConteo: lista.length + ' de ' + todos.length + ' docente(s)',
+      evVacio: !lista.length,
+      evMensajeVacio: todos.length ? 'Ningún docente coincide con la búsqueda.' : 'Todavía no hay docentes en el Expediente docente.',
+      evQuincena: quincena, evSinQuincenas: !qOpc.length,
+      evQuincenasOpc: qOpc.length ? qOpc.map(q => ({id:q, nombre:this.nombreQuincena(q) + ' · ' + this.rangoQuincena(q)}))
+        : [{id:'', nombre:'Sin ausencias registradas'}],
+      setEvQuincena: e => this.setState({evQuincena:e.target.value}),
+      evDescargarTodos: () => this.descargarAusenciasQuincena(quincena),
+      evVerConfig: !!s.evVerConfig, evTextoConfig: s.evVerConfig ? 'Ocultar datos del oficio' : 'Datos del oficio',
+      evAlternarConfig: () => this.setState({evVerConfig: !this.state.evVerConfig}),
+      evConfigCampos: CAMPOS.map(([k, e]) => ({etiqueta:e, valor:cfg[k] || '', cambiar: ev => this.cambiarConfigAus(k, ev.target.value)})),
+      evFilas: lista.map(d => {
+        const propias = aus[d.slug] || [];
+        const base = {nombre:d.nombre, hayFoto:!!d.foto, sinFoto:!d.foto, iniciales:this.iniciales(d.nombre),
+          estiloFoto: foto(d, '44px', '56px')};
+        if (tab === 'incid') {
+          const delCiclo = propias.filter(a => this.normalizaTexto(a.periodo) === this.normalizaTexto(ciclo));
+          const dias = new Set(delCiclo.map(a => a.fecha)).size;
+          const hrs = delCiclo.reduce((t, a) => t + (a.horas || 0), 0);
+          return Object.assign(base, {incidencias: new Set(propias.map(a => a.fecha)).size + ' día(s)',
+            incidenciasCiclo: dias + ' día(s) · ' + hrs + ' h en ' + (ciclo || 'el ciclo'),
+            verRegistro: () => this.setState({evDoc:d.slug, evPaso:'historial', evAviso:''}),
+            registrar: () => irRegistrar(d.slug)});
+        }
+        const prog = this.horasProgramadasMes(this.horarioDocente(d.slug, ciclo), mes);
+        const hAus = propias.filter(a => (a.fecha || '').slice(0, 7) === mes).reduce((t, a) => t + (a.horas || 0), 0);
+        const t = prog ? hAus / prog * 100 : null;
+        return Object.assign(base, {
+          tasa: t === null ? '—' : t.toFixed(1) + ' %',
+          tonoTasa: t === null ? 'var(--color-neutral-600)' : t > 7 ? '#b3261e' : t > 5 ? '#B7791F' : '#2e7d32',
+          nivel: t === null ? 'Sin horas programadas' : t > 7 ? 'Alerta roja' : t > 5 ? 'Alerta' : 'En rango',
+          detalle: prog ? hAus + ' de ' + prog + ' h · ' + nomMes : 'Sin clases en ' + (ciclo || 'el ciclo') + ' · ' + nomMes
+        });
+      })
+    });
+  }
+
   /* ---------- Valores de pantalla ---------- */
   valsExpediente() {
     const s = this.state;
@@ -3929,7 +5031,10 @@ class Component extends DCLogic {
       const {data} = await this.cliente.from('horarios_almacen')
         .select('valor').eq('clave', this.CLAVE_TRAY)
         .eq('institucion_id', this.state.instActiva).maybeSingle();
-      const gens = data && data.valor ? (JSON.parse(data.valor) || []) : [];
+      const gens0 = data && data.valor ? (JSON.parse(data.valor) || []) : [];
+      const rep = this.repararGradosTray(Array.isArray(gens0) ? gens0 : []);
+      const gens = rep.gens;
+      if (rep.movidos) setTimeout(() => this.guardarTrayectoria(gens, rep.movidos + ' alumno(s) reacomodados de semestre'), 0);
       this.setState({
         trayGens: Array.isArray(gens) ? gens : [],
         trayAviso: gens && gens.length ? 'Al día' : 'Sin capturar',
@@ -3949,6 +5054,37 @@ class Component extends DCLogic {
         this.setState({trayGrupos: nombres});
       }
     } catch (e) {}
+  }
+
+  /* Cargas anteriores leían sólo el primer dígito del grupo: 11A terminaba en 1.º
+     semestre. Cada alumno cuyo grupo de dos dígitos no corresponde a la etapa donde
+     está se pasa a la que le toca (9–10 internado, 11–12 servicio social). */
+  repararGradosTray(gens) {
+    let movidos = 0;
+    const salida = gens.map(g => {
+      const etapas = Object.assign({}, g.etapas || {});
+      let cambio = false;
+      for (let n = 1; n <= 8; n++) {
+        const e = etapas['sem' + n];
+        if (!e || !Array.isArray(e.alumnos)) continue;
+        const quedan = [];
+        e.alumnos.forEach(a => {
+          const gr = parseInt((String(a.grupo || '').match(/\d{1,2}/) || [''])[0], 10);
+          const destino = gr >= 9 && gr <= 10 ? 'internado' : gr >= 11 && gr <= 12 ? 'servicio' : '';
+          if (!destino) { quedan.push(a); return; }
+          const d = etapas[destino] && Array.isArray(etapas[destino].alumnos) ? etapas[destino].alumnos : [];
+          const k = this.normalizaTexto(a.mat || '');
+          etapas[destino] = {alumnos: k && d.some(x => this.normalizaTexto(x.mat || '') === k) ? d : d.concat([a]),
+            actualizado: new Date().toISOString()};
+          movidos++; cambio = true;
+        });
+        if (quedan.length !== e.alumnos.length) {
+          if (quedan.length) etapas['sem' + n] = Object.assign({}, e, {alumnos: quedan}); else delete etapas['sem' + n];
+        }
+      }
+      return cambio ? Object.assign({}, g, {etapas}) : g;
+    });
+    return {gens: salida, movidos};
   }
 
   async guardarTrayectoria(gens, aviso) {
@@ -3976,7 +5112,28 @@ class Component extends DCLogic {
 
   etapaDe(gen, etapaId) {
     const e = (gen.etapas || {})[etapaId] || {};
-    return {alumnos: Array.isArray(e.alumnos) ? e.alumnos : [], actualizado: e.actualizado || ''};
+    const propios = Array.isArray(e.alumnos) ? e.alumnos : [];
+    // Sin lista propia, Aspirantes y Aceptados se leen del módulo de Admisión de ese año
+    // (aceptado = casilla «Admitido» marcada).
+    if (!propios.length && (etapaId === 'aspirantes' || etapaId === 'aceptados')) {
+      const adm = this.aspAdmisionPorAnio(gen.anio);
+      if (adm) return {alumnos: etapaId === 'aceptados' ? adm.aceptados : adm.aspirantes, actualizado: '', deAdmision: true};
+    }
+    return {alumnos: propios, actualizado: e.actualizado || ''};
+  }
+
+  aspAdmisionPorAnio(anio) {
+    const d = this.admVista();
+    if (!d.aspirantes.length || parseInt(anio, 10) !== d.anio) return null;
+    if (this._aspCache && this._aspCache.fuente === this.state.admDatos && this._aspCache.k === this.state.programaActivo) return this._aspCache.val;
+    const a = x => {
+      let ap = x.apellidos || '', no = x.nombres || '';
+      if (!ap && !no && x.nombre) no = x.nombre;
+      return {mat: x.folio || '', apellidos: ap, nombres: no, grupo: x.admitido ? 'Aceptado' : 'Aspirante', estatus: 'activo', via: x.via || 'regular'};
+    };
+    const val = {aspirantes: d.aspirantes.map(a), aceptados: d.aspirantes.filter(x => x.admitido).map(a)};
+    this._aspCache = {fuente: this.state.admDatos, k: this.state.programaActivo, val};
+    return val;
   }
 
   aniosLibresTray() {
@@ -4211,8 +5368,9 @@ class Component extends DCLogic {
   etapaEnCurso(anio, ref) {
     const d = ref || new Date();
     const y = d.getFullYear(), m = d.getMonth() + 1;
+    const ene2 = m === 1 && d.getDate() >= 16;
     const base = m >= 8 ? y : y - 1;
-    const extra = (m >= 2 && m <= 7) ? 1 : 0;
+    const extra = ((m >= 2 && m <= 7) || ene2) ? 1 : 0;
     const n = 2 * (base - anio) + 1 + extra;
     if (n < 1) return {id:'aspirantes', corto:'Admisión'};
     if (n <= 8) return {id:'sem' + n, corto:n + '.º semestre'};
@@ -4221,18 +5379,19 @@ class Component extends DCLogic {
     return {id:'titulacion', corto:'Titulación'};
   }
 
-  /* El ciclo A abre el año escolar en agosto y cierra en diciembre; el B va de
-     febrero a junio. Cinco mensualidades cada uno, más la inscripción. */
+  /* El ciclo B abre el año escolar en agosto y cierra en enero; el A va de
+     enero a julio. Reinscripción en agosto y en enero; mensualidad cada mes
+     que incluye el mes de reinscripción (B: ago–dic, A: ene–jul). */
   cicloEnCurso(ref) {
     const d = ref || new Date();
     const m = d.getMonth() + 1, y = d.getFullYear();
-    return m >= 8 ? y + '-A' : y + '-B';
+    return m >= 8 ? y + '-B' : (m === 1 && d.getDate() <= 15) ? (y - 1) + '-B' : y + '-A';
   }
 
   // Una fecha a media mitad del ciclo, para preguntar qué semestre corre en él.
   cicloRef(id) {
     const m = /^(\d{4})-([AB])$/.exec(String(id || ''));
-    return m ? new Date(parseInt(m[1], 10), m[2] === 'A' ? 9 : 3, 1) : null;
+    return m ? new Date(parseInt(m[1], 10), m[2] === 'B' ? 9 : 3, 1) : null;
   }
 
   /* Los ciclos que el sistema puede mostrar: los que han corrido para alguna
@@ -4253,14 +5412,14 @@ class Component extends DCLogic {
   }
 
   /* Qué semestre cursa una generación en un ciclo dado. Los semestres impares sólo
-     pueden caer en un ciclo A y los pares en un ciclo B: una generación que entra en
-     agosto de su año lleva 1.º en el ciclo A de ese año, 2.º en el B del siguiente.
+     pueden caer en un ciclo B y los pares en un ciclo A: una generación que entra en
+     agosto de su año lleva 1.º en el ciclo B de ese año, 2.º en el A del siguiente.
      Devuelve 0 si ese ciclo queda fuera de su trayectoria. */
   semestreEnCiclo(anio, id) {
     const m = /^(\d{4})-([AB])$/.exec(String(id || ''));
     if (!m) return 0;
     const y = parseInt(m[1], 10);
-    const n = m[2] === 'A' ? 2 * (y - anio) + 1 : 2 * (y - anio);
+    const n = m[2] === 'B' ? 2 * (y - anio) + 1 : 2 * (y - anio);
     return n >= 1 && n <= 14 ? n : 0;
   }
 
@@ -4268,7 +5427,30 @@ class Component extends DCLogic {
     const m = /^(\d{4})-([AB])$/.exec(String(id || ''));
     if (!m) return '';
     const yy = String(m[1]).slice(2);
-    return m[2] === 'A' ? 'Ago ' + yy + ' – Dic ' + yy : 'Feb ' + yy + ' – Jun ' + yy;
+    const yy1 = String(parseInt(m[1], 10) + 1).slice(2);
+    return m[2] === 'B' ? 'Ago ' + yy + ' – Ene ' + yy1 : 'Ene ' + yy + ' – Jul ' + yy;
+  }
+
+  // Pastel de dos anillos: interior = semestre, exterior = grupo; líneas con el número de estudiantes.
+  pastelMatricula(enCurso) {
+    const h = React.createElement;
+    const esAct = a => (a.estatus || 'activo') === 'activo' || a.estatus === 'rezago';
+    const ABR = {internado: 'Int', servicio: 'Ser', titulacion: 'Tit', aspirantes: 'Asp', aceptados: 'Acep'};
+    const secs = enCurso.map(x => {
+      const m = /^sem(\d+)$/.exec(x.etapa.id);
+      const porG = {};
+      x.lista.filter(esAct).forEach(a => {
+        const l = (String(a.grupo || '').trim().match(/[A-Za-z]+$/) || ['—'])[0].toUpperCase();
+        porG[l] = (porG[l] || 0) + 1;
+      });
+      const grupos = Object.keys(porG).sort().map(l => ({l, n: porG[l]}));
+      return {orden: m ? parseInt(m[1]) : 20 + x.etapa.id.length, etq: m ? m[1] : (ABR[x.etapa.id] || x.etapa.corto), grupos, n: grupos.reduce((t, q) => t + q.n, 0)};
+    }).filter(s => s.n).sort((a, b) => a.orden - b.orden);
+    const total = secs.reduce((t, s) => t + s.n, 0);
+    if (!total) return null;
+    const intro = !this.introPastelHecha;
+    return h(PastelMatricula, {key: 'pastelMat', secs, total, intro,
+      onFin: () => { this.introPastelHecha = true; this.forceUpdate(); }});
   }
 
   valsInicio() {
@@ -4328,6 +5510,7 @@ class Component extends DCLogic {
         altura: Math.round((x.activos / max) * 100) + '%'
       })),
       sinBarras: enCurso.length === 0,
+      pastelMatricula: this.pastelMatricula(enCurso),
       pendientes: [
         faltan
           ? {texto: faltan + ' generación(es) sin base cargada en su etapa en curso', area:'Trayectoria escolar', abrir:this.abrir('Coordinación Académica','trayectoria')}
@@ -4412,6 +5595,205 @@ class Component extends DCLogic {
      (generación + semestre). Lo propio del módulo es el estado de cada pago, el
      porcentaje de beca y el comentario de convenio. */
   CLAVE_CONT = 'contabilidad:cuentas';
+  CLAVE_COSTOS = 'contabilidad:costos';
+
+  // Costos por semestre, guardados por plan de estudios: {programa: {n: {insc, mens}}}.
+  costosPlan() {
+    return (this.state.contCostos || {})[this.state.programaActivo || '_'] || {};
+  }
+
+  setCosto = (n, campo, v) => {
+    if (!this.puedeEditarAhora('contabilidad')) {
+      this.setState({contCostosAviso:'Edición bloqueada: abre el candado con tu PIN.'}); return;
+    }
+    const p = this.state.programaActivo || '_';
+    const todo = Object.assign({}, this.state.contCostos || {});
+    const plan = Object.assign({}, todo[p]);
+    plan[n] = Object.assign({insc:'', mens:''}, plan[n], {[campo]: String(v || '').replace(/[^\d.]/g, '')});
+    todo[p] = plan;
+    this.setState({contCostos: todo, contCostosAviso:'Sin guardar'});
+  };
+
+  guardarCostos = async () => {
+    if (this.state.contCostosAviso !== 'Sin guardar') return;
+    if (!this.cliente || !this.state.instActiva) {
+      this.setState({contCostosAviso:'Sin conexión: los costos sólo viven en esta sesión.'}); return;
+    }
+    this.setState({contCostosAviso:'Guardando…'});
+    const {error} = await this.cliente.from('horarios_almacen').upsert({
+      clave: this.CLAVE_COSTOS, valor: JSON.stringify(this.state.contCostos || {}),
+      institucion_id: this.state.instActiva,
+      actualizado_en: new Date().toISOString(), actualizado_por: this.usuarioId
+    }, {onConflict:'clave,institucion_id'});
+    this.setState({contCostosAviso: error ? 'No se pudo guardar: ' + error.message : 'Guardado'});
+  };
+
+  /* Un renglón por cada cargo ya abierto: inscripción y mensualidades de cada
+     semestre que ha empezado, de cada alumno según el listado de ese semestre en
+     Trayectoria. El monto sale de Costos; la beca se descuenta de la mensualidad. */
+  libroCobros() {
+    const hoy = new Date(), costos = this.costosPlan();
+    const num = v => { const x = parseFloat(v); return isFinite(x) && x > 0 ? x : 0; };
+    const regs = [];
+    this.trayProg().forEach(g => {
+      if (!Object.keys(g.etapas || {}).length) return;
+      for (let n = 1; n <= 12; n++) {
+        const cal = this.calendarioSemestre(g.anio, n), iv = cal.inscripcion.vence;
+        if (new Date(iv.getFullYear(), iv.getMonth(), 1) > hoy) break;
+        const et = this.etapaDe(g, this.etapaParaSemestre(n));
+        const co = costos[n] || {};
+        ((et && et.alumnos) || []).forEach(a => {
+          const clave = this.claveCuenta(a), c = this.cuentaDe(clave);
+          const beca = Math.min(100, num(c.beca));
+          const pref = 'g' + g.anio + 's' + n + ':';
+          const base = {clave, mat: a.mat || '', gen: g.anio, n, grupoRaw: a.grupo || '', ciclo: cal.ciclo,
+            alumno: ((a.apellidos || '') + (a.nombres ? ' ' + a.nombres : '')).trim() || '—'};
+          const cargo = (def, monto, tipo) => regs.push(Object.assign({}, base, {tipo, monto, vence: def.vence,
+            est: c.pagos[pref + def.id] ? 'cobrado' : hoy > def.vence ? 'vencido' : 'porVencer'}));
+          cargo(cal.inscripcion, num(co.insc), 'insc');
+          cal.meses.forEach(m => cargo(m, num(co.mens) * (1 - beca / 100), 'mens'));
+        });
+      }
+    });
+    return regs;
+  }
+
+  valsContExtra(pestana, cicloSel, busca, editable) {
+    const s = this.state;
+    const out = {contVerCostos: pestana === 'costos', contVerInversion: pestana === 'inversion', contVerAvance: pestana === 'avance'};
+    const num = v => { const x = parseFloat(v); return isFinite(x) && x > 0 ? x : 0; };
+    const fmt = new Intl.NumberFormat('es-MX', {style:'currency', currency:'MXN', maximumFractionDigits:0});
+    const $ = x => fmt.format(x || 0);
+    const ORD = n => n + (n === 1 || n === 3 ? '.er' : '.º');
+    const boton = (activo, elegir, nombre) => ({nombre, elegir,
+      bg: activo ? 'var(--color-accent)' : 'transparent',
+      color: activo ? 'var(--color-bg)' : 'var(--color-text)',
+      borde: activo ? 'var(--color-accent)' : 'var(--color-divider)'});
+    const costos = this.costosPlan();
+    out.costosPlanNombre = s.programaActivo || 'plan activo';
+
+    if (pestana === 'costos') {
+      let total = 0;
+      out.costosFilas = Array.from({length: 12}, (x, i) => {
+        const n = i + 1, co = costos[n] || {}, impar = n % 2 === 1, nm = impar ? 5 : 7;
+        const tot = num(co.insc) + num(co.mens) * nm;
+        total += tot;
+        return {n, nombre: ORD(n) + ' semestre',
+          ciclo: impar ? 'Ciclo B · ago a dic' : 'Ciclo A · ene a jul',
+          meses: nm, insc: co.insc || '', mens: co.mens || '', totalTxt: tot ? $(tot) : '—',
+          bloqueado: !editable,
+          setInsc: e => this.setCosto(n, 'insc', e.target.value),
+          setMens: e => this.setCosto(n, 'mens', e.target.value),
+          guardar: this.guardarCostos};
+      });
+      out.costosTotalCarrera = $(total);
+      out.costosAviso = !editable ? 'Solo lectura' : (s.contCostosAviso || 'Sin capturar');
+      out.costosClaseAviso = s.contCostosAviso === 'Sin guardar' || /No se pudo|bloqueada/.test(s.contCostosAviso || '') ? 'tag-neutral' : 'tag-accent';
+      return out;
+    }
+    if (pestana !== 'inversion' && pestana !== 'avance') return out;
+
+    const regs = this.libroCobros();
+    const norm = g => this.normalizaTexto(g).replace(/[^a-z0-9]/g, '').toUpperCase();
+    const grupoBonito = g => {
+      const m = /(\d+)\s*([A-Za-z]?)/.exec(g || '');
+      return m ? m[1] + '.º' + (m[2] ? ' ' + m[2].toUpperCase() : '') : (g || 'Sin grupo');
+    };
+    const rango = ns => { const a = [...ns].sort((x, y) => x - y); return a.length ? (a.length > 1 ? ORD(a[0]) + ' a ' + ORD(a[a.length - 1]) : ORD(a[0])) + ' sem.' : ''; };
+    const sumar = (lista, keyFn, nombreFn) => {
+      const m = new Map();
+      lista.forEach(r => {
+        const k = keyFn(r);
+        let o = m.get(k);
+        if (!o) { o = {k, nombre: nombreFn(r), r, esperado:0, cobrado:0, vencido:0, porVencer:0, ns: new Set(), gens: new Set(), grupos: new Set(), alumnos: new Set(), insc:0, mens:0}; m.set(k, o); }
+        o.esperado += r.monto; o[r.est] += r.monto; o[r.tipo] += r.monto;
+        o.ns.add(r.n); o.gens.add(r.gen); o.alumnos.add(r.clave); if (r.grupoRaw) o.grupos.add(grupoBonito(r.grupoRaw));
+      });
+      return [...m.values()];
+    };
+    const fila = o => {
+      const e = o.esperado, w = x => e ? (100 * x / e).toFixed(2) + '%' : '0%';
+      return Object.assign(o, {
+        esperadoTxt: $(o.esperado), cobradoTxt: $(o.cobrado), vencidoTxt: $(o.vencido), porVencerTxt: $(o.porVencer),
+        pct: e ? o.cobrado / e : 0, pctTxt: e ? Math.round(100 * o.cobrado / e) + '%' : '—',
+        colorVencido: o.vencido > 0 ? '#c8341f' : 'inherit',
+        wCob: w(o.cobrado), wVen: w(o.vencido), wPor: w(o.porVencer),
+        titulo: o.nombre + ' · cobrado ' + $(o.cobrado) + ' · vencido ' + $(o.vencido) + ' · por vencer ' + $(o.porVencer)});
+    };
+    const delCiclo = regs.filter(r => r.ciclo === cicloSel);
+    const vistas = {
+      estudiante: () => sumar(regs, r => r.clave, r => r.alumno)
+        .map(o => Object.assign(o, {detalle: [o.r.mat, 'gen. ' + o.r.gen, rango(o.ns)].filter(Boolean).join(' · ')}))
+        .sort((a, b) => a.nombre.localeCompare(b.nombre, 'es')),
+      grupo: () => sumar(delCiclo, r => r.n + '|' + norm(r.grupoRaw), r => ORD(r.n) + ' sem. · grupo ' + grupoBonito(r.grupoRaw))
+        .map(o => Object.assign(o, {detalle: o.alumnos.size + ' alumno(s) · gen. ' + [...o.gens].sort().join(', ')}))
+        .sort((a, b) => (a.r.n - b.r.n) || a.nombre.localeCompare(b.nombre)),
+      semestre: () => sumar(delCiclo, r => r.n, r => ORD(r.n) + ' semestre')
+        .map(o => Object.assign(o, {detalle: o.alumnos.size + ' alumno(s) · grupos ' + [...o.grupos].sort().join(', ') + ' · gen. ' + [...o.gens].sort().join(', ')}))
+        .sort((a, b) => a.r.n - b.r.n),
+      generacion: () => sumar(regs, r => r.gen, r => 'Generación ' + r.gen)
+        .map(o => Object.assign(o, {detalle: o.alumnos.size + ' alumno(s) · ' + rango(o.ns)}))
+        .sort((a, b) => b.r.gen - a.r.gen),
+      corte: () => sumar(regs, r => r.ciclo, r => 'Ciclo ' + r.ciclo)
+        .map(o => Object.assign(o, {detalle: 'inscripciones ' + $(o.insc) + ' · mensualidades ' + $(o.mens) + ' · ' + o.alumnos.size + ' alumno(s)'}))
+        .sort((a, b) => b.k.localeCompare(a.k))
+    };
+    const filtra = l => l.filter(o => !busca || this.normalizaTexto(o.nombre + ' ' + o.detalle).indexOf(busca) !== -1);
+    const hayCostos = Object.keys(costos).some(k => num((costos[k] || {}).insc) || num((costos[k] || {}).mens));
+
+    if (pestana === 'inversion') {
+      const INV = [
+        {id:'estudiante', nombre:'Por estudiante', col:'Alumno', nota:'Lo que cada alumno ha generado en todos los semestres que ha cursado, hasta el ciclo en curso.'},
+        {id:'grupo', nombre:'Por grupo', col:'Grupo', nota:'Grupos del ciclo ' + cicloSel + ' (elija otro en la cinta superior).'},
+        {id:'semestre', nombre:'Por semestre', col:'Semestre', nota:'Suma todos los grupos de un mismo semestre en el ciclo ' + cicloSel + ', sin importar la generación de ingreso: quien repite cuenta en el semestre que cursa.'},
+        {id:'generacion', nombre:'Por generación', col:'Generación', nota:'Acumulado de cada generación de ingreso en toda su trayectoria.'},
+        {id:'corte', nombre:'Corte general', col:'Ciclo', nota:'Corte de todo el plan, ciclo por ciclo. Las tarjetas suman el histórico.'}
+      ];
+      const v = INV.find(x => x.id === s.contInvVista) || INV[0];
+      const filas = filtra(vistas[v.id]()).map(fila);
+      const t = filas.reduce((a, f) => ({e: a.e + f.esperado, c: a.c + f.cobrado, v: a.v + f.vencido, p: a.p + f.porVencer}), {e:0, c:0, v:0, p:0});
+      Object.assign(out, {
+        invVistas: INV.map(x => boton(x.id === v.id, () => this.setState({contInvVista: x.id}), x.nombre)),
+        invNota: v.nota, invColNombre: v.col, invFilas: filas, invSinFilas: !filas.length, invSinCostos: !hayCostos,
+        invTarjetas: [
+          {nombre:'Esperado', valor: $(t.e), color:'inherit'},
+          {nombre:'Cobrado', valor: $(t.c), color:'#1f7a45'},
+          {nombre:'Adeudo vencido', valor: $(t.v), color: t.v ? '#c8341f' : 'inherit'},
+          {nombre:'Por vencer', valor: $(t.p), color:'inherit'},
+          {nombre:'% cobrado', valor: t.e ? Math.round(100 * t.c / t.e) + '%' : '—', color:'inherit'}
+        ]
+      });
+      return out;
+    }
+
+    const AV = [
+      {id:'estudiante', nombre:'Por estudiante', nota:'Todos los semestres cursados. Primero los de menor avance.'},
+      {id:'grupo', nombre:'Por grupo', nota:'Grupos del ciclo ' + cicloSel + '. Primero los de menor avance.'},
+      {id:'generacion', nombre:'Por generación', nota:'Trayectoria completa de cada generación de ingreso.'}
+    ];
+    const v = AV.find(x => x.id === s.contAvVista) || AV[1];
+    const filas = filtra(vistas[v.id]()).map(fila);
+    if (v.id !== 'generacion') filas.sort((a, b) => (a.pct - b.pct) || a.nombre.localeCompare(b.nombre, 'es'));
+    const MESL = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+    const meses = sumar(delCiclo, r => r.vence.getFullYear() * 100 + r.vence.getMonth(),
+      r => MESL[r.vence.getMonth()] + ' ' + String(r.vence.getFullYear()).slice(2)).sort((a, b) => a.k - b.k);
+    const maxE = meses.reduce((m, o) => Math.max(m, o.esperado), 0);
+    const tc = delCiclo.reduce((a, r) => (a.e += r.monto, a[r.est] += r.monto, a), {e:0, cobrado:0, vencido:0, porVencer:0});
+    const h = (x, e) => e ? (100 * x / e).toFixed(2) + '%' : '0%';
+    Object.assign(out, {
+      avVistas: AV.map(x => boton(x.id === v.id, () => this.setState({contAvVista: x.id}), x.nombre)),
+      avNota: v.nota, avFilas: filas, avSinFilas: !filas.length,
+      avResumenCiclo: tc.e ? $(tc.cobrado) + ' cobrado de ' + $(tc.e) + ' (' + Math.round(100 * tc.cobrado / tc.e) + '%) · ' + $(tc.vencido) + ' vencido' : (hayCostos ? 'Sin cargos en este ciclo.' : 'Capture los costos en la pestaña Costos para ver montos.'),
+      avMeses: meses.map(o => ({
+        etiqueta: o.nombre, monto: $(o.cobrado),
+        pctTxt: o.esperado ? Math.round(100 * o.cobrado / o.esperado) + '%' : '',
+        alto: maxE ? (86 * o.esperado / maxE).toFixed(2) + '%' : '0%',
+        hCob: h(o.cobrado, o.esperado), hVen: h(o.vencido, o.esperado), hPor: h(o.porVencer, o.esperado),
+        titulo: o.nombre + ' · esperado ' + $(o.esperado) + ' · cobrado ' + $(o.cobrado) + ' · vencido ' + $(o.vencido)
+      }))
+    });
+    return out;
+  }
 
   async cargarContabilidad() {
     if (!this.cliente || !this.state.instActiva) return;
@@ -4420,6 +5802,11 @@ class Component extends DCLogic {
         .select('valor').eq('clave', this.CLAVE_CONT)
         .eq('institucion_id', this.state.instActiva).maybeSingle();
       const mapa = data && data.valor ? (JSON.parse(data.valor) || {}) : {};
+      const r2 = await this.cliente.from('horarios_almacen')
+        .select('valor').eq('clave', this.CLAVE_COSTOS)
+        .eq('institucion_id', this.state.instActiva).maybeSingle();
+      const costos = r2.data && r2.data.valor ? (JSON.parse(r2.data.valor) || {}) : {};
+      this.setState({contCostos: costos, contCostosAviso: Object.keys(costos).length ? 'Al día con la base' : ''});
       this.setState({contCuentas: mapa,
         contAviso: Object.keys(mapa).length ? 'Al día con la base' : 'Sin capturar', contAvisoError:false});
     } catch (e) {
@@ -4493,7 +5880,7 @@ class Component extends DCLogic {
   ym(d) { return d.getFullYear() + '-' + this.dosDig(d.getMonth() + 1); }
 
   /* Formato de seguimiento de pago. Un solo libro sirve de ida y vuelta: la hoja
-     «Vigencia de pagos» lleva una casilla por pago (la inscripción y los cinco meses
+     «Vigencia de pagos» lleva una casilla por pago (la inscripción y los seis meses
      del ciclo) y la hoja «Observaciones» una nota por alumno. Casilla marcada es pago
      registrado; casilla vacía, pago pendiente. Quien no aparece en la hoja va al
      corriente. */
@@ -4505,13 +5892,13 @@ class Component extends DCLogic {
     return l.indexOf(this.state.cicloSel) !== -1 ? this.state.cicloSel : this.cicloEnCurso(new Date());
   }
 
-  // Los cinco meses de un ciclo, con su fecha límite: el día 10 de cada mes.
+  // Los seis meses de un ciclo, con su fecha límite: el día 10 de cada mes.
   mesesDelCiclo(cicloId) {
     const m = /^(\d{4})-([AB])$/.exec(String(cicloId || ''));
     if (!m) return [];
     const MES = ['Ene.','Feb.','Mar.','Abr.','May.','Jun.','Jul.','Ago.','Sep.','Oct.','Nov.','Dic.'];
-    const y = parseInt(m[1], 10), ini = m[2] === 'A' ? 7 : 1;
-    return [0,1,2,3,4].map(k => {
+    const y = parseInt(m[1], 10), ini = m[2] === 'B' ? 7 : 0;
+    return (m[2] === 'B' ? [0,1,2,3,4] : [0,1,2,3,4,5,6]).map(k => {
       const d = new Date(y, ini + k, 10);
       return {id:'m' + (k + 1), etiqueta: MES[d.getMonth()], vence: d};
     });
@@ -4755,22 +6142,23 @@ class Component extends DCLogic {
     return {beca: c.beca || '', comentario: c.comentario || '', pagos: c.pagos || {}};
   }
 
-  /* Un semestre son cinco meses: los impares corren de agosto a diciembre (ciclo A)
-     y los pares de febrero a junio (ciclo B). La inscripción y cada mensualidad
+  /* Los impares (ciclo B) pagan reinscripción en agosto y mensualidad de agosto a
+     diciembre; los pares (ciclo A) reinscripción en enero y mensualidad de enero a
+     julio. La inscripción y cada mensualidad
      vencen el día 10 del mes que les toca. */
   calendarioSemestre(anio, n) {
     const MES = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
     const inicio = n % 2 === 1
       ? new Date(anio + (n - 1) / 2, 7, 1)
-      : new Date(anio + n / 2, 1, 1);
+      : new Date(anio + n / 2, 0, 1);
     const meses = [];
-    for (let k = 0; k < 5; k++) {
+    for (let k = 0, nM = inicio.getMonth() === 7 ? 5 : 7; k < nM; k++) {
       const d = new Date(inicio.getFullYear(), inicio.getMonth() + k, 10);
       meses.push({id:'m' + (k + 1), etiqueta: MES[d.getMonth()], anio: String(d.getFullYear()).slice(2), vence: d});
     }
     return {
-      ciclo: inicio.getFullYear() + (inicio.getMonth() === 7 ? '-A' : '-B'),
-      inscripcion: {id:'insc', etiqueta:'insc', vence: new Date(inicio.getFullYear(), inicio.getMonth(), 10)},
+      ciclo: inicio.getFullYear() + (inicio.getMonth() === 7 ? '-B' : '-A'),
+      inscripcion: {id:'insc', etiqueta:'insc', vence: new Date(inicio.getFullYear(), inicio.getMonth() === 7 ? 7 : 0, 10)},
       meses
     };
   }
@@ -4883,20 +6271,21 @@ class Component extends DCLogic {
     let pagados = 0, vencidos = 0, pendientes = 0, conConvenio = 0, conBeca = 0;
 
     // Las columnas se agrupan por semestre: cada bloque son seis pagos, la
-    // inscripción y las cinco mensualidades del ciclo.
+    // inscripción y las seis mensualidades del ciclo.
     const ORD = n => n + (n === 1 || n === 3 ? '.er' : '.º');
     const semMax = bloques.reduce((t, b) => Math.max(t, b.semN), 0);
     const refCal = bloques.length ? bloques[0] : null;
     const historial = s.contPestana === 'historial';
-    /* Los meses de las columnas salen del ciclo, no de la generación: un ciclo A va
-       de agosto a diciembre y un ciclo B de febrero a junio. En la pestaña actual el
+    const pestana = ['actual','historial','costos','inversion','avance'].indexOf(s.contPestana) !== -1 ? s.contPestana : 'actual';
+    /* Los meses de las columnas salen del ciclo, no de la generación: un ciclo B cobra
+       de agosto a diciembre y un ciclo A de enero a julio. En la pestaña actual el
        ciclo es el de la cinta; en el historial, el que le toca a cada semestre. */
     const MESL = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
     const mesesDeCiclo = id => {
       const m = /^(\d{4})-([AB])$/.exec(String(id || ''));
       if (!m) return [];
-      const y = parseInt(m[1], 10), ini = m[2] === 'A' ? 7 : 1;
-      return [0,1,2,3,4].map(k => {
+      const y = parseInt(m[1], 10), ini = m[2] === 'B' ? 7 : 0;
+      return (m[2] === 'B' ? [0,1,2,3,4] : [0,1,2,3,4,5,6]).map(k => {
         const d = new Date(y, ini + k, 1);
         return {etiqueta: MESL[d.getMonth()], anio: String(d.getFullYear()).slice(2)};
       });
@@ -4910,7 +6299,7 @@ class Component extends DCLogic {
       const idCiclo = historial && n ? cicloDeSemestre(n) : cicloSel;
       return {
         titulo: n ? ORD(n) + ' semestre' : 'Ciclo ' + cicloSel,
-        span: 6,
+        span: 1 + mesesDeCiclo(idCiclo).length,
         ciclo: verTodas ? '' : idCiclo,
         cols: [{etiqueta:'insc.', anio:''}].concat(
           mesesDeCiclo(idCiclo).map(m => ({etiqueta: m.etiqueta, anio: verTodas ? '' : m.anio}))
@@ -4966,7 +6355,7 @@ class Component extends DCLogic {
         soloLectura: bloqueado,
         semestres: semColumnas.map((sc, i) => {
           const n = historial ? i + 1 : b.semN;
-          if (n > b.semN) return {cursado:false, sinCursar:true, celdas:[]};
+          if (n > b.semN) return {cursado:false, sinCursar:true, celdas:[], huecos: sc.cols.map((x, j) => ({j}))};
           const c = this.calendarioSemestre(b.gen.anio, n);
           const pref = 'g' + b.gen.anio + 's' + n + ':';
           return {
@@ -5016,8 +6405,8 @@ class Component extends DCLogic {
       esContabilidad: true,
       contAviso: s.contAviso || 'Sin capturar',
       claseContAviso: s.contAvisoError ? 'tag-neutral' : 'tag-accent',
-      contHayGens: gens.length > 0,
-      contSinGens: gens.length === 0,
+      contHayGens: gens.length > 0 && pestana === 'actual' || gens.length > 0 && pestana === 'historial',
+      contSinGens: gens.length === 0 && (pestana === 'actual' || pestana === 'historial'),
       contGrupos: [{valor:'', nombre:'Todos los grupos'}]
         .concat(gruposDisponibles.map(g => ({valor: g, nombre: 'Grupo ' + g}))),
       contGrupoSel: grupoSel,
@@ -5025,9 +6414,12 @@ class Component extends DCLogic {
       contMuestraGen: true,
       contPestanas: [
         {id:'actual', nombre:'Semestre del ciclo'},
-        {id:'historial', nombre:'Historial'}
+        {id:'historial', nombre:'Historial'},
+        {id:'costos', nombre:'Costos'},
+        {id:'inversion', nombre:'Inversión'},
+        {id:'avance', nombre:'Avance de cobros'}
       ].map(p => {
-        const activa = (s.contPestana === 'historial' ? 'historial' : 'actual') === p.id;
+        const activa = pestana === p.id;
         return {
           nombre: p.nombre,
           bg: activa ? 'var(--color-accent)' : 'transparent',
@@ -5064,8 +6456,7 @@ class Component extends DCLogic {
       contCicloEsHoy: cicloSel === cicloHoy,
       contCicloTitulo: cicloSel === cicloHoy ? 'Ciclo en curso' : 'Ciclo ' + cicloSel,
       contSemColumnas: semColumnas,
-      contSiete: [1,2,3,4,5,6].map(n => ({n})),
-      contAnchoTabla: (420 + semColumnas.length * 6 * 30) + 'px',
+      contAnchoTabla: (420 + semColumnas.reduce((t, sc) => t + sc.span * 30, 0)) + 'px',
       contFilas: filas,
       contHayFilas: filas.length > 0,
       contSinFilas: filas.length === 0,
@@ -5099,6 +6490,7 @@ class Component extends DCLogic {
       marcarAlCorriente: () => this.marcarAlCorriente(porMarcar),
       contCruceNota: 'El archivo se cruza por matrícula; los alumnos del ciclo que no vengan en la hoja quedan al corriente.'
     };
+    Object.assign(ret, this.valsContExtra(pestana, cicloSel, busca, editable));
     const admC = this.admVista();
     if (admC.aspirantes.length) ret.contGrupos = ret.contGrupos.concat([{valor:'ADM', nombre:'Proceso de admisión ' + admC.anio}]);
     return s.contGrupoSel === 'ADM' ? Object.assign(ret, this.contAdmision(editable, filtroEstado, busca)) : ret;
@@ -5508,6 +6900,51 @@ class Component extends DCLogic {
     return Object.assign({}, d, {aspirantes: d.aspirantes.filter(a => this.enPrograma(a.folio, a.area))});
   }
 
+  // Se desvanece todo menos la carrera elegida; luego ella, y entra el sistema.
+  salirAPrograma = nombre => {
+    if (this.state.epFase) return;
+    this.setState({epSaliendo: nombre, epFase: 1});
+    setTimeout(() => this.setState({epFase: 2}), 340);
+    setTimeout(() => { this.setState({epSaliendo: '', epFase: 0}); this.elegirPrograma(nombre); }, 660);
+  };
+
+  refMain = React.createRef();
+
+  // Al cambiar de módulo, primero se desvanece la pantalla y después entra la nueva.
+  setState(upd, cb) {
+    const m = this.refMain && this.refMain.current;
+    if (upd && typeof upd === 'object' && 'vista' in upd && upd.vista !== this.state.vista
+        && this.state.vista !== 'programa' && upd.vista !== 'programa' && m && m.animate && !this._saliendo) {
+      this._saliendo = true;
+      m.style.opacity = '0';
+      m.style.transition = 'opacity .18s ease-in';
+      setTimeout(() => {
+        this._saliendo = false;
+        super.setState(upd, cb);
+        requestAnimationFrame(() => {
+          const el = this.refMain.current || m;
+          el.style.transition = 'opacity .32s ease-out';
+          el.style.opacity = '1';
+          setTimeout(() => { el.style.transition = ''; el.style.opacity = ''; }, 360);
+        });
+      }, 180);
+      return;
+    }
+    return super.setState(upd, cb);
+  }
+
+  componentDidUpdate(pp, ps) {
+    const s = this.state;
+    const claves = ['vista', 'areaVista', 'trayGenGraf', 'trayGrafSel', 'trayEtapaSel', 'programaActivo'];
+    if (claves.some(k => ps[k] !== s[k]) && this.refMain.current && this.refMain.current.animate) {
+      this.refMain.current.animate([{opacity: 0, transform: 'translateY(6px)'}, {opacity: 1, transform: 'none'}], {duration: 320, easing: 'ease-out'});
+    }
+    if (!ps.menuVisible && s.menuVisible) {
+      const nav = document.querySelector('[data-nav-modulos]');
+      if (nav && nav.animate) nav.animate([{transform: 'translateX(-100%)', opacity: 0}, {transform: 'none', opacity: 1}], {duration: 650, easing: 'cubic-bezier(.22,.8,.3,1)'});
+    }
+  }
+
   elegirPrograma = nombre => {
     try { localStorage.setItem('dirin-programa-' + this.state.instActiva, nombre); } catch (e) {}
     this.setState({programaActivo: nombre, programaElegido: true, indLic: null, admNuevo: {},
@@ -5524,6 +6961,7 @@ class Component extends DCLogic {
     const gens = this.generacionesTray(), adm = this.admDatos();
     return {
       esElegirPrograma: s.vista === 'programa',
+      epOpTexto: s.epFase ? 0 : 1,
       epInstitucion: inst ? inst.nombre : '',
       epSinProgramas: !progs.length,
       epProgramas: progs.map(p => {
@@ -5535,7 +6973,10 @@ class Component extends DCLogic {
         return {nombre: p, siglas: mapa[p] || '—',
           detalle: (nAl || asp) ? nAl + ' alumno(s) en trayectoria · ' + asp + ' aspirante(s) ' + adm.anio : 'Sin información registrada',
           borde: p === s.programaActivo ? 'var(--color-accent)' : 'var(--color-divider)',
-          elegir: () => this.elegirPrograma(p)};
+          opacidad: s.epFase ? (p === s.epSaliendo ? (s.epFase === 2 ? 0 : 1) : 0) : 1,
+          escala: p === s.epSaliendo ? (s.epFase === 2 ? 'scale(1.1)' : 'scale(1.04)') : 'none',
+          eventos: s.epFase ? 'none' : 'auto',
+          elegir: () => this.salirAPrograma(p)};
       })
     };
   }
@@ -6588,6 +8029,133 @@ class Component extends DCLogic {
     }, o, {ixSerieVacia: !(o.ixSerie || []).length});
   }
 
+  // Ciclos: el semestre k de la generación Y cae en B(Y) si k es impar (agosto) y en A(Y+…) si es par (enero).
+  // Gráfica de una generación: cada columna compara su lista con la anterior que tenga datos.
+  valsGrafGen(gens) {
+    const s = this.state;
+    const g = !s.trayEtapaSel && s.trayGenGraf ? gens.filter(x => x.id === s.trayGenGraf)[0] : null;
+    if (!g) return {trayVerGraf: false, trayVerGrafDet: false};
+    const clave = a => a.mat ? 'm:' + this.normalizaTexto(String(a.mat).trim()) : 'n:' + this.normalizaTexto((a.apellidos || '') + ' ' + (a.nombres || ''));
+    const conjunto = lista => { const m = {}; lista.forEach(a => { m[clave(a)] = 1; }); return m; };
+    const ETQ = {aspirantes:'Admisión', aceptados:'Aceptados', sem1:'Inscritos 1.º', internado:'Internado', servicio:'Servicio'};
+    const yy = y => String(y).slice(-2);
+    const cicloSem = k => { const y = g.anio + Math.floor((k + 1) / 2), l = k % 2 === 0 ? 'B' : 'A';
+      return {ciclo: l + yy(y), periodo: l === 'A' ? '(ene ' + yy(y) + ' – jul ' + yy(y) + ')' : '(ago ' + yy(y) + ' – ene ' + yy(y + 1) + ')',
+        promoLarga: 'Promoción ' + l + ' ' + y,
+        cicloLargo: l === 'A' ? 'Ciclo escolar de enero a julio de ' + y : 'Ciclo escolar de agosto de ' + y + ' a enero de ' + (y + 1)}; };
+    const cols = ETAPAS_TRAY.filter(e => e.id !== 'titulacion').map(e => {
+      const al = this.etapaDe(g, e.id).alumnos;
+      return Object.assign({id: e.id, nombreLargo: e.nombre, etiqueta: ETQ[e.id] || e.corto + ' sem', titulo: e.nombre, alumnos: al, set: conjunto(al), tit: false},
+        /^sem\d$/.test(e.id) ? cicloSem(parseInt(e.id.slice(3)) - 1) : {});
+    });
+    const tits = this.etapaDe(g, 'titulacion').alumnos;
+    const porAnio = {};
+    tits.forEach(a => { const y = parseInt(a.anioTit) || g.anio + 6; (porAnio[y] = porAnio[y] || []).push(a); });
+    const anios = Object.keys(porAnio).map(Number).sort((a, b) => a - b);
+    if (!anios.length) anios.push(g.anio + 6);
+    anios.forEach(y => cols.push({id: 'tit' + y, nombreLargo: 'Titulación ' + y, etiqueta: 'Titul-' + yy(y), titulo: 'Titulados en ' + y,
+      alumnos: porAnio[y] || [], set: conjunto(porAnio[y] || []), tit: true}));
+    const n = o => Object.keys(o).length;
+    const menos = (a, b) => Object.keys(a).filter(k => !b[k]);
+    let previo = null, pendientes = null;
+    const titulados = {}, todosTit = conjunto(tits);
+    const max = Math.max(1, ...cols.map(c => n(c.set)));
+    const salida = cols.map((c, i) => {
+      const total = n(c.set);
+      let ing = 0, baj = 0;
+      if (c.tit) {
+        if (!pendientes) pendientes = previo ? Object.assign({}, previo) : {};
+        if (total || i === cols.length - 1) {
+          ing = menos(c.set, pendientes).filter(k => !titulados[k]).length;
+          // Baja sólo si no se titula en ningún año; se registra en la última columna.
+          if (i === cols.length - 1) baj = menos(pendientes, todosTit).length;
+          Object.keys(c.set).forEach(k => { titulados[k] = 1; });
+        }
+      } else if (total) {
+        if (previo) { ing = menos(c.set, previo).length; baj = menos(previo, c.set).length; }
+        else ing = total;
+        previo = c.set;
+      }
+      const vacio = !total;
+      return {
+        etiqueta: c.etiqueta, ciclo: c.ciclo || '', periodo: c.periodo || '', titulo: c.titulo + ' · ' + total + ' estudiante(s)',
+        total: vacio ? '' : String(total),
+        alto: (total / max * 70).toFixed(1) + '%',
+        dispPunto: vacio ? 'none' : 'block',
+        color: c.tit ? '#2e7d32' : 'var(--color-accent)',
+        colorEtiqueta: vacio ? 'var(--color-neutral-400, #999)' : 'var(--color-text)',
+        ingresos: ing ? '+' + ing : '',
+        bajas: baj ? '−' + baj : '',
+        abrir: () => this.setState({trayGrafSel: c.id})
+      };
+    });
+    const cerrarGraf = () => this.setState({trayGenGraf: '', trayGrafSel: ''});
+    const sel = cols.filter(c => c.id === s.trayGrafSel)[0];
+    if (sel) return Object.assign({trayVerGraf: false, trayVerGrafDet: true, cerrarGraf,
+      cerrarGrafDet: () => this.setState({trayGrafSel: ''})}, this.detalleGrafGen(g, sel));
+    const puntos = cols.map((c, i) => ({i, t: n(c.set)})).filter(q => q.t)
+      .map(q => ((q.i + 0.5) / cols.length * 100).toFixed(2) + ',' + (100 - q.t / max * 70).toFixed(2)).join(' ');
+    return {trayVerGraf: true, trayVerGrafDet: false, grafNombre: 'Generación ' + g.anio, grafCols: salida, grafPuntos: puntos, cerrarGraf};
+  }
+
+  // Pastel por grupo y listados en paralelo de una columna de la gráfica.
+  detalleGrafGen(g, c) {
+    const COL = ['var(--color-accent)', 'var(--color-accent-2)', '#2e7d32', '#D9A441', '#5b5b5b', '#8a4f9e'];
+    const porGrupo = {};
+    c.alumnos.forEach(a => { const k = String(a.grupo || '').trim() || 'Sin grupo'; (porGrupo[k] = porGrupo[k] || []).push(a); });
+    const grupos = Object.keys(porGrupo).sort((a, b) => a.localeCompare(b, 'es', {numeric: true}));
+    const total = c.alumnos.length;
+    const nom = a => ((a.apellidos || '') + ' ' + (a.nombres || '')).trim();
+    const listas = grupos.map((gr, i) => ({
+      titulo: gr === 'Sin grupo' ? gr : 'Grupo ' + gr, color: COL[i % COL.length],
+      cuenta: porGrupo[gr].length + (porGrupo[gr].length === 1 ? ' estudiante' : ' estudiantes'),
+      filas: porGrupo[gr].slice().sort((a, b) => nom(a).localeCompare(nom(b), 'es'))
+        .map(a => ({mat: a.mat || '—', apellidos: a.apellidos || '', nombres: a.nombres || ''}))
+    }));
+    const h = React.createElement;
+    const W = 900, H = 420, cx = W / 2, cy = H / 2, R = 150, r = 78;
+    const p = (rad, a) => [cx + rad * Math.cos(a), cy + rad * Math.sin(a)];
+    const piezas = [], rotulos = [];
+    let ang = -Math.PI / 2;
+    grupos.forEach((gr, i) => {
+      const cant = porGrupo[gr].length, frac = cant / (total || 1);
+      const a0 = ang, a1 = ang + frac * 2 * Math.PI; ang = a1;
+      const color = COL[i % COL.length];
+      if (frac >= 0.9999) {
+        piezas.push(h('circle', {key: 'c' + i, cx, cy, r: (R + r) / 2, fill: 'none', stroke: color, strokeWidth: R - r}));
+      } else {
+        const lg = a1 - a0 > Math.PI ? 1 : 0;
+        const [x0, y0] = p(R, a0), [x1, y1] = p(R, a1), [x2, y2] = p(r, a1), [x3, y3] = p(r, a0);
+        piezas.push(h('path', {key: 'p' + i, fill: color, stroke: 'var(--color-bg)', strokeWidth: 3,
+          d: 'M' + x0 + ' ' + y0 + ' A' + R + ' ' + R + ' 0 ' + lg + ' 1 ' + x1 + ' ' + y1 + ' L' + x2 + ' ' + y2 + ' A' + r + ' ' + r + ' 0 ' + lg + ' 0 ' + x3 + ' ' + y3 + ' Z'}));
+      }
+      const am = frac >= 0.9999 ? -Math.PI / 4 : (a0 + a1) / 2;
+      const [lx, ly] = p((R + r) / 2, am);
+      rotulos.push(h('text', {key: 't' + i, x: lx, y: ly, textAnchor: 'middle', dominantBaseline: 'central', fill: '#fff',
+        fontSize: gr.length > 3 ? 15 : 24, fontWeight: 800, fontFamily: 'var(--font-heading)'}, gr));
+      const [ax, ay] = p(R + 4, am), [bx, by] = p(R + 38, am);
+      const der = Math.cos(am) >= 0, ex = bx + (der ? 50 : -50);
+      rotulos.push(h('polyline', {key: 'l' + i, points: ax + ',' + ay + ' ' + bx + ',' + by + ' ' + ex + ',' + by, fill: 'none', stroke: 'var(--color-text)', strokeWidth: 1.5}));
+      rotulos.push(h('text', {key: 'e' + i, x: ex + (der ? 8 : -8), y: by, textAnchor: der ? 'start' : 'end', dominantBaseline: 'central',
+        fill: 'var(--color-text)', fontFamily: 'var(--font-heading)'},
+        h('tspan', {fontSize: 26, fontWeight: 800}, String(cant)),
+        h('tspan', {fontSize: 15, fontWeight: 600, dx: 6}, cant === 1 ? 'estudiante' : 'estudiantes')));
+    });
+    const centro = [
+      h('text', {key: 'n', x: cx, y: cy - 8, textAnchor: 'middle', dominantBaseline: 'central', fill: 'var(--color-text)', fontSize: 50, fontWeight: 800, fontFamily: 'var(--font-heading)'}, String(total)),
+      h('text', {key: 'e', x: cx, y: cy + 28, textAnchor: 'middle', fill: 'var(--color-text)', fontSize: 13, letterSpacing: '.08em'}, 'ESTUDIANTES')
+    ];
+    return {
+      gdGen: 'Generación ' + g.anio,
+      gdTitulo: c.nombreLargo,
+      gdPromo: c.promoLarga || '',
+      gdCiclo: c.cicloLargo || '',
+      gdVacio: !total, gdHay: total > 0,
+      gdListas: listas,
+      gdPastel: total ? h('svg', {viewBox: '0 0 ' + W + ' ' + H, style: {width: '100%', maxWidth: W + 'px', height: 'auto', display: 'block'}}, piezas.concat(rotulos, centro)) : null
+    };
+  }
+
   valsTrayectoria() {
     const s = this.state;
     if (s.vista !== 'trayectoria') return {esTrayectoria:false};
@@ -6605,6 +8173,17 @@ class Component extends DCLogic {
       claseEstado: g.cerrada ? 'tag-neutral' : 'tag-accent',
       fondoNombre: g.id === (s.trayGenSel || gens[0].id) ? 'color-mix(in srgb, var(--color-accent) 10%, var(--color-bg))' : 'var(--color-bg)',
       elegir: () => this.setState({trayGenSel: g.id, trayPorBorrar:''}),
+      verGrafica: () => this.setState({trayGenGraf: g.id, trayGrafSel: '', trayPorBorrar:''}),
+      entrar: () => { if (this.state.trayHover !== g.id) this.setState({trayHover: g.id}); },
+      salir: () => this.setState(st => st.trayHover === g.id ? {trayHover: ''} : null),
+      linea: s.trayHover === g.id ? React.createElement(LineaTray, {key: g.id, n: ETAPAS_TRAY.length, puntos: (() => {
+        const pts = ETAPAS_TRAY.map((e, i) => {
+          const k = /^sem\d$/.test(e.id) ? parseInt(e.id.slice(3)) - 1 : -1;
+          return {i, total: cuenta(g, e.id), promo: k < 0 ? '' : (k % 2 === 0 ? 'B' : 'A') + String(g.anio + Math.floor((k + 1) / 2)).slice(-2)};
+        }).filter(q => q.total);
+        const mx = Math.max(1, ...pts.map(q => q.total));
+        return pts.map(q => Object.assign(q, {alto: q.total / mx * 100}));
+      })()}) : null,
       claseElegir: g.id === (s.trayGenSel || gens[0].id) ? 'tag-accent' : 'tag-neutral',
       textoElegir: g.id === (s.trayGenSel || gens[0].id) ? 'Indicadores de esta' : 'Ver indicadores',
       accionCierre: g.cerrada ? 'Reabrir' : 'Cerrar generación',
@@ -6613,7 +8192,9 @@ class Component extends DCLogic {
       borrar: () => this.borrarGeneracion(g.id),
       celdas: ETAPAS_TRAY.map(e => {
         const n = cuenta(g, e.id);
+        const k = /^sem\d$/.test(e.id) ? parseInt(e.id.slice(3)) - 1 : -1;
         return {
+          promo: k < 0 ? '' : (k % 2 === 0 ? 'B' : 'A') + String(g.anio + Math.floor((k + 1) / 2)).slice(-2),
           cuenta: n ? String(n) : '—',
           luz: n ? '#2e7d32' : 'var(--color-neutral-300)',
           borde: n ? 'rgba(0,0,0,.3)' : 'var(--color-divider)',
@@ -6704,14 +8285,15 @@ class Component extends DCLogic {
       trayHayAvisoAnio: !!s.trayAvisoAnio,
       confirmarGeneracion: this.confirmarGeneracion,
       cancelarGeneracion: this.cancelarGeneracion,
-      trayEtapas: ETAPAS_TRAY.map(e => ({corto:e.corto, nombre:e.nombre})),
+      trayEtapas: ETAPAS_TRAY.map(e => ({corto:e.corto, nombre:e.nombre, abrev:({aspirantes:'Asp', aceptados:'Acep', internado:'Int', servicio:'Ser', titulacion:'Tit'})[e.id] || e.corto})),
       trayFilas: filas,
       trayBloques: bloques,
       nombreGenIndic: gen ? String(gen.anio) : '—',
       estatusOpc: ESTATUS_TRAY,
       modalidadOpc: MODALIDADES_TIT,
-      trayVistaGeneral: !s.trayEtapaSel,
-      trayVerDetalle: !!s.trayEtapaSel
+      trayVistaGeneral: !s.trayEtapaSel && !s.trayGenGraf,
+      trayVerDetalle: !!s.trayEtapaSel,
+      ...this.valsGrafGen(gens)
     };
     if (!s.trayEtapaSel) return base;
 
@@ -6740,7 +8322,7 @@ class Component extends DCLogic {
       .concat(usaGrupo ? [{nombre:'Grupo'}] : [])
       .concat(usaVia ? [{nombre:'Vía'}] : [])
       .concat([{nombre:'Estatus'}])
-      .concat(esTitulacion ? [{nombre:'Modalidad'},{nombre:'Concluido'}] : [])
+      .concat(esTitulacion ? [{nombre:'Modalidad'},{nombre:'Año'},{nombre:'Concluido'}] : [])
       .concat([{nombre:''}]);
 
     return Object.assign(base, {
@@ -6841,6 +8423,9 @@ class Component extends DCLogic {
         textoConcluido: a.concluido ? 'Concluido' : 'Pendiente',
         setEstatus: e => this.cambiarAlumnoTray(gen.id, s.trayEtapaSel, i, {estatus: e.target.value}),
         setModalidad: e => this.cambiarAlumnoTray(gen.id, s.trayEtapaSel, i, {modalidad: e.target.value}),
+        anioTit: a.anioTit ? String(a.anioTit) : '',
+        anioTitPista: String(gen.anio + 6),
+        setAnioTit: e => { const v = parseInt(String(e.target.value).replace(/\D/g, '')); this.cambiarAlumnoTray(gen.id, s.trayEtapaSel, i, {anioTit: v >= 2000 && v <= 2100 ? v : ''}); },
         alternarConcluido: () => this.cambiarAlumnoTray(gen.id, s.trayEtapaSel, i, {concluido: !a.concluido}),
         quitar: () => this.quitarAlumnoTray(gen.id, s.trayEtapaSel, i)
       })).filter(x => x.coincide)
@@ -7045,10 +8630,10 @@ class Component extends DCLogic {
   // Todas las instituciones que la cuenta puede ver. El supremo ve todas;
   // los demás sólo la suya, porque así lo filtra la base de datos.
   async cargarInstituciones(preferida) {
-    if (!this.cliente) return;
+    if (!this.cliente) { this.setState({programaElegido: true}); return; }
     const {data, error} = await this.cliente.from('instituciones')
       .select('*').order('nombre');
-    if (error || !data) { this.setState({avisoInst: error ? error.message : ''}); return; }
+    if (error || !data) { this.setState({avisoInst: error ? error.message : '', programaElegido: true}); return; }
     const lista = data.map(r => ({
       id: r.id, nombre: r.nombre || '',
       colores: this.leerJson(r.colores, ['#7a1f2b','#2C5F8A','#D9A441']),
@@ -7078,7 +8663,7 @@ class Component extends DCLogic {
 
   entrarInstitucion = (id, callado) => {
     const inst = this.state.instituciones.find(i => i.id === id);
-    if (!inst) { this.setState({instActiva:'', idAviso:'Sin institución'}); return; }
+    if (!inst) { this.setState({instActiva:'', idAviso:'Sin institución', programaElegido: true}); return; }
     try { localStorage.setItem('dirin-institucion', id); } catch (e) {}
     this.aplicarColores(inst.colores);
     const cambia = id !== this.state.instActiva || !this.state.programaElegido;
@@ -7103,6 +8688,7 @@ class Component extends DCLogic {
       this.cargarFichasTS();
       this.cargarContabilidad();
       this.cargarExpedienteDocente();
+      this.cargarIncidencias();
         this.cargarExpedientes();
       this.cargarPadron();
       this.cargarCuentas();
@@ -7230,12 +8816,11 @@ class Component extends DCLogic {
     const s = this.state;
     if (!this.cliente || !s.instActiva) { this.setState({idAviso:'Sin institución activa', idAvisoError:true}); return; }
     if (!this.puedeEditarAhora('identidad')) { this.setState({idAviso:'Edición bloqueada', idAvisoError:true}); return; }
-    const programas = s.idProgramas.map(p => ({id:p.id, nombre:(p.nombre || '').trim(), siglas:String(p.siglas || '').trim().toUpperCase()}))
-      .filter(p => p.nombre);
+    // Los programas y sus siglas se administran en Sistema → Instituciones; aquí no se tocan.
     this.setState({idAviso:'Guardando…', idAvisoError:false});
     const campos = {
       nombre: s.idNombre.trim(), colores: JSON.stringify(s.idColores),
-      logo: s.idLogo, membrete: s.idMembrete, programas: JSON.stringify(programas)
+      logo: s.idLogo, membrete: s.idMembrete
     };
     let {error} = await this.cliente.from('instituciones')
       .update(Object.assign({membrete_h: s.idMembreteH}, campos)).eq('id', s.instActiva);
@@ -7249,15 +8834,14 @@ class Component extends DCLogic {
     }
     if (error) { this.setState({idAviso:'No se pudo guardar: ' + error.message, idAvisoError:true}); return; }
     if (sinColumna) {
-      this.setState({idProgramas: programas,
+      this.setState({
         idAviso:'Se guardó todo menos la hoja horizontal: ejecuta supabase-membrete-horizontal.sql en Supabase.',
         idAvisoError:true});
       return;
     }
     this.setState({
-      idProgramas: programas,
       instituciones: s.instituciones.map(i => i.id === s.instActiva
-        ? Object.assign({}, i, {nombre:s.idNombre.trim(), colores:s.idColores, logo:s.idLogo, membrete:s.idMembrete, membreteH:s.idMembreteH, programas})
+        ? Object.assign({}, i, {nombre:s.idNombre.trim(), colores:s.idColores, logo:s.idLogo, membrete:s.idMembrete, membreteH:s.idMembreteH})
         : i),
       idAviso: 'Guardado ' + new Date().toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit'}),
       idAvisoError: false
@@ -7379,8 +8963,8 @@ class Component extends DCLogic {
   // ---- Candado del programador de horarios ----
   // Nace cerrado en cada sesión y se cierra solo al salir. El iframe también
   // arranca bloqueado por su cuenta, así que el estado seguro es el de partida.
-  refHorarios = el => { this.iframeHorarios = el; };
-  refCalendario = el => { this.iframeCalendario = el; };
+  refHorarios = el => { this.iframeHorarios = el; if (el) el.addEventListener('load', this.avisarCandado); };
+  refCalendario = el => { this.iframeCalendario = el; if (el) el.addEventListener('load', this.avisarCandado); };
   refPublicas = el => { this.iframePublicas = el; };
 
   CLAVE_HORARIO = 'horarios:auto';
@@ -7633,7 +9217,8 @@ class Component extends DCLogic {
   /* Cambiar de módulo cierra el candado: cada pantalla se desbloquea aparte,
      para que nadie deje la edición abierta al pasar de una cosa a otra. */
   navegar(cambios) {
-    if (this.esPantallaChica()) cambios = Object.assign({}, cambios, {menuVisible:false});
+    // Al elegir un módulo el menú se recoge para dejarle todo el ancho.
+    cambios = Object.assign({}, cambios, {menuVisible:false});
     // Sin plan de estudios elegido no se entra a ningún módulo.
     if (!this.state.programaElegido && this.programasDisponibles().length > 1) cambios = Object.assign({}, cambios, {vista:'programa', areaVista:''});
     const cerrar = this.state.edicionHorarios ? {edicionHorarios:false, pidiendoPin:false,
@@ -8197,8 +9782,12 @@ class Component extends DCLogic {
       refHorarios: this.refHorarios, avisarCandado: this.avisarCandado,
       alternarCandado: this.alternarCandado,
       edicionAbierta: !!s.edicionHorarios, edicionBloqueada: !s.edicionHorarios,
-      colorCandado: s.edicionHorarios ? '#1f7a4d' : '#2C5F8A',
-      hoverCandado: {background: s.edicionHorarios ? 'rgba(31,122,77,.10)' : 'rgba(44,95,138,.10)'},
+      colorCandado: s.edicionHorarios ? '#1f9d55' : '#c8341f',
+      hoverCandado: {background: s.edicionHorarios ? 'rgba(31,157,85,.10)' : 'rgba(200,52,31,.10)'},
+      menuCuenta: !!s.menuCuenta,
+      alternarMenuCuenta: () => this.setState(x => ({menuCuenta: !x.menuCuenta, cambioPerfil: false})),
+      cerrarMenuCuenta: () => this.setState({menuCuenta: false, cambioPerfil: false}),
+      abrirMiCuentaMenu: () => { this.setState({menuCuenta: false}); this.abrirMiCuenta(); },
       ayudaCandado: this.esMovil()
         ? 'Desde un celular o tableta DIRIN es de sólo lectura. Para editar, entra desde una computadora.'
         : (s.edicionHorarios
@@ -8224,6 +9813,8 @@ class Component extends DCLogic {
       pinAviso: s.pinAviso, hayPinAviso: !!s.pinAviso,
       confirmarPin: this.confirmarPin, cancelarPin: this.cancelarPin, enterPin: this.enterPin,
       // El ciclo de la cinta es uno solo para todo el sistema.
+      cicloTextoGlobal: (() => { const c = this.cicloEnCurso(new Date()); const m = /^(\d{4})-([AB])$/.exec(c);
+        return m ? m[2] + ' ' + m[1] + ' · ' + this.cicloBonito(c) : c; })(),
       cicloOpciones: (() => {
         const hoyC = this.cicloEnCurso(new Date());
         return this.ciclosDisponibles().map(c => ({
@@ -8272,6 +9863,7 @@ class Component extends DCLogic {
       /* La barra de módulos se puede recoger para dejarle todo el ancho al
          módulo abierto, que es donde se trabaja. */
       menuVisible: this.state.menuVisible,
+      refMain: this.refMain,
       columnasMenu: this.state.menuVisible ? '264px minmax(0,1fr)' : 'minmax(0,1fr)',
       textoMenu: this.state.menuVisible ? 'Ocultar módulos' : 'Módulos',
       tituloMenu: this.state.menuVisible
@@ -8289,7 +9881,8 @@ class Component extends DCLogic {
       bgInicio: s.vista === 'inicio' ? 'color-mix(in srgb, var(--color-accent) 14%, transparent)' : 'transparent',
       colorInicio: s.vista === 'inicio' ? 'var(--color-accent-700)' : 'var(--color-text)',
       barraInicio: s.vista === 'inicio' ? 'var(--color-accent)' : 'transparent',
-      esInicio: s.vista === 'inicio',
+      // No se pinta el inicio hasta saber si hay que elegir plan de estudios (evita el destello).
+      esInicio: s.vista === 'inicio' && s.programaElegido,
       esCarga: s.vista === 'carga',
       esCalendario: s.vista === 'calendario', refCalendario: this.refCalendario,
       esPublicas: s.vista === 'publicas',
@@ -8328,8 +9921,9 @@ class Component extends DCLogic {
       esReingreso: s.vista === 'reingreso',
       esPadron: s.vista === 'padron',
       esIdentidad: s.vista === 'identidad',
-      esObra: ['programa','inicio','admision','fichaid','indicadores','carga','calendario','usuarios','reingreso','padron','identidad','instituciones','trayectoria','contabilidad','expediente','publicas'].indexOf(s.vista) === -1,
+      esObra: ['programa','inicio','admision','fichaid','indicadores','carga','calendario','usuarios','reingreso','padron','identidad','instituciones','trayectoria','contabilidad','expediente','evaldocente','publicas'].indexOf(s.vista) === -1,
       ...this.valsExpediente(),
+      ...this.valsEvalDocente(),
       ...this.valsTrayectoria(),
       ...this.valsAdmision(),
       ...this.valsFichaId(),

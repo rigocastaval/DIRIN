@@ -18,7 +18,7 @@
   --ui: "Inter", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
 }
 *{box-sizing:border-box}
-html,body{margin:0;padding:0;height:100%}
+html,body{margin:0;padding:0;min-height:100%}
 body{font-family:var(--ui);background:var(--lienzo);color:var(--tinta);font-size:14px}
 button,input,select,textarea{font-family:inherit;font-size:inherit}
 
@@ -72,7 +72,7 @@ button,input,select,textarea{font-family:inherit;font-size:inherit}
 .migrupo{font-size:9.5px;text-transform:uppercase;letter-spacing:.09em;color:var(--gris);
   padding:7px 10px 3px;font-weight:700}
 .menupop hr{border:0;border-top:1px solid var(--linea);margin:5px 8px}
-.scope{margin-left:auto;display:flex;gap:2px;background:#efecea;border-radius:999px;padding:2px}
+.scope{margin-left:auto;display:flex;flex-wrap:wrap;justify-content:flex-end;gap:2px;background:#efecea;border-radius:999px;padding:2px}
 .scope button{border:0;background:none;border-radius:999px;padding:3px 9px;font:inherit;font-size:10px;
   text-transform:uppercase;letter-spacing:.05em;color:var(--gris);cursor:pointer;white-space:nowrap}
 .scope button.on{background:var(--papel);color:var(--tinta);font-weight:700;box-shadow:0 1px 2px rgba(0,0,0,.10)}
@@ -94,26 +94,13 @@ button,input,select,textarea{font-family:inherit;font-size:inherit}
 body.bloqueado #panelHerramienta{opacity:.5}
 body.bloqueado #panelHerramienta .body{pointer-events:none}
 body.bloqueado .grid td.cell{cursor:not-allowed}
-/* ---------- Horarios por materia ---------- */
-.cell.atenuado{background:#faf9f8;color:transparent}
-.cell .gp{display:block;font-size:9.5px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;
-  color:var(--gris);line-height:1.25;margin-bottom:1px}
-.cell .multi{display:flex;flex-direction:column;gap:2px;width:100%;align-items:stretch}
-.cell .uno{text-align:center;padding:2px 3px;border-top:1px solid rgba(0,0,0,.10)}
-.cell .uno:first-child{border-top:0}
+.cell.noCoincide{opacity:.14}
+.filtroCuad{margin-left:auto;width:220px;max-width:45%;padding:5px 10px;border:1px solid var(--linea);border-radius:6px;font:inherit;font-size:12px;font-weight:400;text-transform:none;letter-spacing:0;background:var(--papel);color:var(--tinta)}
 /* Exámenes: grupos donde el docente elegido ya tiene clase programada. */
 .tab.conDoc{background:rgba(31,122,77,.12);border-color:var(--ok);color:#14603a;font-weight:600}
 .tab.conDoc.on{background:var(--guinda);border-color:var(--guinda);color:#fff;box-shadow:inset 0 0 0 2px rgba(31,122,77,.55)}
 .tab .puntoDoc{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--ok);margin-right:6px;vertical-align:1px}
 .tab.conDoc.on .puntoDoc{background:#8ee0b4}
-.tab.tambien{background:#f2efec;color:var(--tinta);font-weight:600;box-shadow:inset 0 0 0 1px var(--linea)}
-.cell.filtrable{cursor:pointer}
-.chipsFiltro{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
-.chipF{border:1px solid var(--linea);background:var(--papel);border-radius:999px;padding:4px 11px;
-  font:inherit;font-size:11.5px;color:var(--tinta);cursor:pointer;display:inline-flex;align-items:center;gap:6px}
-.chipF:hover{border-color:var(--gris)}
-.chipF .sw{width:9px;height:9px;border-radius:2px;display:inline-block;flex:none}
-.chipF.on{background:var(--guinda);border-color:var(--guinda);color:#fff;font-weight:600}
 .conteoAlertas{margin-left:auto;font-size:10px;font-weight:700;letter-spacing:.04em;
   border-radius:999px;padding:2px 8px;background:#efecea;color:var(--gris)}
 .conteoAlertas.hay{background:#fbe4e4;color:var(--error)}
@@ -273,17 +260,18 @@ body.bloqueado .grid td.cell{cursor:not-allowed}
 }
 #hojaImpresion{display:none}
 #membreteFondo{display:none}
-table.grid{border-collapse:collapse;width:100%;table-layout:fixed;min-width:840px;user-select:none}
+table.grid{border-collapse:collapse;width:100%;table-layout:fixed;min-width:620px;user-select:none}
 table.grid th,table.grid td{border:1px solid #d9d4d2;padding:0;vertical-align:middle}
 table.grid thead th{background:#fbfaf9;font-size:11px;padding:8px 4px;text-transform:uppercase;letter-spacing:.06em;color:var(--gris)}
-table.grid tbody th{background:#fbfaf9;font-size:11px;font-weight:600;padding:6px 4px;width:88px;color:var(--tinta)}
+table.grid tbody th{background:#fbfaf9;font-size:11px;font-weight:600;padding:6px 4px;color:var(--tinta);white-space:nowrap}
 table.grid tbody tr{height:52px}
 td.cell{height:52px;cursor:crosshair;position:relative;text-align:center;padding:3px 4px;line-height:1.2}
 tr.filaAjuste{height:22px}
 tr.filaAjuste td{background:#fbfaf9}
-th.ajusteHora{background:#fbfaf9;padding:2px;width:88px;display:flex;align-items:center;justify-content:center;gap:4px}
+th.ajusteHora{background:#fbfaf9;padding:2px;text-align:center;vertical-align:middle}
+.ajusteCaja{display:flex;align-items:center;justify-content:center;gap:4px;height:100%}
 .btnAjuste{width:22px;height:18px;border:1px solid #d9d4d2;border-radius:4px;background:#fff;color:var(--guinda);
-  font-size:13px;font-weight:700;line-height:1;cursor:pointer;padding:0}
+  font-size:13px;font-weight:700;line-height:1;cursor:pointer;padding:0;display:inline-flex;align-items:center;justify-content:center}
 .btnAjuste:hover{background:var(--guinda);color:#fff;border-color:var(--guinda)}
 td.cell:hover{outline:2px solid var(--dorado);outline-offset:-2px}
 td.cell .mt{font-size:11.5px;font-weight:700;display:block}
@@ -349,17 +337,20 @@ td.cell.examen{outline:2px dashed rgba(0,0,0,.28);outline-offset:-2px}
 #toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
 #toast.bad{background:var(--error)}
 
-.editor{position:fixed;inset:0;background:var(--lienzo);z-index:40;display:none;
-        flex-direction:column;overflow:hidden}
-.editor.on{display:flex}
+.editor{display:flex;flex-direction:column;background:var(--papel);border:1px solid var(--linea);border-radius:10px;overflow:hidden}
+.xlsBtn{display:flex;flex-direction:column;align-items:center;gap:3px;border:0;background:none;cursor:pointer;
+  padding:4px 8px;font:inherit;font-size:10.5px;font-weight:600;color:var(--tinta);border-radius:6px}
+.xlsBtn:hover{background:rgba(29,111,66,.08);color:#1D6F42}
 /* La cinta de botones acompaña al scroll y queda siempre arriba, tanto si
    desplaza la lista como si lo hace la ventana que contiene el módulo. */
 .ecab{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 20px;
       background:var(--papel);border-bottom:1px solid var(--linea);
-      position:sticky;top:0;z-index:5}
+      position:sticky;top:var(--altoTabs,47px);z-index:5}
+.buscaPlan{border:1px solid var(--linea);border-radius:8px;padding:7px 11px;font:inherit;font-size:12.5px;width:240px;max-width:100%}
+.buscaPlan:focus{outline:none;border-color:var(--guinda)}
 .ecab>b{font-size:14px}
 .econteo{margin-left:auto;font-size:12px;color:var(--gris)}
-.ecuerpo{flex:1;overflow:auto;padding:16px 20px 40px}
+.ecuerpo{overflow:auto;padding:16px 20px 30px}
 .ehint{font-size:12px;color:var(--gris);line-height:1.5;margin:0 0 12px;max-width:900px}
 table.etabla{border-collapse:separate;border-spacing:0;width:100%;background:var(--papel);
              border:1px solid var(--linea);border-radius:8px}
@@ -397,6 +388,66 @@ button.ex:hover{background:#fbe6e6;color:var(--error)}
 
 @media (max-width:1180px){ .layout{grid-template-columns:1fr} }
 @media (prefers-reduced-motion:reduce){ *{transition:none!important} }
+
+/* ---------- Pestañas de vista ---------- */
+.vistaTabs{display:flex;gap:4px;padding:10px 20px 0;border-bottom:1px solid var(--linea);background:var(--papel);position:sticky;top:0;z-index:40}
+.vistaTab{border:0;border-bottom:3px solid transparent;background:none;padding:9px 16px;cursor:pointer;font-size:13.5px;font-weight:600;color:var(--gris);margin-bottom:-1px}
+.vistaTab.on{color:var(--guinda);border-bottom-color:var(--guinda)}
+.vista{padding:14px 20px 40px}
+.vista[hidden],#eTabs[hidden],#eTituloPlan[hidden],#eBuscaPlan[hidden]{display:none!important}
+.vista.entrando{animation:vistaIn .35s ease both}
+@keyframes vistaIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.filaSup{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:14px;align-items:start;margin-bottom:14px}
+.filaSup .panel + .panel{margin-top:0}
+.filaSup .lista{max-height:300px}
+.filaSup{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.flot{position:relative}
+.flotPop .body{padding:12px 14px}
+.flotPop .ficha{padding:12px 14px;border-top:1px solid var(--linea)}
+.flotBtn{width:100%;display:flex;align-items:center;gap:10px;border:1px solid var(--linea);background:var(--papel);
+  border-radius:10px;padding:10px 14px;cursor:pointer;font:inherit;text-align:left;color:var(--tinta)}
+.flotBtn:hover{border-color:var(--guinda)}
+.flot.abierto .flotBtn{border-color:var(--guinda);box-shadow:0 0 0 2px rgba(0,0,0,.04)}
+.flotEt{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--gris);flex:none}
+.flotVal{flex:1;min-width:0;font-size:13.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.flotVal i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:7px;vertical-align:-1px}
+.flotCaret{flex:none;color:var(--gris);transition:transform .2s}
+.flot.abierto .flotCaret{transform:rotate(180deg)}
+.flotPop{position:absolute;top:calc(100% + 6px);left:0;right:0;z-index:30;background:var(--papel);border:1px solid var(--linea);
+  border-radius:10px;box-shadow:0 14px 34px rgba(0,0,0,.16);display:none;max-height:min(560px,75vh);overflow:auto}
+.flot.abierto .flotPop{display:block;animation:vistaIn .18s ease both}
+body.bloqueado #panelHerramienta .flotBtn{pointer-events:none}
+.herrCols{display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:14px;align-items:start}
+.infoCols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;align-items:start}
+.conLateral{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:14px;align-items:start}
+.lateralMat{width:220px;position:sticky;top:calc(var(--altoTabs,47px) + 12px)}
+.conTres{display:grid;grid-template-columns:220px minmax(0,1fr);gap:14px;align-items:start}
+.lateralIzq{position:sticky;top:calc(var(--altoTabs,47px) + 12px);max-height:calc(100vh - var(--altoTabs,47px) - 24px);overflow:auto;display:flex;flex-direction:column;gap:10px}
+.lateralIzq .panel + .panel{margin-top:0}
+.lateralIzq > .panel{flex:none}
+.lateralIzq .panel h2{padding:8px 12px}
+.lateralIzq .panel .body{padding:10px 12px}
+.lateralIzq .lista{max-height:240px;margin:0 -12px}
+.lateralIzq .doc{padding:6px 12px}
+.lateralIzq .herrCols{grid-template-columns:minmax(0,1fr);gap:10px}
+.lateralIzq .tools{grid-template-columns:1fr 1fr}
+.lateralIzq .tool{padding:7px 4px}
+.docSel{font-size:12.5px;font-weight:600;margin-bottom:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.centro{min-width:0}
+.focoBtn{width:100%;display:flex;align-items:center;gap:9px;border:1px solid var(--linea);background:var(--papel);border-radius:10px;
+  padding:10px 12px;font-size:12.5px;font-weight:600;color:var(--tinta);text-align:left;white-space:nowrap}
+
+.foco{flex:none;width:11px;height:11px;border-radius:50%;background:#bdb7b4}
+.foco.verde{background:#22b35e;box-shadow:0 0 0 3px rgba(34,179,94,.18),0 0 8px rgba(34,179,94,.7)}
+.foco.amarillo{background:#f2b705;box-shadow:0 0 0 3px rgba(242,183,5,.2),0 0 8px rgba(242,183,5,.75)}
+.foco.rojo{background:#e02424;box-shadow:0 0 0 3px rgba(224,36,36,.18),0 0 8px rgba(224,36,36,.7)}
+.lateralCuerpo{margin-top:8px;background:var(--papel);border:1px solid var(--linea);border-radius:10px;padding:10px;max-height:calc(100vh - var(--altoTabs,47px) - 90px);overflow:auto}
+
+.alertas li .lm{display:block;font-weight:600}
+.alertas li .ld{display:block;font-size:11px;opacity:.9}
+.infoCols .panel + .panel{margin-top:0}
+@media (max-width:860px){ .conLateral,.conTres{grid-template-columns:minmax(0,1fr)} .lateralMat,.lateralIzq{width:auto;position:static;max-height:none} }
+@media (max-width:860px){ .filaSup,.herrCols,.infoCols{grid-template-columns:minmax(0,1fr)} .vista{padding:12px 12px 40px} }
 </style>
 </head>
 <body>
@@ -424,23 +475,13 @@ button.ex:hover{background:#fbe6e6;color:var(--error)}
       </div>
     </div>
     <div class="periodo">
-      <span class="ctxEt">Institución</span>
-      <span class="ctxFijo" id="ctxInstitucion">Sin asignar</span>
-      <span class="ctxEt">Programa</span>
-      <button class="ctxBtn" id="ctxPrograma" title="Definir el programa académico">+</button>
+      <span class="ctxFijo" id="ctxInstitucion" style="display:none">Sin asignar</span>
+      <button class="ctxBtn" id="ctxPrograma" style="display:none">+</button>
       <span class="ctxEt">Periodo</span>
       <button class="ctxBtn" id="ctxPeriodo" title="Definir el periodo del ciclo">+</button>
     </div>
   </div>
   <div class="toolbar">
-    <div class="menu">
-      <button class="btn menubtn" type="button" aria-haspopup="true">Datos de origen</button>
-      <div class="menupop">
-        <button class="mi" id="btnFormato"><b>Descargar formato de carga docente</b><span>Excel en blanco, con hoja de instrucciones</span></button>
-        <button class="mi" id="btnExcel"><b>Cargar docentes y plan de estudios</b><span>Desde el archivo de Excel</span></button>
-        <button class="mi" id="btnEditar"><b>Editar datos</b><span>Docentes, plan de estudios y disponibilidad</span></button>
-      </div>
-    </div>
     <div class="menu">
       <button class="btn menubtn" type="button" aria-haspopup="true">Configuración</button>
       <div class="menupop">
@@ -455,15 +496,9 @@ button.ex:hover{background:#fbe6e6;color:var(--error)}
         <div class="migrupo">Documentos finales</div>
         <button class="mi" id="btnWord"><b>Descargar Horarios</b><span>Word · un horario por grupo</span></button>
         <button class="mi" id="btnInforme"><b>Descargar Requisición Docente</b><span>Word · plantilla institucional</span></button>
-        <hr>
-        <button class="mi" id="btnExcelSalida"><b>Descargar Excel</b><span>Docentes, plan y disponibilidad</span></button>
-        <hr>
-        <div class="migrupo">Respaldo</div>
-        <button class="mi" id="btnGuardar"><b>Descargar copia</b><span>Guardar este avance como .json</span></button>
       </div>
     </div>
-    <button class="btn primary" id="btnCargaRapida" style="display:none">Cargar docentes y plan de estudios</button>
-    <button class="deshacer" id="btnDeshacer" type="button" disabled title="Deshacer el último cambio" aria-label="Deshacer">
+        <button class="deshacer" id="btnDeshacer" type="button" disabled title="Deshacer el último cambio" aria-label="Deshacer">
       <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2.6 6.4h4.2M2.6 6.4V2.3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M3.1 6.1A5.6 5.6 0 1 1 2.9 10.4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
       <span>Deshacer</span>
     </button>
@@ -473,44 +508,50 @@ button.ex:hover{background:#fbe6e6;color:var(--error)}
   </div>
 </div>
 
-<div class="layout">
+<div class="vistaTabs" id="vistaTabs">
+  <button class="vistaTab on" data-vista="horarios">Horarios</button>
+  <button class="vistaTab" data-vista="info">Información detallada</button>
+  <button class="vistaTab" data-vista="docentes">Docentes</button>
+  <button class="vistaTab" data-vista="plan">Plan de estudios</button>
+</div>
 
-  <!-- ================= IZQUIERDA ================= -->
-  <div>
-    <div class="panel">
-      <h2>Docentes</h2>
+<div class="vista conTres" id="vistaHorarios">
+  <aside class="lateralIzq" id="lateralIzq">
+    <div class="panel" id="panelDocente">
+      <h2>Docente</h2>
       <div class="body">
+        <div class="docSel" id="valDocente">Elegir docente</div>
         <input class="search" id="buscar" placeholder="Buscar por nombre…">
         <div class="lista" id="listaDocentes"></div>
       </div>
       <div class="ficha" id="ficha"><span class="vacio">Cargue el Excel y elija un docente.</span></div>
     </div>
-
     <div class="panel" id="panelHerramienta">
       <h2>Herramienta</h2>
-      <div class="body">
+      <div class="body herrCols">
+        <div>
+          <div class="field" id="campoMateria" style="margin-top:0">
+            <label for="materia">Materia</label>
+            <div class="conCaret">
+              <input id="materia" placeholder="Elija o escriba la materia" autocomplete="off">
+              <button type="button" id="caretMateria" aria-label="Ver todas las materias" title="Ver todas las materias">▾</button>
+              <div class="listaMat" id="listaMaterias" hidden></div>
+            </div>
+          </div>
+          <div class="field" id="campoTexto" style="display:none;margin-top:0">
+            <label for="textoLibre">Texto de la celda</label>
+            <input id="textoLibre" value="Acreditación de culturales y deportivas">
+          </div>
+          <div class="brushInfo" id="brushInfo"></div>
+        </div>
         <div class="tools">
           <button class="tool on" data-tool="clase">Clase</button>
           <button class="tool" data-tool="receso">Receso</button>
           <button class="tool" data-tool="texto">Texto libre</button>
           <button class="tool" data-tool="borrar">Borrar</button>
         </div>
-        <div class="field" id="campoMateria">
-          <label for="materia">Materia</label>
-          <div class="conCaret">
-            <input id="materia" placeholder="Elija o escriba la materia" autocomplete="off">
-            <button type="button" id="caretMateria" aria-label="Ver todas las materias" title="Ver todas las materias">▾</button>
-            <div class="listaMat" id="listaMaterias" hidden></div>
-          </div>
-        </div>
-        <div class="field" id="campoTexto" style="display:none">
-          <label for="textoLibre">Texto de la celda</label>
-          <input id="textoLibre" value="Acreditación de culturales y deportivas">
-        </div>
-        <div class="brushInfo" id="brushInfo"></div>
       </div>
     </div>
-
     <div class="panel" id="panelExamenMaterias" style="display:none">
       <h2>Materias a examinar</h2>
       <div class="body">
@@ -534,20 +575,12 @@ button.ex:hover{background:#fbe6e6;color:var(--error)}
         <div class="brushInfo" id="brushInfoEx"></div>
       </div>
     </div>
-
-    <div class="panel">
-      <h2>Materias por programar</h2>
-      <div class="body"><ul class="alertas" id="alertas"></ul></div>
-    </div>
-  </div>
-
-  <!-- ================= CENTRO ================= -->
-  <div>
+  </aside>
+  <div class="centro">
     <div class="modoTabs" id="modoTabs">
       <button class="modoTab on" data-modo="clases">Horario de clases</button>
       <button class="modoTab" id="btnExamenes" data-modo="examenes">Programar Exámenes</button>
       <button class="modoTab" id="btnHorarioDocente" data-modo="docente">Horarios por docente</button>
-      <button class="modoTab" id="btnHorarioMateria" data-modo="materia">Horarios por materia</button>
       <div style="margin-left:auto;display:flex;gap:8px">
         <button class="btn" id="btnSubirNube" title="Guarda en la base de datos de DIRIN el horario que está en pantalla, para verlo desde cualquier equipo">Guardar cambios</button>
         <button class="btn ghost" id="btnDescargarPantalla" title="Word del horario que está viendo">Descargar</button>
@@ -560,21 +593,24 @@ button.ex:hover{background:#fbe6e6;color:var(--error)}
       <button class="tipoEx" data-tipo="regularizacion">Regularización</button>
     </div>
     <div class="tabs" id="tabs"></div>
-    <div class="panel">
-      <h2 id="tituloGrupo">Horario</h2>
-      <div class="gridwrap" id="gridwrap"></div>
-      <div class="leyenda" id="leyenda"></div>
+    <div class="conLateral">
+      <div class="panel" style="margin-top:0">
+        <h2 style="display:flex;align-items:center;gap:10px"><span id="tituloGrupo">Horario</span><input class="filtroCuad" id="filtroCuadricula" placeholder="Filtrar por materia o docente…" autocomplete="off"></h2>
+        <div class="gridwrap" id="gridwrap"></div>
+        <div class="leyenda" id="leyenda"></div>
+      </div>
+      <aside class="lateralMat" id="lateralMat">
+        <div class="focoBtn" id="btnMatProg"><i class="foco" id="focoMat"></i>Materias por programar</div>
+        <div class="lateralCuerpo"><ul class="alertas" id="alertas"></ul></div>
+      </aside>
     </div>
   </div>
+</div>
 
-  <!-- ================= DERECHA ================= -->
-  <div>
-    <div class="panel">
+<div class="vista infoCols" id="vistaInfo" hidden>
+  <div class="panel">
       <h2 class="conScope">Carga docente
-        <span class="scope" id="scopeCarga">
-          <button type="button" data-scope="grupo" class="on">Este grupo</button>
-          <button type="button" data-scope="todos">Todos</button>
-        </span>
+        <span class="scope" id="scopeCarga"></span>
       </h2>
       <div class="body" id="cargaDocente"></div>
     </div>
@@ -584,23 +620,24 @@ button.ex:hover{background:#fbe6e6;color:var(--error)}
       </h2>
       <div class="body"><ul class="alertas" id="alertasHorario"></ul></div>
     </div>
-  </div>
 </div>
 
+<div class="vista" id="vistaDatos" hidden>
 <div class="editor" id="editor">
   <div class="ecab">
-    <b>Editar datos</b>
     <div class="tabs" id="eTabs" style="margin:0">
       <button class="tab on" data-hoja="docentes">Docentes</button>
-      <button class="tab" data-hoja="plan">Plan de estudios</button>
-      <button class="tab" data-hoja="disponibilidad">Disponibilidad</button>
+      <button class="tab" data-hoja="disponibilidad">Horarios disponibles</button>
     </div>
+    <b id="eTituloPlan" hidden>Plan de estudios</b>
+    <input type="search" class="buscaPlan" id="eBuscaPlan" placeholder="Buscar materia…" autocomplete="off">
     <span class="econteo" id="eConteo"></span>
+    <button class="xlsBtn" id="eFormato" type="button"><svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><rect x="9" y="3" width="20" height="26" rx="2" fill="#fff" stroke="#1D6F42" stroke-width="1.6"/><path d="M19 9h7M19 14h7M19 19h7M19 24h7" stroke="#1D6F42" stroke-width="1.4"/><rect x="2" y="8" width="15" height="16" rx="2" fill="#1D6F42"/><path d="M6 12l7 8M13 12l-7 8" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg><span>Descargar formato</span></button>
+    <button class="xlsBtn" id="eCargar" type="button"><svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><rect x="9" y="3" width="20" height="26" rx="2" fill="#fff" stroke="#1D6F42" stroke-width="1.6"/><path d="M19 9h7M19 14h7M19 19h7M19 24h7" stroke="#1D6F42" stroke-width="1.4"/><rect x="2" y="8" width="15" height="16" rx="2" fill="#1D6F42"/><path d="M6 12l7 8M13 12l-7 8" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg><span>Cargar Excel</span></button>
     <button class="btn primary" id="eGuardar">Guardar cambios</button>
-    <button class="btn primary" id="eDescargar">Descargar Excel</button>
-    <button class="btn ghost" id="eCerrar">Cerrar</button>
   </div>
   <div class="ecuerpo" id="eCuerpo"></div>
+</div>
 </div>
 
 <div class="overlay" id="overlay">
@@ -649,11 +686,9 @@ const state = {
   grupos: [],             // {id,semestre,grupo,celdas:{ "Lunes|7:15-8:15": {...} }}
   activo: null,
   docenteSel: null,
-  modo: "clases",           // "clases" | "examenes" | "docente" | "materia"
+  modo: "clases",           // "clases" | "examenes" | "docente"
   tipoExamen: "ordinarios", // "ordinarios" | "extraordinarios" | "regularizacion"
   grupoExamenExtra: null,   // grupo elegido para ver su cuadrícula de examen (los 3 tipos)
-  grupoMateria: null,       // grupo elegido en «Horarios por materia»
-  filtroMateria: null,      // etiqueta (materia, receso o texto libre) que aísla la rejilla
   tool: "clase",
   nombreProyecto: "",
   programa: "",
@@ -731,7 +766,7 @@ document.addEventListener("keydown", e => { if (e.key === "Escape") cerrarModal(
 /* =====================================================================
    Carga del Excel
    ===================================================================== */
-document.getElementById("btnExcel").onclick = () => document.getElementById("fileExcel").click();
+
 
 /* ---------- Cinta agrupada: apertura y cierre de los menús ---------- */
 (function(){
@@ -750,13 +785,9 @@ document.getElementById("btnExcel").onclick = () => document.getElementById("fil
   document.addEventListener("click", cerrar);
   document.addEventListener("keydown", e => { if (e.key === "Escape") cerrar(); });
 
-  document.getElementById("btnCargaRapida").onclick = () => document.getElementById("fileExcel").click();
 
-  document.querySelectorAll("#scopeCarga button").forEach(b => b.onclick = () => {
-    cargaScope = b.dataset.scope;
-    document.querySelectorAll("#scopeCarga button").forEach(x => x.classList.toggle("on", x === b));
-    renderPaneles();
-  });
+
+
 })();
 document.getElementById("fileExcel").onchange = e => {
   const f = e.target.files[0]; if (!f) return;
@@ -765,7 +796,8 @@ document.getElementById("fileExcel").onchange = e => {
     return;
   }
   const fr = new FileReader();
-  fr.onload = ev => { try { leerLibro(ev.target.result); } catch(err){ toast("El archivo no se pudo leer: " + err.message, true); } };
+  const solo = cargaSolo; cargaSolo = null;
+  fr.onload = ev => { try { leerLibro(ev.target.result, solo); if (typeof pintarEditor === "function" && !document.getElementById("vistaDatos").hidden) pintarEditor(); } catch(err){ toast("El archivo no se pudo leer: " + err.message, true); } };
   fr.readAsArrayBuffer(f);
   e.target.value = "";
 };
@@ -778,8 +810,20 @@ function buscaCol(fila, nombres){
   return null;
 }
 
-function leerLibro(buf){
+function leerLibro(buf, solo){
   const wb = XLSX.read(buf, {type:"array"});
+  if (solo === "plan" || solo === "disponibilidad"){
+    const nom = wb.SheetNames.find(n => norm(n).includes(solo === "plan" ? "plan" : "disponibilidad"))
+             || wb.SheetNames.find(n => !norm(n).includes("instruc")) || wb.SheetNames[0];
+    if (solo === "disponibilidad" && !state.docentes.length){
+      toast("Cargue primero a los docentes: la disponibilidad se liga por su nombre.", true); return;
+    }
+    const n = solo === "plan" ? leerPlan(wb.Sheets[nom]) : leerDisponibilidad(wb.Sheets[nom]);
+    render();
+    if (!n){ toast(solo === "plan" ? "La hoja del plan de estudios está vacía." : "No se enlazó ninguna disponibilidad: revise que los nombres coincidan con los docentes.", true); return; }
+    toast(solo === "plan" ? `Se cargaron ${n} materias del plan.` : `Se cargaron ${n} disponibilidades.`);
+    return;
+  }
   // «Disponibilidad» se busca primero porque su nombre también contiene «docente»
   const hojaDisp = wb.SheetNames.find(n => norm(n).includes("disponibilidad"));
   const hojaPlan = wb.SheetNames.find(n => norm(n).includes("plan"));
@@ -943,12 +987,14 @@ document.querySelectorAll(".tipoEx").forEach(btn => {
 function actualizarVistaModo(){
   const esExamen = state.modo === "examenes";
   const esDocente = state.modo === "docente";
-  const soloLectura = esDocente || state.modo === "materia";
+  if (state.modo === "materia") state.modo = "clases";
+  const soloLectura = esDocente;
   // Mantiene la pestaña resaltada aunque el modo venga restaurado de un proyecto guardado.
   document.querySelectorAll(".modoTab").forEach(b => b.classList.toggle("on", b.dataset.modo === state.modo));
   document.getElementById("tiposExamen").style.display = esExamen ? "flex" : "none";
   document.getElementById("panelHerramienta").style.display = (soloLectura || esExamen) ? "none" : "";
   document.getElementById("panelExamenMaterias").style.display = esExamen ? "" : "none";
+  document.getElementById("lateralMat").style.display = state.modo === "clases" ? "" : "none";
   fijarHerramienta(esExamen && (state.tool === "receso" || state.tool === "texto") ? "clase" : state.tool);
   const etiquetaMateria = document.querySelector('label[for="materia"]');
   if (etiquetaMateria) etiquetaMateria.textContent = esExamen ? "Materia a examinar" : "Materia";
@@ -970,11 +1016,6 @@ function tituloContextoActual(){
   if (state.modo === "docente"){
     const d = docente(state.docenteSel);
     return "Horarios por docente" + (d ? " / " + d.nombre : "");
-  }
-  if (state.modo === "materia"){
-    const g = grupoMateriaActual();
-    return "Horarios por materia" + (g ? " / " + grupoNombre(g) : "") +
-           (state.filtroMateria ? " / " + state.filtroMateria : "");
   }
   return "Horario";
 }
@@ -1006,23 +1047,6 @@ async function descargarPantalla(){
     descargarBytes(`${limpio(nombreTipo)}_${limpio(grupoNombre(g))}_${nombreArchivo()}.docx`,
       armarDocx([hoja], [], 680, membreteDe(true)), MIME_DOCX);
     toast("Horario de examen descargado.");
-    return;
-  }
-
-  if (state.modo === "materia"){
-    const g = grupoMateriaActual();
-    if (!g){ toast("Ningún grupo tiene clases programadas todavía.", true); return; }
-    const filtro = state.filtroMateria;
-    // Se exporta exactamente lo que está a la vista: con filtro, todos los grupos
-    // visibles (una página por grupo) y sólo las celdas de esa materia.
-    const ids = filtro ? (window.__gruposMateriaVisibles || [g.id]) : [g.id];
-    const visibles = ids.map(id => state.grupos.find(x => x.id === id)).filter(Boolean);
-    const hojas = (visibles.length ? visibles : [g]).map(gr => hojaHorarioDatos(
-      ["Horario por materia" + (filtro ? " · " + filtro : ""), state.periodo, grupoNombre(gr)],
-      gr.bloques, celdasFiltradasMateria(gr, filtro)));
-    descargarBytes(`Horario_${limpio(grupoNombre(g))}${filtro ? "_" + limpio(filtro) : ""}_${nombreArchivo()}.docx`,
-      armarDocx(hojas, [], 680, membreteDe(true)), MIME_DOCX);
-    toast(filtro ? `«${filtro}» descargada (${hojas.length} grupo(s)).` : "Rejilla del grupo descargada.");
     return;
   }
 
@@ -1174,6 +1198,8 @@ function fijarHerramienta(tool){
 document.querySelectorAll(".tool").forEach(t => t.onclick = () => {
   fijarHerramienta(t.dataset.tool);
   renderGrid(); pincel();
+  // Clase espera la materia y Texto libre espera el texto: el menú sigue abierto.
+  if (t.closest("#panelHerramienta") && (t.dataset.tool === "receso" || t.dataset.tool === "borrar")) cerrarFlot();
 });
 document.getElementById("buscar").oninput = renderDocentes;
 document.getElementById("materia").oninput = e => {
@@ -1365,8 +1391,6 @@ async function cambiarContexto(cambios){
     state.grupos = [];
     state.activo = null;
     state.docenteSel = null;
-    state.filtroMateria = null;
-    state.grupoMateria = null;
     state.grupoExamenExtra = null;
     state.docentes = previos.docentes; state.plan = previos.plan;
     state.dias = previos.dias; state.firmas = previos.firmas;
@@ -1562,6 +1586,7 @@ document.getElementById("ctxPeriodo").onclick = abrirModalPeriodo;
 pintarContexto();
 
 function pincel(){
+  try { etiquetasFlot(); } catch(e){}
   const el = state.modo === "examenes"
     ? document.getElementById("brushInfoEx")
     : document.getElementById("brushInfo");
@@ -2015,32 +2040,6 @@ function renderTabs(){
     return;
   }
 
-  if (state.modo === "materia"){
-    const conClases = gruposConClases();
-    if (!conClases.length){
-      el.innerHTML = `<span class="vacio" style="padding:6px 2px;display:inline-block">Ningún grupo tiene clases programadas todavía en «Horario de clases».</span>`;
-      return;
-    }
-    if (!conClases.some(g => g.id === state.grupoMateria)) state.grupoMateria = conClases[0].id;
-    // Con un filtro activo se iluminan todos los grupos que están en el mapa,
-    // no sólo el elegido: la vista abarca a todos ellos.
-    const visibles = state.filtroMateria
-      ? gruposConEtiqueta(state.filtroMateria).map(x => x.id)
-      : [state.grupoMateria];
-    el.innerHTML = conClases.map(g => {
-      const eje = g.id === state.grupoMateria;
-      const dentro = visibles.includes(g.id);
-      const cls = eje ? "on" : (dentro ? "tambien" : "");
-      return `<button class="tab ${cls}" data-g="${g.id}"${dentro && !eje ? ` title="También visible en el mapa"` : ""}>${esc(grupoNombre(g))}</button>`;
-    }).join("");
-    el.querySelectorAll(".tab").forEach(t => t.onclick = () => {
-      state.grupoMateria = t.dataset.g;
-      state.filtroMateria = null;   // cada grupo empieza sin filtro
-      render();
-    });
-    return;
-  }
-
   if (state.modo === "docente"){
     // Vista de solo lectura: no hay grupos que elegir, el docente se elige en la lista de la izquierda.
     el.innerHTML = `<span class="vacio" style="padding:6px 2px;display:inline-block">Elija un docente en la lista de la izquierda para ver su horario combinado de todos los grupos.</span>`;
@@ -2102,20 +2101,54 @@ function renderDocentes(){
       : hs > max ? `${hs - max} h de más`
       : "completo";
     return `<button class="doc ${d.id===state.docenteSel?"sel":""}${falta>0?" debe":""}" data-d="${d.id}">
-      <span class="n">${esc(d.nombre)}${falta>0?` <em class="falta">${falta} h</em>`:""}</span>
-      <span class="m"><span>${esc(d.contratacion||"—")} · ${nota}</span><b>${hs}${max?" / "+max:""} h</b></span>
-      <span class="bar"><i class="${cls}" style="width:${pct}%"></i></span></button>`;
+      <span class="n">${esc(d.nombre)}</span></button>`;
   }).join("");
   enlazarDocentes(el);
 }
 
+function cerrarFlot(){ document.querySelectorAll(".flot.abierto").forEach(f => f.classList.remove("abierto")); }
+function etiquetasFlot(){
+  const vd = document.getElementById("valDocente"), vh = document.getElementById("valHerramienta");
+  if (vd){
+    const d = docente(state.docenteSel);
+    vd.textContent = d ? d.nombre : state.docenteSel === "" ? "Sin docente" : "Elegir docente";
+    vd.title = vd.textContent;
+  }
+  if (vh){
+    const t = state.tool, m = (document.getElementById("materia").value || "").trim();
+    if (t === "clase"){
+      vh.innerHTML = m ? `<i style="background:${colorMateria(m)}"></i>${esc(m)}` : "Clase · elegir materia";
+    } else if (t === "texto"){
+      const tx = (document.getElementById("textoLibre").value || "").trim();
+      vh.textContent = "Texto libre" + (tx ? " · " + tx : "");
+    } else vh.textContent = t === "receso" ? "Receso" : "Borrar";
+  }
+}
+document.querySelectorAll(".flot .flotBtn").forEach(b => b.onclick = () => {
+  const f = b.parentElement, abrir = !f.classList.contains("abierto");
+  cerrarFlot();
+  if (abrir){
+    f.classList.add("abierto");
+    const q = f.querySelector("#buscar"); if (q) setTimeout(() => q.focus(), 30);
+  }
+});
+document.addEventListener("pointerdown", e => {
+  if (!e.target.closest(".flot") && !e.target.closest("#listaMaterias") && !e.target.closest(".overlay")) cerrarFlot();
+});
+document.addEventListener("keydown", e => { if (e.key === "Escape") cerrarFlot(); });
+
+document.getElementById("textoLibre").addEventListener("input", etiquetasFlot);
+document.getElementById("textoLibre").addEventListener("keydown", e => { if (e.key === "Enter") cerrarFlot(); });
+
 function enlazarDocentes(el){
   el.querySelectorAll(".doc").forEach(b => b.onclick = () => {
     // Cadena vacía es «sin docente»; null es «ninguno elegido».
+    const enFlot = !!b.closest("#flotDocentes");
     state.docenteSel = b.dataset.d === "" ? "" : b.dataset.d;
     fijarHerramienta("clase");
     document.getElementById("materia").value = "";
     renderTabs(); renderDocentes(); renderFicha(); renderPanelExamen(); renderGrid(); renderPaneles(); pincel();
+    if (enFlot) cerrarFlot();
   });
 }
 
@@ -2233,6 +2266,7 @@ function renderMaterias(filtro){
     document.getElementById("materia").value = b.dataset.m;
     cerrarListaMaterias();
     renderMaterias(); pincel(); renderPaneles();
+    if (state.modo !== "examenes") cerrarFlot();
     if (state.modo === "examenes"){ renderPanelExamen(); renderGrid(); }
   });
 }
@@ -2466,7 +2500,7 @@ function renderGridDocente(){
   };
   const {tramo, omitir} = tramosPorDia(bloques, state.dias, igual);
 
-  let h = `<table class="grid"><thead><tr><th>Hora</th>${state.dias.map(dd=>`<th>${esc(dd)}</th>`).join("")}</tr></thead><tbody>`;
+  let h = `<table class="grid"><colgroup><col style="width:${anchoHora(bloques)}px">${state.dias.map(()=>'<col>').join('')}</colgroup><thead><tr><th>Hora</th>${state.dias.map(dd=>`<th>${esc(dd)}</th>`).join("")}</tr></thead><tbody>`;
   bloques.forEach(b => {
     h += `<tr><th>${esc(b)}</th>`;
     state.dias.forEach(dia => {
@@ -2493,193 +2527,24 @@ function renderGridDocente(){
   leyenda.innerHTML = `<span>Vista de solo lectura: combina las clases de ${esc(d.nombre)} en todos los grupos del horario de clases.</span>`;
 }
 
-/* =====================================================================
-   Horarios por materia — vista de solo lectura
-   Toma tal cual lo programado en «Horario de clases» para UN grupo y permite
-   aislar una materia o actividad. Dos docentes que imparten la misma materia
-   caen bajo la misma etiqueta a propósito: el filtro es por nombre, no por docente.
-   ===================================================================== */
-function gruposConClases(){
-  return state.grupos.filter(g => Object.values(g.celdas).some(c => c.tipo === "clase"));
-}
-function grupoMateriaActual(){
-  const conClases = gruposConClases();
-  if (!conClases.length) return null;
-  return conClases.find(g => g.id === state.grupoMateria) || conClases[0];
-}
-// Qué "es" una celda para efectos del filtro: la materia, el receso o el texto libre.
-function etiquetaCelda(c){
-  if (!c) return null;
-  if (c.tipo === "receso") return "Receso";
-  if (c.tipo === "texto")  return (c.texto || "").trim() || "Texto libre";
-  return (c.materia || "").trim() || "Sin materia";
-}
-function etiquetasDeGrupo(g){
-  const m = new Map();
-  Object.values(g.celdas).forEach(c => {
-    const e = etiquetaCelda(c);
-    if (!e) return;
-    const fila = m.get(e) || {etiqueta:e, horas:0, tipo:c.tipo};
-    fila.horas++;
-    m.set(e, fila);
-  });
-  return Array.from(m.values()).sort((a,b) => a.etiqueta.localeCompare(b.etiqueta, "es"));
-}
-// Todos los grupos donde aparece la etiqueta filtrada, empezando por el elegido.
-function gruposConEtiqueta(et){
-  const eje = grupoMateriaActual();
-  const lista = gruposConClases().filter(g =>
-    Object.values(g.celdas).some(c => norm(etiquetaCelda(c)) === norm(et)));
-  return eje && lista.includes(eje) ? [eje].concat(lista.filter(g => g !== eje)) : lista;
-}
-// Día+bloque → [{grupo, celda}] de todos los grupos que comparten la etiqueta.
-function mapaEtiquetaEnGrupos(grupos, et){
-  const mapa = new Map();
-  grupos.forEach(g => {
-    Object.entries(g.celdas).forEach(([k, c]) => {
-      if (norm(etiquetaCelda(c)) !== norm(et)) return;
-      if (!mapa.has(k)) mapa.set(k, []);
-      mapa.get(k).push({grupo: grupoNombre(g), celda: c});
-    });
-  });
-  return mapa;
-}
-// Paleta fija por posicion del grupo: en esta vista el color identifica al GRUPO,
-// no a la materia, para distinguir de un vistazo de quien es cada hora.
-const COLORES_GRUPO = ["#cfe0ef","#dceadb","#f6e3c8","#e6dcef","#f8dcdc","#d3e9e9",
-                       "#efe4d0","#e0e5f2","#e9dfd6","#dfeee4","#f2dfe9","#dde7ef"];
-function colorGrupo(g){
-  const i = Math.max(0, state.grupos.findIndex(x => x.id === g.id));
-  return COLORES_GRUPO[i % COLORES_GRUPO.length];
-}
-function bloquesUnionDe(grupos){
-  const union = new Set();
-  grupos.forEach(g => (g.bloques && g.bloques.length ? g.bloques : BLOQUES_DEF).forEach(b => union.add(b)));
-  return CANON_BLOQUES.filter(b => union.has(b));
-}
-function celdasFiltradasMateria(g, filtro){
-  if (!filtro) return g.celdas;
-  const out = {};
-  Object.entries(g.celdas).forEach(([k,c]) => {
-    if (norm(etiquetaCelda(c)) === norm(filtro)) out[k] = c;
-  });
-  return out;
-}
-function colorEtiqueta(e){
-  return (e.tipo === "clase" || e.tipo === "examen") ? colorMateria(e.etiqueta) : "#e4dfdc";
-}
-
-function renderGridMateria(){
-  const wrap = document.getElementById("gridwrap");
-  const leyenda = document.getElementById("leyenda");
-  const tit = document.getElementById("tituloGrupo");
-  const g = grupoMateriaActual();
-  if (!g){
-    tit.textContent = "Horarios por materia";
-    wrap.innerHTML = `<div style="padding:40px;text-align:center" class="vacio">Ningún grupo tiene clases programadas todavía en «Horario de clases».</div>`;
-    leyenda.innerHTML = "";
-    return;
-  }
-  if (!g.bloques || !g.bloques.length) g.bloques = [...BLOQUES_DEF];
-
-  const etiquetas = etiquetasDeGrupo(g);
-  if (state.filtroMateria && !etiquetas.some(e => norm(e.etiqueta) === norm(state.filtroMateria)))
-    state.filtroMateria = null;   // el filtro dejó de existir en este grupo
-  const filtro = state.filtroMateria;
-
-  // Con filtro activo la vista deja de ser de un solo grupo: reúne esa misma
-  // materia o actividad en todos los grupos que la tengan programada.
-  const grupos = filtro ? gruposConEtiqueta(filtro) : [g];
-  const bloques = filtro ? bloquesUnionDe(grupos) : g.bloques;
-  const mapa = filtro ? mapaEtiquetaEnGrupos(grupos, filtro) : null;
-  window.__gruposMateriaVisibles = grupos.map(x => x.id);
-
-  tit.textContent = "Horario " + grupos.map(grupoNombre).join(" · ") + (filtro ? " · " + filtro : "");
-
-  const contenido = c => {
-    if (c.tipo === "receso") return "R E C E S O";
-    if (c.tipo === "texto")  return esc(c.texto);
-    const doc = docente(c.docenteId);
-    return `<span class="mt">${esc(c.materia)}</span><span class="dc">${esc(doc ? doc.nombre : c.docenteId ? "docente eliminado" : "")}</span>`;
-  };
-  // En esta vista el fondo lo da el grupo, no la materia.
-  const porNombre = {};
-  grupos.forEach(gr => { porNombre[grupoNombre(gr)] = colorGrupo(gr); });
-  const fondoGrupo = nombre => porNombre[nombre] || "";
-
-  let h = `<table class="grid"><thead><tr><th>Hora</th>${state.dias.map(d=>`<th>${esc(d)}</th>`).join("")}</tr></thead><tbody>`;
-  // Une horas consecutivas idénticas: con filtro, mismos grupos y misma celda;
-  // sin filtro, misma materia y docente dentro del grupo.
-  const firmaFiltro = ent => ent.map(e =>
-    norm(e.grupo) + "§" + norm(etiquetaCelda(e.celda)) + "§" + (e.celda.docenteId || "")).sort().join("|");
-  const igual = (dia, b1, b2) => {
-    if (filtro){
-      const A = mapa.get(cellKey(dia,b1)) || [], B = mapa.get(cellKey(dia,b2)) || [];
-      return A.length > 0 && B.length > 0 && firmaFiltro(A) === firmaFiltro(B);
-    }
-    return mismaCelda(g.celdas[cellKey(dia,b1)], g.celdas[cellKey(dia,b2)]);
-  };
-  const {tramo, omitir} = tramosPorDia(bloques, state.dias, igual);
-  bloques.forEach(b => {
-    h += `<tr><th>${esc(b)}</th>`;
-    state.dias.forEach(d => {
-      if (omitir[d+"|"+b]) return;
-      const rs = (tramo[d+"|"+b] || 1) > 1 ? ` rowspan="${tramo[d+"|"+b]}"` : "";
-      const k = cellKey(d,b);
-
-      if (filtro){
-        const entradas = mapa.get(k) || [];
-        if (!entradas.length){ h += `<td class="cell atenuado"${rs} title="Sin ${esc(filtro)} en este horario"></td>`; return; }
-        if (entradas.length === 1){
-          const e = entradas[0], fondo = fondoGrupo(e.grupo);
-          h += `<td class="cell filtrable"${rs} data-et="${esc(filtro)}"${fondo ? ` style="background:${fondo}"` : ""} title="${esc(e.grupo)} · ${esc(filtro)} — clic para quitar el filtro">` +
-               `<span class="gp">${esc(e.grupo)}</span>${contenido(e.celda)}</td>`;
-          return;
-        }
-        h += `<td class="cell filtrable"${rs} data-et="${esc(filtro)}" title="${esc(entradas.map(e => e.grupo).join(" / "))} — clic para quitar el filtro">` +
-             `<span class="multi">${entradas.map(e =>
-               `<span class="uno" style="background:${fondoGrupo(e.grupo)}"><span class="gp">${esc(e.grupo)}</span>${contenido(e.celda)}</span>`).join("")}</span></td>`;
-        return;
-      }
-
-      const c = g.celdas[k];
-      const et = etiquetaCelda(c);
-      if (!et){ h += `<td class="cell"${rs}></td>`; return; }
-      let clases = "filtrable";
-      if (c.tipo === "receso") clases += " receso";
-      else if (c.tipo === "texto") clases += " libre";
-      else if (c.tipo === "examen") clases += " examen";
-      const fondo = (c.tipo === "clase" || c.tipo === "examen") ? colorMateria(c.materia) : "";
-      h += `<td class="cell ${clases}"${rs} data-et="${esc(et)}"${fondo ? ` style="background:${fondo}"` : ""} title="Clic para ver «${esc(et)}» en todos los grupos">${contenido(c)}</td>`;
-    });
-    h += `</tr>`;
-  });
-  wrap.innerHTML = h + `</tbody></table>`;
-
-  wrap.querySelectorAll("td.filtrable").forEach(td => td.onclick = () => {
-    const et = td.dataset.et;
-    state.filtroMateria = (filtro && norm(filtro) === norm(et)) ? null : et;
-    renderGridMateria();
-    renderTabs();
-  });
-
-  const total = etiquetas.reduce((s,e) => s + e.horas, 0);
-  const horasVista = filtro ? Array.from(mapa.values()).reduce((s,l) => s + l.length, 0) : total;
-  const puntos = (filtro ? grupos : []).map(gr =>
-    `<span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--gris)"><i style="width:10px;height:10px;border-radius:2px;background:${colorGrupo(gr)};display:inline-block"></i>${esc(grupoNombre(gr))}</span>`).join("");
-  leyenda.innerHTML = `<div class="chipsFiltro">
-      <button type="button" class="chipF ${filtro ? "" : "on"}" data-et="">Ver todo · ${total} h</button>` +
-    etiquetas.map(e => `<button type="button" class="chipF ${filtro && norm(filtro) === norm(e.etiqueta) ? "on" : ""}" data-et="${esc(e.etiqueta)}">` +
-      `<i class="sw" style="background:${colorEtiqueta(e)}"></i>${esc(e.etiqueta)} · ${e.horas} h</button>`).join("") +
-    `</div>` +
-    (filtro ? `<div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:12px;align-items:center">${puntos}<span style="font-size:11.5px;color:var(--gris)">${esc(filtro)} · ${horasVista} h en ${grupos.length === 1 ? "un grupo" : grupos.length + " grupos"}</span></div>` : "");
-  leyenda.querySelectorAll(".chipF").forEach(b => b.onclick = () => {
-    state.filtroMateria = b.dataset.et || null;
-    renderGridMateria();
-    renderTabs();
+// Filtro de la cuadrícula: atenúa las celdas cuya materia o docente no coinciden.
+function aplicarFiltroCuadricula(){
+  const q = norm((document.getElementById("filtroCuadricula").value || "").trim());
+  document.querySelectorAll("#gridwrap td.cell").forEach(td => {
+    const txt = norm(td.textContent + " " + (td.title || ""));
+    td.classList.toggle("noCoincide", !!q && !!txt.trim() && !txt.includes(q));
   });
 }
+document.getElementById("filtroCuadricula").addEventListener("input", aplicarFiltroCuadricula);
+{ const _rg = renderGrid; renderGrid = function(){ _rg.apply(this, arguments); aplicarFiltroCuadricula(); }; }
 
+// Ancho justo para el texto más largo de la columna de horas.
+function anchoHora(bloques){
+  const c = anchoHora.c || (anchoHora.c = document.createElement("canvas").getContext("2d"));
+  c.font = '600 11px "Inter","Segoe UI",system-ui,sans-serif';
+  const w = Math.max(c.measureText("HORA").width + 12, ...bloques.map(b => c.measureText(String(b)).width));
+  return Math.max(54, Math.ceil(w) + 12);
+}
 function renderGrid(){
   if (!contextoCompleto() && !state.grupos.length){
     const wrap = document.getElementById("gridwrap");
@@ -2692,7 +2557,6 @@ function renderGrid(){
     return;
   }
   if (state.modo === "docente"){ renderGridDocente(); return; }
-  if (state.modo === "materia"){ renderGridMateria(); return; }
   const wrap = document.getElementById("gridwrap");
   const rc = contextoRejilla();
   document.getElementById("tituloGrupo").textContent = (rc ? rc.titulo : "Horario") +
@@ -2710,13 +2574,13 @@ function renderGrid(){
   const nDias = state.dias.length;
   const permiteAjuste = !!rc.g;
   const filaAjuste = ext => `<tr class="filaAjuste">
-      <th class="ajusteHora">
+      <th class="ajusteHora"><div class="ajusteCaja">
         <button type="button" class="btnAjuste" data-ext="${ext}" data-dir="1" title="Agregar una hora">+</button>
         <button type="button" class="btnAjuste" data-ext="${ext}" data-dir="-1" title="Quitar esa hora">−</button>
-      </th>
+      </div></th>
       <td colspan="${nDias}"></td>
     </tr>`;
-  let h = `<table class="grid"><thead><tr><th>Hora</th>${state.dias.map(d=>`<th>${esc(d)}</th>`).join("")}</tr></thead><tbody>`;
+  let h = `<table class="grid"><colgroup><col style="width:${anchoHora(rc.bloques)}px">${state.dias.map(()=>'<col>').join('')}</colgroup><thead><tr><th>Hora</th>${state.dias.map(d=>`<th>${esc(d)}</th>`).join("")}</tr></thead><tbody>`;
   if (permiteAjuste) h += filaAjuste("inicio");
   // Horas seguidas con la misma información: una sola celda que abarca todas.
   const tramo = {}, omitir = {};
@@ -2879,7 +2743,7 @@ function todasMateriasCompletas(){
 }
 
 /* Alcance del panel «Carga docente»: sólo el grupo activo o todos los grupos. */
-let cargaScope = "grupo";
+let cargaScope = null;
 
 function renderPaneles(){
   const g = state.grupos.find(x => x.id === state.activo);
@@ -2894,16 +2758,16 @@ function renderPaneles(){
     }
     av.filas.forEach(f => {
       if (f.libre)
-        completas.push({materia:f.materia, m:`${f.materia}: ${f.horas} h programadas (actividad sin horas asignadas en el plan).`});
+        completas.push({materia:f.materia, d:`${f.horas} h · sin horas en el plan`, m:`${f.materia}: ${f.horas} h programadas (actividad sin horas asignadas en el plan).`});
       else if (f.faltan > 0)
-        pendientes.push({materia:f.materia, m:`${f.materia}: faltan ${f.faltan} h por programar de ${f.plan} h del plan.`});
+        pendientes.push({materia:f.materia, d:`Faltan ${f.faltan} h de ${f.plan} h`, m:`${f.materia}: faltan ${f.faltan} h por programar de ${f.plan} h del plan.`});
       else if (f.faltan < 0)
-        exceso.push({materia:f.materia, m:`${f.materia}: ${f.horas} h programadas contra ${f.plan} h del plan (exceso de ${-f.faltan} h).`});
+        exceso.push({materia:f.materia, d:`${f.horas} h de ${f.plan} h · ${-f.faltan} h de más`, m:`${f.materia}: ${f.horas} h programadas contra ${f.plan} h del plan (exceso de ${-f.faltan} h).`});
       else
-        completas.push({materia:f.materia, m:`${f.materia}: ${f.horas} h de ${f.plan} h del plan.`});
+        completas.push({materia:f.materia, d:`${f.horas} h de ${f.plan} h`, m:`${f.materia}: ${f.horas} h de ${f.plan} h del plan.`});
     });
     av.extras.forEach(f =>
-      pendientes.push({materia:f.materia, m:`${f.materia} no aparece en el plan de estudios del semestre ${g.semestre} (${f.horas} h programadas).`}));
+      pendientes.push({materia:f.materia, d:`Fuera del plan · ${f.horas} h`, m:`${f.materia} no aparece en el plan de estudios del semestre ${g.semestre} (${f.horas} h programadas).`}));
   }
 
   // Bloques asignados fuera de la disponibilidad que el propio docente declaró
@@ -2927,9 +2791,11 @@ function renderPaneles(){
   });
 
   const cd = document.getElementById("cargaDocente");
-  const porGrupo = cargaScope === "grupo" && !!g;
+  if (!state.grupos.some(x => x.id === cargaScope)) cargaScope = g ? g.id : (state.grupos[0] || {}).id;
+  const gc = state.grupos.find(x => x.id === cargaScope);
+  const porGrupo = !!gc;
   const conHoras = state.docentes
-        .map(d => ({d, h: horasDocenteTotal(d.id), hg: horasDocenteEnGrupo(d.id, g)}))
+        .map(d => ({d, h: horasDocenteTotal(d.id), hg: gc ? horasDocenteEnGrupo(d.id, gc) : 0}))
         .filter(x => x.h > 0)
         .sort((a,b) => porGrupo ? (b.hg - a.hg) || (b.h - a.h) : b.h - a.h);
 
@@ -2951,11 +2817,15 @@ function renderPaneles(){
     const sel = d.id === state.docenteSel ? " sel" : "";
     return `<div class="row2${sel}"><span>${esc(d.nombre)}</span><span class="tag ${cls}">${txt}</span></div>`;
   }).join("") : `<span class="vacio">${porGrupo
-      ? "Ningún docente tiene horas en " + esc(grupoNombre(g)) + " todavía."
+      ? "Ningún docente tiene horas en " + esc(grupoNombre(gc)) + " todavía."
       : "Nadie tiene horas asignadas todavía."}</span>`;
 
   const sc = document.getElementById("scopeCarga");
-  if (sc) sc.style.display = state.grupos.length ? "" : "none";
+  if (sc){
+    sc.style.display = state.grupos.length ? "" : "none";
+    sc.innerHTML = state.grupos.map(x => `<button type="button" data-g="${esc(x.id)}" class="${x.id === cargaScope ? "on" : ""}">${esc(grupoNombre(x))}</button>`).join("");
+    sc.querySelectorAll("button").forEach(bt => bt.onclick = () => { cargaScope = bt.dataset.g; renderPaneles(); });
+  }
 
   const ch = celdasEnChoque();
   if (ch.size) generales.unshift({m:`Hay ${ch.size/2} choque(s) de docente entre grupos, marcados con borde rojo en la rejilla.`});
@@ -2964,7 +2834,7 @@ function renderPaneles(){
                         (a.docenteId && a.docenteId === state.docenteSel);
   const li = (a, cls) => `<li class="${cls}${marcaSel(a)?" sel":""}${a.materia?" clic":""}"${
     a.materia ? ` data-m="${esc(a.materia)}" title="Pintar esta materia en la rejilla"` : ""
-  }>${esc(a.m)}</li>`;
+  }>${a.d ? `<span class="lm">${esc(a.materia)}</span><span class="ld">${esc(a.d)}</span>` : esc(a.m)}</li>`;
   const seccion = (titulo, items, cls, vacioTxt) =>
     `<li class="secTitulo">${titulo}</li>` +
     (items.length ? items.map(a => li(a, cls)).join("") : `<li class="vacioSec">${vacioTxt}</li>`);
@@ -2986,6 +2856,12 @@ function renderPaneles(){
     seccion("Pendientes", pendientes, "warn", "Sin materias pendientes.") +
     seccion("Exceso de horas", exceso, "bad", "Sin excesos de horas.") +
     seccion("Completas", completas, "ok", "Ninguna materia completa todavía.");
+  const foco = document.getElementById("focoMat");
+  if (foco){
+    const est = exceso.length ? "rojo" : pendientes.length ? "amarillo" : completas.length ? "verde" : "";
+    foco.className = "foco " + est;
+    foco.parentElement.title = {rojo:"Hay materias con horas de más", amarillo:"Faltan materias por programar", verde:"Todas las materias están completas", "":"Sin materias en el plan"}[est];
+  }
 
   /* Elegir una materia de la lista carga el pincel con ella y con el docente
      que esté seleccionado, para pintar de inmediato sobre la cuadrícula. */
@@ -3721,7 +3597,7 @@ function bajar(nombre, contenido, mime){
 function nombreArchivo(){
   return (state.nombreProyecto || state.periodo || "horarios").replace(/[^\wáéíóúÁÉÍÓÚñÑ ]+/g,"").trim().replace(/\s+/g,"_");
 }
-document.getElementById("btnGuardar").onclick = () => {
+if (document.getElementById("btnGuardar")) document.getElementById("btnGuardar").onclick = () => {
   bajar(`Horarios_${nombreArchivo()}.json`, instantanea(), "application/json");
   toast("Copia descargada.");
 };
@@ -4621,7 +4497,7 @@ function armarXLSX(hojas){
 
 /* ---------- Las tres hojas de datos ---------- */
 let formatoEnBlanco = false;
-function excelDeDatos(){
+function excelDeDatos(solo){
   const enc = (t, est) => ({v:t, s:est === undefined ? EST.CABEZA : est});
   const txt = v => ({v:v||"", s: (v||"") === "" ? EST.PENDIENTE : EST.TEXTO});
   const num = v => v ? {v:v, n:true, s:EST.NUMERO} : {v:"", s:EST.PENDIENTE};
@@ -4724,14 +4600,26 @@ function excelDeDatos(){
     rI++;
   });
 
-  return armarXLSX([
-    {nombre:"Docentes", xml: hojaXLSX([6,40,42,22,28,16,26,30,26,44,30], fD,
+  const hojaDeInstr = solo ? (() => {
+    const clave = {docentes:"«Docentes»", plan:"«Plan de estudios»", disponibilidad:"«Disponibilidad»"}[solo];
+    const out = []; let dentro = false, antes = true;
+    inst.forEach(([k,t]) => {
+      if (k === "T" && t.startsWith("Hoja ")){ antes = false; dentro = t.includes(clave); }
+      if (antes || dentro) out.push([k,t]);
+    });
+    const fx = []; let r = 2;
+    out.forEach(([k,t]) => { if (k === "T") r++; fx.push(filaXLSX(r, [null, {v:t, s: k === "T" ? EST.INSTR_T : EST.INSTR_P}])); r++; });
+    return fx;
+  })() : fI;
+  const todas = [
+    {id:"docentes", nombre:"Docentes", xml: hojaXLSX([6,40,42,22,28,16,26,30,26,44,30], fD,
       {congelar:4, fusiones:["A1:K1","A2:K2"]})},
-    {nombre:"Plan de estudios", xml: hojaXLSX([14,44,16,48], fP, {congelar:4, fusiones:["A1:D1","A2:D2"]})},
-    {nombre:"Disponibilidad", xml: hojaXLSX([6,34,26,32,26,34,22,14,12,16,40], fV,
+    {id:"plan", nombre:"Plan de estudios", xml: hojaXLSX([14,44,16,48], fP, {congelar:4, fusiones:["A1:D1","A2:D2"]})},
+    {id:"disponibilidad", nombre:"Disponibilidad", xml: hojaXLSX([6,34,26,32,26,34,22,14,12,16,40], fV,
       {congelar:4, fusiones:["A1:K1","A2:K2"]})},
-    {nombre:"Instrucciones", xml: hojaXLSX([4,112], fI)}
-  ]);
+  ];
+  return armarXLSX([...todas.filter(x => !solo || x.id === solo),
+    {nombre:"Instrucciones", xml: hojaXLSX([4,112], hojaDeInstr)}]);
 }
 
 const MIME_XLSX = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
@@ -4752,13 +4640,16 @@ const EJEMPLO_PLAN = [
   {semestre:"1º", materia:"Anatomía humana", horas:5, perfil:"Médico Cirujano"},
   {semestre:"1º", materia:"Bioquímica", horas:4, perfil:"Químico o Médico"}
 ];
-function descargarFormato(){
+function descargarFormato(solo){
   const docentes = state.docentes, plan = state.plan;
-  state.docentes = EJEMPLO_DOCENTES; state.plan = EJEMPLO_PLAN;
+  // Los horarios disponibles se prellenan con los docentes ya capturados, si los hay.
+  state.docentes = solo === "disponibilidad" && docentes.length ? docentes : EJEMPLO_DOCENTES;
+  state.plan = EJEMPLO_PLAN;
   let bytes;
-  try { formatoEnBlanco = true; bytes = excelDeDatos(); }
+  try { formatoEnBlanco = true; bytes = excelDeDatos(solo); }
   finally { formatoEnBlanco = false; state.docentes = docentes; state.plan = plan; }
-  descargarBytes("Formato_de_carga_docente.xlsx", bytes, MIME_XLSX);
+  const archivo = {docentes:"Formato_docentes", plan:"Formato_plan_de_estudios", disponibilidad:"Formato_horarios_disponibles"}[solo] || "Formato_de_carga_docente";
+  descargarBytes(archivo + ".xlsx", bytes, MIME_XLSX);
   toast("Formato descargado. Lea la hoja «Instrucciones» antes de capturar.");
 }
 function descargarExcel(){
@@ -4768,8 +4659,7 @@ function descargarExcel(){
   descargarBytes(`Datos_${nombreArchivo()}.xlsx`, excelDeDatos(), MIME_XLSX);
   toast(`Excel descargado · ${state.docentes.length} docentes y ${state.plan.length} materias.`);
 }
-document.getElementById("btnExcelSalida").onclick = descargarExcel;
-document.getElementById("btnFormato").onclick = descargarFormato;
+
 
 /* Imprime sólo la cuadrícula que se está viendo: se clona en una hoja aparte
    para no arrastrar los paneles ni la cinta de herramientas. */
@@ -4841,17 +4731,17 @@ function imprimirTodos(){
    ===================================================================== */
 let hojaEditor = "docentes";
 
-function abrirEditor(){
-  document.getElementById("editor").classList.add("on");
+function abrirEditor(hoja){
+  if (hoja) hojaEditor = hoja;
+  const plan = hojaEditor === "plan";
+  document.getElementById("eTabs").hidden = plan;
+  document.getElementById("eTituloPlan").hidden = !plan;
+
   pintarEditor();
 }
-function cerrarEditor(){
-  document.getElementById("editor").classList.remove("on");
-  render();
-}
-document.getElementById("btnEditar").onclick = abrirEditor;
-document.getElementById("eCerrar").onclick = cerrarEditor;
-document.getElementById("eDescargar").onclick = descargarExcel;
+let cargaSolo = null;
+document.getElementById("eFormato").onclick = () => descargarFormato(hojaEditor);
+document.getElementById("eCargar").onclick = () => { cargaSolo = hojaEditor; document.getElementById("fileExcel").click(); };
 /* Los cambios del editor se guardan solos, pero el botón lo hace en el momento
    y lo confirma, para no dejar duda de que quedaron asentados. */
 document.getElementById("eGuardar").onclick = () => {
@@ -4875,6 +4765,7 @@ function pintarEditor(){
   else if (hojaEditor === "plan")     c.innerHTML = tablaPlan();
   else                                c.innerHTML = tablaDisponibilidad();
   conectarEditor();
+  filtrarPlan();
   const mas = document.getElementById("eMas");
   if (mas) mas.onclick = agregarFilaEditor;
   const n = hojaEditor === "plan" ? state.plan.length : state.docentes.length;
@@ -4897,7 +4788,7 @@ function tablaDocentes(){
   let h = `<table class="etabla"><thead><tr>${cab.map(x=>`<th>${esc(x)}</th>`).join("")}</tr></thead><tbody>`;
   state.docentes.forEach((d, i) => {
     const horas = horasDocenteTotal(d.id);
-    h += `<tr><td class="n">${i+1}</td>
+    h += `<tr class="filaPlan" data-i="${i}"><td class="n">${i+1}</td>
       <td>${campo(i,"nombre",d.nombre)}</td>
       <td>${campo(i,"formacion",d.formacion)}</td>
       <td>${campo(i,"cedulas",d.cedulas)}</td>
@@ -4906,6 +4797,7 @@ function tablaDocentes(){
       <td class="n"><button class="ex" data-borra="${i}" title="${horas ? `Tiene ${horas} h programadas` : "Eliminar docente"}">×</button></td></tr>`;
   });
   if (!state.docentes.length) h += `<tr><td colspan="7" class="evacio">Sin docentes. Use «+ Agregar docente» o cargue el Excel.</td></tr>`;
+  else h += `<tr id="planSinRes" style="display:none"><td colspan="7" class="evacio">Ningún docente coincide con la búsqueda.</td></tr>`;
   return h + filaMas(7, "Agregar docente") + `</tbody></table>`;
 }
 
@@ -4916,8 +4808,12 @@ function tablaPlan(){
     (útil para ensayo de desfile, tutoría o campo clínico). Con 0 horas, sólo se cuentan las
     horas que le pinte, sin faltantes ni excesos.</p>
     <table class="etabla"><thead><tr>${cab.map(x=>`<th>${esc(x)}</th>`).join("")}</tr></thead><tbody>`;
+  const PASTEL = ["#ffffff","#eef5fc","#f1f8ee","#fdf5e8","#f6effa","#fcefef","#ecf7f6","#f8f6e6","#f0f0f7","#fbeff5"];
+  const sems = [...new Set(state.plan.map(p => String(p.semestre||"").trim()))]
+    .sort((a,b) => (parseInt(a)||99) - (parseInt(b)||99) || a.localeCompare(b,"es"));
   state.plan.forEach((p, i) => {
-    h += `<tr><td class="n">${i+1}</td>
+    const fondo = PASTEL[sems.indexOf(String(p.semestre||"").trim()) % PASTEL.length];
+    h += `<tr class="filaPlan" data-i="${i}" style="background:${fondo}"><td class="n">${i+1}</td>
       <td class="w90">${campo(i,"semestre",p.semestre)}</td>
       <td>${campo(i,"materia",p.materia)}</td>
       <td class="w80">${campo(i,"horas",p.horas,"num")}</td>
@@ -4925,9 +4821,36 @@ function tablaPlan(){
       <td class="n"><button class="ex" data-borra="${i}" title="Eliminar materia">×</button></td></tr>`;
   });
   if (!state.plan.length) h += `<tr><td colspan="6" class="evacio">Sin materias. Use «+ Agregar materia» o cargue el Excel.</td></tr>`;
+  else h += `<tr id="planSinRes" style="display:none"><td colspan="6" class="evacio">Ninguna materia coincide con la búsqueda.</td></tr>`;
   return h + filaMas(6, "Agregar materia") + `</tbody></table>`;
 }
 
+const buscaHoja = {};
+function filtrarPlan(){
+  const inp = document.getElementById("eBuscaPlan");
+  if (inp.dataset.hoja !== hojaEditor){
+    inp.dataset.hoja = hojaEditor; inp.value = buscaHoja[hojaEditor] || "";
+    inp.placeholder = hojaEditor === "plan" ? "Buscar materia…" : "Buscar docente por nombre…";
+  }
+  buscaHoja[hojaEditor] = inp.value;
+  const q = norm(inp.value || "");
+  let vis = 0;
+  document.querySelectorAll("#eCuerpo tr.filaPlan").forEach(tr => {
+    const p = (hojaEditor === "plan" ? state.plan : state.docentes)[Number(tr.dataset.i)];
+    const ok = !q || norm(p ? (hojaEditor === "plan" ? p.materia : p.nombre) || "" : "").includes(q);
+    tr.style.display = ok ? "" : "none"; if (ok) vis++;
+  });
+  const sr = document.getElementById("planSinRes");
+  if (sr) sr.style.display = q && !vis ? "" : "none";
+}
+document.getElementById("eBuscaPlan").oninput = filtrarPlan;
+(() => {
+  const vt = document.getElementById("vistaTabs");
+  const fija = () => { if (vt && vt.offsetHeight) document.documentElement.style.setProperty("--altoTabs", vt.offsetHeight + "px"); };
+  setTimeout(fija, 300); setTimeout(fija, 1500);
+  fija(); window.addEventListener("resize", fija); window.addEventListener("load", fija);
+  if (window.ResizeObserver) new ResizeObserver(fija).observe(vt);
+})();
 function tablaDisponibilidad(){
   const cab = ["#","Docente","Días disponibles","Horario disponible","Horarios restringidos",
                "Observaciones","Disponibilidad (clave)"];
@@ -4941,7 +4864,7 @@ function tablaDisponibilidad(){
     let pie = "";
     if (pal && pal.error) pie = `<span class="epal mala">No se pudo interpretar</span>`;
     else if (pal) pie = `<span class="epal">${esc(pal.texto)}</span>`;
-    h += `<tr><td class="n">${i+1}</td>
+    h += `<tr class="filaPlan" data-i="${i}"><td class="n">${i+1}</td>
       <td class="evinc">${esc(d.nombre)}</td>
       <td>${campo(i,"disp.dias",v.dias)}</td>
       <td>${campo(i,"disp.horario",v.horario)}</td>
@@ -4950,6 +4873,7 @@ function tablaDisponibilidad(){
       <td>${campo(i,"disp.clave",v.clave)}${pie}</td></tr>`;
   });
   if (!state.docentes.length) h += `<tr><td colspan="7" class="evacio">Sin docentes cargados.</td></tr>`;
+  else h += `<tr id="planSinRes" style="display:none"><td colspan="7" class="evacio">Ningún docente coincide con la búsqueda.</td></tr>`;
   return h + filaMas(7, "Agregar docente") + `</tbody></table>`;
 }
 
@@ -5094,5 +5018,27 @@ function agregarFilaEditor(){
 </script>
 <div id="membreteFondo"></div>
 <div id="hojaImpresion"></div>
+<script>
+(function(){
+  const tabs = document.querySelectorAll('.vistaTab');
+  tabs.forEach(t => t.onclick = () => {
+    if (t.classList.contains('on')) return;
+    tabs.forEach(x => x.classList.toggle('on', x === t));
+    const dv = t.dataset.vista;
+    const ver = dv === 'info' ? 'vistaInfo' : (dv === 'docentes' || dv === 'plan') ? 'vistaDatos' : 'vistaHorarios';
+    const actual = document.querySelector('.vista:not([hidden])');
+    const mostrar = () => { if (ver === 'vistaDatos') abrirEditor(dv === 'plan' ? 'plan' : (hojaEditor === 'plan' ? 'docentes' : hojaEditor)); else render(); document.querySelectorAll('.vista').forEach(v => {
+      const on = v.id === ver;
+      v.hidden = !on;
+      v.classList.remove('entrando');
+      if (on){ void v.offsetWidth; v.classList.add('entrando'); }
+    }); };
+    if (actual && actual.animate){
+      actual.classList.remove('entrando');
+      actual.animate([{opacity:1},{opacity:0}], {duration:180, easing:'ease-in'}).onfinish = mostrar;
+    } else mostrar();
+  });
+})();
+</script>
 </body>
 </html>
