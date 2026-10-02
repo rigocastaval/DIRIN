@@ -94,7 +94,7 @@ a:hover{color:var(--color-accent-700)}
     <p class="text-muted" style="font-size:12.5px;margin:0;line-height:1.5">El acceso es exclusivo para cuentas autorizadas por la Dirección. No hay registro abierto: si necesitas una cuenta, solicítala al administrador del sistema.</p>
   </div>
 
-  <div style="flex:1 1 420px;background:var(--color-accent);color:var(--color-bg);padding:clamp(28px,4vw,48px) clamp(24px,5vw,56px);display:flex;flex-direction:column;justify-content:space-between;gap:28px">
+  <div style="flex:1 1 420px;background-color:var(--color-accent);background-image:linear-gradient(180deg, rgba(20,8,8,.55) 0%, rgba(20,8,8,.2) 40%, rgba(20,8,8,.72) 100%), url('img/preportada.jpg');background-size:cover;background-position:center;color:#fff;padding:clamp(28px,4vw,48px) clamp(24px,5vw,56px);display:flex;flex-direction:column;justify-content:space-between;gap:28px">
     <div style="display:flex;align-items:center;gap:14px">
       <div style="width:42px;height:42px;border:2px solid var(--color-bg);display:flex;align-items:center;justify-content:center;font-family:var(--font-heading);font-weight:800;font-size:13px;letter-spacing:.04em">DI</div>
       <div style="line-height:1.15">
@@ -104,7 +104,7 @@ a:hover{color:var(--color-accent-700)}
     </div>
     <div>
       <div style="height:2px;background:var(--color-bg);opacity:.45;margin-bottom:28px;max-width:640px"></div>
-      <h1 style="margin:0;font-size:clamp(34px,6vw,56px);line-height:1.04;color:var(--color-bg);max-width:12ch">Toda la operación académica.</h1>
+      <h1 style="margin:0;font-size:clamp(34px,6vw,56px);line-height:1.04;color:#fff;max-width:12ch;text-shadow:0 2px 18px rgba(0,0,0,.35)">Toda la operación académica.</h1>
       <p style="margin:24px 0 0;font-size:16px;line-height:1.55;max-width:44ch;text-wrap:pretty">Dirección, admisión, coordinaciones, control escolar e indicadores. Cada perfil accede únicamente a los módulos que le corresponden.</p>
     </div>
     <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;opacity:.75">Ciclo 2026-B · {{ estadoConexion }}</div>
@@ -398,7 +398,7 @@ a:hover{color:var(--color-accent-700)}
           <hr class="hr">
 
           <div style="margin-bottom:28px">
-            <h5 style="margin:0;padding:12px 0">Matrícula activa · etapa en curso</h5>
+            <h3 style="margin: 0; padding: 14px 0; text-align: center; font-size: 50px">Matrícula activa</h3>
             <div style="padding:18px;display:flex;justify-content:center">{{ pastelMatricula }}</div>
             <div style="display:flex;gap:22px;flex-wrap:wrap;justify-content:center;padding:0 18px 16px;font-size:11.5px" class="text-muted">
               <span>Anillo interior: semestre</span><span>Anillo exterior: grupo</span><span>Al final de cada línea: estudiantes del grupo</span>
@@ -1805,6 +1805,151 @@ Vázquez Ledesma, Iván	MG-25-0092" style="width:100%;font-family:var(--font-bod
         </div>
       </sc-if>
 
+      <sc-if value="{{ esSegAcad }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:24px 28px 60px">
+          <sc-if value="{{ segEsLista }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap">
+              <div>
+                <h6 style="margin:0 0 4px" class="text-muted">Control Escolar</h6>
+                <h2 style="margin:0">Seguimiento académico</h2>
+              </div>
+              <span class="text-muted" style="margin-left:auto;font-size:12px">Rg regular, sin retrasos · Rp repetidor, se atrasó · Rv revalidando</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;margin-top:10px;font-size:11.5px;color:var(--color-neutral-600)">
+              <span style="width:7px;height:7px;background:currentColor;flex:none"></span>
+              <span>{{ segAviso }}</span>
+            </div>
+            <hr class="hr">
+            <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px">
+              <sc-for list="{{ segTabs }}" as="t" hint-placeholder-count="8">
+                <button class="btn {{ t.clase }}" onClick="{{ t.elegir }}" style="padding:6px 14px;font-size:12.5px;display:flex;gap:8px;align-items:baseline"><span>{{ t.etiqueta }}</span><span style="font-size:10.5px;opacity:.7">{{ t.conteo }}</span></button>
+              </sc-for>
+            </div>
+            <sc-if value="{{ segHayGrupos }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;flex-wrap:wrap;align-items:center;gap:14px 22px;border:2px solid var(--color-divider);padding:12px 16px;margin-bottom:16px">
+              <div style="flex:1 1 300px;min-width:240px">
+                <h6 style="margin:0 0 4px">Kárdex de calificaciones · {{ segGrupoSel }}</h6>
+                <p class="text-muted" style="margin:0;font-size:12px;line-height:1.55;max-width:80ch">Un libro por grupo, una hoja por estudiante. Descárguelo, capture parciales, ordinario, extraordinario y regularización en escala 0–10,000 y súbalo de nuevo. El promedio final se calcula solo.</p>
+                <sc-if value="{{ segHayKardexAviso }}" hint-placeholder-val="{{ false }}">
+                  <div style="font-size:11.5px;margin-top:6px;font-family:var(--font-heading);font-weight:700">{{ segKardexAviso }}</div>
+                </sc-if>
+              </div>
+              <input class="input" type="file" accept=".xlsx,.xls" onChange="{{ importarKardex }}" title="Subir el kárdex lleno" style="flex:0 1 260px;min-width:200px;font-size:12px">
+              <button onClick="{{ descargarKardex }}" title="Descargar el kárdex del grupo en Excel" style="border:0;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;padding:4px;color:var(--color-text);transition:transform .2s ease" style-hover="transform:scale(1.08)">
+                <svg width="34" height="34" viewBox="0 0 48 48" aria-hidden="true"><path d="M14 4h22l8 8v30a2 2 0 0 1-2 2H14a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" fill="#fff" stroke="#1D6F42" stroke-width="2"></path><path d="M36 4v8h8" fill="none" stroke="#1D6F42" stroke-width="2"></path><rect x="4" y="15" width="22" height="22" rx="2" fill="#1D6F42"></rect><path d="M9.5 20.5l11 11M20.5 20.5l-11 11" stroke="#fff" stroke-width="3" stroke-linecap="round"></path><path d="M30 20h10M30 26h10M30 32h10" stroke="#1D6F42" stroke-width="2"></path></svg>
+                <span style="font-size:11px;font-weight:600;white-space:nowrap">Descargar kárdex</span>
+              </button>
+            </div>
+            <div style="border:2px solid var(--color-divider);overflow:auto;max-height:calc(100vh - var(--alto-barra,54px) - 48px)">
+                <table style="border-collapse:separate;border-spacing:0;width:100%;min-width:980px;font-size:12.5px">
+                  <thead style="position:sticky;top:0;z-index:3">
+                    <tr>
+                      <th colspan="11" style="text-align:left;padding:11px 16px;background:var(--color-bg);border-bottom:2px solid var(--color-divider)">
+                        <div style="display:flex;align-items:baseline;gap:12px;position:sticky;left:16px;max-width:calc(100vw - 120px)">
+                          <h5 style="margin:0">{{ segGrupoSel }}</h5>
+                          <span class="text-muted" style="font-size:11.5px;font-weight:400">{{ segConteo }}</span>
+                          <span class="text-muted" style="font-size:11px;font-weight:400">{{ segOrdenTexto }}</span>
+                        </div>
+                      </th>
+                    </tr>
+                    <tr>
+                      <th rowspan="2" style="text-align:left;padding:8px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;width:34px">#</th>
+                      <th rowspan="2" style="text-align:left;padding:8px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.06em"><button onClick="{{ so.nombre.fn }}" title="Ordenar" style="background:none;border:0;padding:0;margin:0;cursor:pointer;font:inherit;color:inherit;text-transform:inherit;letter-spacing:inherit;display:inline-flex;align-items:center;gap:5px;white-space:nowrap"><span>Estudiante</span><span style="font-size:9px;color:var(--color-accent-700)">{{ so.nombre.ind }}</span></button></th>
+                      <th rowspan="2" style="text-align:left;padding:8px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.06em"><button onClick="{{ so.estado.fn }}" title="Ordenar" style="background:none;border:0;padding:0;margin:0;cursor:pointer;font:inherit;color:inherit;text-transform:inherit;letter-spacing:inherit;display:inline-flex;align-items:center;gap:5px;white-space:nowrap"><span>Estado</span><span style="font-size:9px;color:var(--color-accent-700)">{{ so.estado.ind }}</span></button></th>
+                      <th rowspan="2" style="text-align:right;padding:8px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.06em"><button onClick="{{ so.promedio.fn }}" title="Ordenar" style="background:none;border:0;padding:0;margin:0;cursor:pointer;font:inherit;color:inherit;text-transform:inherit;letter-spacing:inherit;display:inline-flex;align-items:center;gap:5px;white-space:nowrap"><span>Promedio general</span><span style="font-size:9px;color:var(--color-accent-700)">{{ so.promedio.ind }}</span></button></th>
+                      <th rowspan="2" title="Horas culturales y deportivas" style="text-align:center;padding:8px 10px;border-left:2px solid var(--color-divider);border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.06em"><button onClick="{{ so.horasCD.fn }}" title="Ordenar" style="background:none;border:0;padding:0;margin:0;cursor:pointer;font:inherit;color:inherit;text-transform:inherit;letter-spacing:inherit;display:inline-flex;align-items:center;gap:5px;white-space:nowrap"><span>Horas C y D</span><span style="font-size:9px;color:var(--color-accent-700)">{{ so.horasCD.ind }}</span></button></th>
+                      <th rowspan="2" title="Horas de servicio social" style="text-align:center;padding:8px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.06em"><button onClick="{{ so.horasSS.fn }}" title="Ordenar" style="background:none;border:0;padding:0;margin:0;cursor:pointer;font:inherit;color:inherit;text-transform:inherit;letter-spacing:inherit;display:inline-flex;align-items:center;gap:5px;white-space:nowrap"><span>Horas SS</span><span style="font-size:9px;color:var(--color-accent-700)">{{ so.horasSS.ind }}</span></button></th>
+                      <th rowspan="2" title="Llamadas de atención o amonestaciones" style="text-align:center;padding:8px 10px;border-left:2px solid var(--color-divider);border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.06em"><button onClick="{{ so.indisc.fn }}" title="Ordenar" style="background:none;border:0;padding:0;margin:0;cursor:pointer;font:inherit;color:inherit;text-transform:inherit;letter-spacing:inherit;display:inline-flex;align-items:center;gap:5px;white-space:nowrap"><span>Indisciplina</span><span style="font-size:9px;color:var(--color-accent-700)">{{ so.indisc.ind }}</span></button></th>
+                      <th rowspan="2" style="text-align:center;padding:8px 10px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.06em"><button onClick="{{ so.justif.fn }}" title="Ordenar" style="background:none;border:0;padding:0;margin:0;cursor:pointer;font:inherit;color:inherit;text-transform:inherit;letter-spacing:inherit;display:inline-flex;align-items:center;gap:5px;white-space:nowrap"><span>Justificantes</span><span style="font-size:9px;color:var(--color-accent-700)">{{ so.justif.ind }}</span></button></th>
+                      <th colspan="3" style="text-align:center;padding:8px 10px 4px;border-bottom:1px solid var(--color-divider);border-left:2px solid var(--color-divider);background:var(--color-neutral-100);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.06em">Exámenes</th>
+                    </tr>
+                    <tr>
+                      <th style="text-align:center;padding:4px 10px 8px;border-bottom:2px solid var(--color-divider);border-left:2px solid var(--color-divider);background:var(--color-neutral-100);font-size:11px;font-weight:600"><button onClick="{{ so.ord.fn }}" title="Ordenar" style="background:none;border:0;padding:0;margin:0;cursor:pointer;font:inherit;color:inherit;text-transform:inherit;letter-spacing:inherit;display:inline-flex;align-items:center;gap:5px;white-space:nowrap"><span>Ordinarios</span><span style="font-size:9px;color:var(--color-accent-700)">{{ so.ord.ind }}</span></button></th>
+                      <th style="text-align:center;padding:4px 10px 8px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-size:11px;font-weight:600"><button onClick="{{ so.extra.fn }}" title="Ordenar" style="background:none;border:0;padding:0;margin:0;cursor:pointer;font:inherit;color:inherit;text-transform:inherit;letter-spacing:inherit;display:inline-flex;align-items:center;gap:5px;white-space:nowrap"><span>Extraordinarios</span><span style="font-size:9px;color:var(--color-accent-700)">{{ so.extra.ind }}</span></button></th>
+                      <th style="text-align:center;padding:4px 10px 8px;border-bottom:2px solid var(--color-divider);background:var(--color-neutral-100);font-size:11px;font-weight:600"><button onClick="{{ so.reg.fn }}" title="Ordenar" style="background:none;border:0;padding:0;margin:0;cursor:pointer;font:inherit;color:inherit;text-transform:inherit;letter-spacing:inherit;display:inline-flex;align-items:center;gap:5px;white-space:nowrap"><span>Regularización</span><span style="font-size:9px;color:var(--color-accent-700)">{{ so.reg.ind }}</span></button></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <sc-for list="{{ segFilas }}" as="f" hint-placeholder-count="6">
+                      <tr>
+                        <td class="text-muted" style="padding:6px 10px;border-bottom:1px solid var(--color-divider)">{{ f.n }}</td>
+                        <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider)">
+                          <button onClick="{{ f.abrir }}" style="background:none;border:0;padding:0;cursor:pointer;text-align:left;font:inherit;color:var(--color-accent-700);font-size:13.5px" style-hover="text-decoration:underline">{{ f.nombre }}</button>
+                          <div class="text-muted" style="font-size:11px">{{ f.matricula }}</div>
+                        </td>
+                        <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider)">
+                          <select class="input" value="{{ f.estado }}" onChange="{{ f.setEstado }}" style="width:70px;padding:4px 6px">
+                            <option value="Rg">Rg</option>
+                            <option value="Rp">Rp</option>
+                            <option value="Rv">Rv</option>
+                          </select>
+                        </td>
+                        <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider);text-align:right;font-family:var(--font-heading);font-weight:800;font-size:15px">{{ f.promedio }}</td>
+                        <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider);border-left:2px solid var(--color-divider);text-align:center"><input class="input" inputmode="numeric" value="{{ f.horasCD }}" onChange="{{ f.setHorasCD }}" style="width:58px;text-align:center;padding:4px 6px"></td>
+                        <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider);text-align:center"><input class="input" inputmode="numeric" value="{{ f.horasSS }}" onChange="{{ f.setHorasSS }}" style="width:58px;text-align:center;padding:4px 6px"></td>
+                        <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider);border-left:2px solid var(--color-divider);text-align:center;font-family:var(--font-heading);font-weight:700">{{ f.indisc }}</td>
+                        <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider);text-align:center;font-family:var(--font-heading);font-weight:700">{{ f.justif }}</td>
+                        <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider);border-left:2px solid var(--color-divider);text-align:center;font-family:var(--font-heading);font-weight:700">{{ f.ord }}</td>
+                        <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider);text-align:center;font-family:var(--font-heading);font-weight:700">{{ f.extra }}</td>
+                        <td style="padding:6px 10px;border-bottom:1px solid var(--color-divider);text-align:center;font-family:var(--font-heading);font-weight:700">{{ f.reg }}</td>
+                      </tr>
+                    </sc-for>
+                  </tbody>
+                </table>
+            </div>
+            <p class="text-muted" style="font-size:11.5px;margin:10px 0 0;line-height:1.6;max-width:90ch">El estado se asigna con la generación de ingreso; Rv se marca a mano. Promedio y exámenes salen del kárdex cargado. Indisciplina y justificantes quedan en 0 hasta definir sus reglas. Horas y calificaciones se guardan en este navegador.</p>
+            </sc-if>
+          </sc-if>
+
+          <sc-if value="{{ segEsAlumno }}" hint-placeholder-val="{{ false }}">
+            <button class="btn btn-ghost" onClick="{{ segVolver }}" style="margin-bottom:14px;padding-left:0">{{ segAVolverTexto }}</button>
+            <h6 style="margin:0 0 4px" class="text-muted">Histórico de calificaciones</h6>
+            <h2 style="margin:0">{{ segANombre }}</h2>
+            <div class="text-muted" style="font-size:12.5px;margin-top:6px">{{ segADatos }}</div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));border:2px solid var(--color-divider);margin:20px 0">
+              <sc-for list="{{ segAKpis }}" as="k" hint-placeholder-count="4">
+                <div style="padding:14px 18px;border-right:1px solid var(--color-divider)">
+                  <div class="text-muted" style="font-size:11px;text-transform:uppercase;letter-spacing:.07em">{{ k.etiqueta }}</div>
+                  <div style="font-family:var(--font-heading);font-weight:800;font-size:28px;line-height:1.1;margin-top:4px">{{ k.valor }}</div>
+                </div>
+              </sc-for>
+            </div>
+            <sc-if value="{{ segAHayGrafica }}" hint-placeholder-val="{{ false }}">
+              <div style="border:2px solid var(--color-divider);padding:18px 18px 6px;margin:0 0 20px">{{ segAGrafica }}</div>
+            </sc-if>
+            <sc-if value="{{ segASinHist }}" hint-placeholder-val="{{ false }}">
+              <p class="text-muted" style="border:2px solid var(--color-divider);padding:22px 16px;margin:0;font-size:12.5px">Aún no hay calificaciones registradas para este estudiante.</p>
+            </sc-if>
+            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,420px),1fr));gap:20px;align-items:start">
+              <sc-for list="{{ segASems }}" as="sm" hint-placeholder-count="2">
+                <div style="border:2px solid var(--color-divider)">
+                  <div style="display:flex;align-items:baseline;gap:12px;padding:11px 16px;border-bottom:2px solid var(--color-divider)">
+                    <h5 style="margin:0">{{ sm.titulo }}</h5>
+                    <span style="margin-left:auto;font-family:var(--font-heading);font-weight:800;font-size:13px">{{ sm.promedio }}</span>
+                  </div>
+                  <table style="border-collapse:collapse;width:100%;font-size:12.5px">
+                    <thead><tr>
+                      <th style="text-align:left;padding:7px 16px;border-bottom:1px solid var(--color-divider);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.06em">Materia</th>
+                      <th style="text-align:left;padding:7px 10px;border-bottom:1px solid var(--color-divider);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.06em">Examen</th>
+                      <th style="text-align:right;padding:7px 16px;border-bottom:1px solid var(--color-divider);font-family:var(--font-heading);font-size:10.5px;text-transform:uppercase;letter-spacing:.06em">Calificación</th>
+                    </tr></thead>
+                    <tbody>
+                      <sc-for list="{{ sm.filas }}" as="h" hint-placeholder-count="5">
+                        <tr>
+                          <td style="padding:6px 16px;border-bottom:1px solid var(--color-divider)">{{ h.materia }}</td>
+                          <td class="text-muted" style="padding:6px 10px;border-bottom:1px solid var(--color-divider)">{{ h.tipo }}</td>
+                          <td style="padding:6px 16px;border-bottom:1px solid var(--color-divider);text-align:right;font-family:var(--font-heading);font-weight:800;color:{{ h.colorCalif }}">{{ h.calif }}</td>
+                        </tr>
+                      </sc-for>
+                    </tbody>
+                  </table>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+        </div>
+      </sc-if>
+
       <sc-if value="{{ esIdentidad }}" hint-placeholder-val="{{ false }}">
         <div style="padding:24px 28px 60px">
           <div style="display:flex;align-items:flex-end;gap:16px">
@@ -2851,8 +2996,11 @@ Vázquez Ledesma, Iván	MG-25-0092" style="width:100%;font-family:var(--font-bod
       </sc-if>
 
       <sc-if value="{{ esElegirPrograma }}" hint-placeholder-val="{{ false }}">
-        <div style="position:fixed;inset:0;z-index:500;background:var(--color-bg);overflow:auto;display:flex;align-items:center;justify-content:center">
-        <div style="padding:48px 28px 64px;max-width:980px;width:100%">
+        <div style="position:fixed;inset:0;z-index:500;background:#1a1a1a;overflow:auto;display:flex;align-items:center;justify-content:center;padding:28px">
+        <sc-for list="{{ epFondos }}" as="fd" hint-placeholder-count="1">
+          <div style="position:fixed;inset:0;background-image:url('{{ fd.src }}');background-size:cover;background-position:center;opacity:{{ fd.op }};transition:opacity .7s ease;pointer-events:none"></div>
+        </sc-for>
+        <div style="position:relative;padding:40px 36px 44px;max-width:980px;width:100%;background:var(--color-bg);box-shadow:0 20px 60px rgba(0,0,0,.35)">
           <div style="transition:opacity .3s ease;opacity:{{ epOpTexto }}">
           <h6 style="margin:0 0 6px" class="text-muted">{{ epInstitucion }}</h6>
           <h2 style="margin:0 0 8px">¿En qué plan de estudios va a trabajar?</h2>
@@ -2863,7 +3011,7 @@ Vázquez Ledesma, Iván	MG-25-0092" style="width:100%;font-family:var(--font-bod
           </sc-if>
           <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr));gap:14px">
             <sc-for list="{{ epProgramas }}" as="p" hint-placeholder-count="3">
-              <button onClick="{{ p.elegir }}" style="text-align:left;border:2px solid {{ p.borde }};background:var(--color-bg);padding:18px 20px;cursor:pointer;display:flex;flex-direction:column;gap:8px;color:var(--color-text);transition:transform .2s ease,opacity .3s ease,border-color .2s;opacity:{{ p.opacidad }};transform:{{ p.escala }};pointer-events:{{ p.eventos }}" style-hover="border-color:var(--color-accent);transform:scale(1.04)">
+              <button onClick="{{ p.elegir }}" onMouseEnter="{{ p.entrar }}" onMouseLeave="{{ salirFotoPrograma }}" onFocus="{{ p.entrar }}" onBlur="{{ salirFotoPrograma }}" style="text-align:left;border:2px solid {{ p.borde }};background:var(--color-bg);padding:18px 20px;cursor:pointer;display:flex;flex-direction:column;gap:8px;color:var(--color-text);transition:transform .2s ease,opacity .3s ease,border-color .2s;opacity:{{ p.opacidad }};transform:{{ p.escala }};pointer-events:{{ p.eventos }}" style-hover="border-color:var(--color-accent);transform:scale(1.04)">
                 <span style="font-family:var(--font-mono, monospace);font-weight:800;font-size:13px;color:var(--color-accent-700)">{{ p.siglas }}</span>
                 <span style="font-family:var(--font-heading);font-weight:800;font-size:18px;line-height:1.2">{{ p.nombre }}</span>
                 <span class="text-muted" style="font-size:12px">{{ p.detalle }}</span>
@@ -3327,7 +3475,7 @@ const AREAS = [
   {id:'ce', nombre:'Control Escolar', perfiles:['super','admin_inst','admin','direccion','control','estudiante'], modulos:[
     {id:'padron', nombre:'Padrón y grupos', listo:true},
     {id:'actas', nombre:'Actas de calificaciones'},
-    {id:'segacad', nombre:'Seguimiento académico'},
+    {id:'segacad', nombre:'Seguimiento académico', listo:true},
     {id:'segest', nombre:'Seguimiento de estudiantes'},
     {id:'segeg', nombre:'Seguimiento de egresados'}]},
   {id:'img', nombre:'Administración de imagen', perfiles:['super','admin_inst','admin','direccion'], modulos:[
@@ -3345,18 +3493,19 @@ const COLORES_POR_DEFECTO = ['#7a1f2b','#2C5F8A','#D9A441'];
 // líneas con conteo, latido y traslado a su lugar en la página.
 function PastelMatricula(p) {
   const h = React.createElement, secs = p.secs, total = p.total;
-  const FIN = 6600;
-  const [t, setT] = React.useState(p.intro ? 0 : FIN);
+  const FIN = 6600, TIT = 2000;
+  const [tt, setT] = React.useState(p.intro ? 0 : FIN + TIT);
+  const t = tt - TIT;
   const ref = React.useRef(null), destino = React.useRef(null);
   React.useEffect(() => {
     if (!p.intro) return;
     let raf, t0 = null;
     const paso = ts => {
       if (t0 === null) t0 = ts;
-      const v = Math.min(FIN, ts - t0);
-      if (v >= 5500 && !destino.current && ref.current) destino.current = ref.current.getBoundingClientRect();
+      const v = Math.min(FIN + TIT, ts - t0);
+      if (v >= 5500 + TIT && !destino.current && ref.current) destino.current = ref.current.getBoundingClientRect();
       setT(v);
-      if (v < FIN) raf = requestAnimationFrame(paso); else if (p.onFin) p.onFin();
+      if (v < FIN + TIT) raf = requestAnimationFrame(paso); else if (p.onFin) p.onFin();
     };
     raf = requestAnimationFrame(paso);
     return () => cancelAnimationFrame(raf);
@@ -3421,7 +3570,10 @@ function PastelMatricula(p) {
   const caja = d ? {left: r0x.left + (d.left - r0x.left) * kMov, top: r0x.top + (d.top - r0x.top) * kMov, width: r0x.width + (d.width - r0x.width) * kMov} : r0x;
   return h(React.Fragment, null, enPagina,
     h('div', {style: {position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(255,255,255,' + (1 - kMov) + ')', pointerEvents: kMov > 0.6 ? 'none' : 'auto'}},
-      h('div', {style: {position: 'absolute', left: caja.left + 'px', top: caja.top + 'px', width: caja.width + 'px'}}, svg)));
+      t < 0 ? h('div', {style: {position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px', textAlign: 'center',
+          fontFamily: 'var(--font-heading)', fontWeight: 800, fontSize: 'clamp(44px, 8vw, 104px)', lineHeight: 1.05, color: 'var(--color-text)',
+          opacity: Math.min(eo(cl(tt / 650)), 1 - cl((tt - 1350) / 650)), transform: 'scale(' + (0.97 + 0.03 * eo(cl(tt / 650))) + ')'}}, 'Matrícula Activa')
+        : h('div', {style: {position: 'absolute', left: caja.left + 'px', top: caja.top + 'px', width: caja.width + 'px'}}, svg)));
 }
 
 // Línea que recorre la trayectoria de una generación al pasar el mouse por su renglón.
@@ -3619,12 +3771,487 @@ class Component extends DCLogic {
     expedientes: SEMILLA, activo: SEMILLA[0].id, tabReingreso:'cedula', cupo:'2',
     nuevoNombre:'', nuevaMatricula:'', sync:'', syncError:false,
     estudiantes:[], inscripciones:[], padronAviso:'Sin cargar', padronError:false, padronOcupado:false,
-    tabPadron:'grupos',
+    tabPadron:'grupos', segGrupo:'', segAlumno:'',
     fPeriodo: periodoActual(), fGrado:'', fGrupo:'', fBusca:'',
     cargaTexto:'', cargaGen: String(new Date().getFullYear()),
     insPeriodo: periodoActual(), insGrado:'1', insGrupo:'A',
     promOrigen: periodoActual(), promGrado:'', promGrupo:'', promDestino: periodoSiguiente(periodoActual())
   };
+
+  // ================= Control Escolar · seguimiento académico =================
+  // Registro por estudiante (estado, horas, indisciplina, justificantes e histórico).
+  // Por ahora vive en este navegador, por institución.
+
+  segClave() { return 'dirin-segacad-' + (this.state.demo || !this.state.instActiva ? 'demo' : this.state.instActiva); }
+
+  segDatos() {
+    const k = this.segClave();
+    if (this._segCache && this._segCache.k === k) return this._segCache.d;
+    let d = {};
+    try { d = JSON.parse(localStorage.getItem(k) || '{}') || {}; } catch (e) {}
+    this._segCache = {k, d};
+    return d;
+  }
+
+  segGuardar(id, cambio) {
+    const d = Object.assign({}, this.segDatos());
+    d[id] = Object.assign({}, d[id] || {}, cambio);
+    this._segCache = {k: this.segClave(), d};
+    try { localStorage.setItem(this.segClave(), JSON.stringify(d)); } catch (e) {}
+    this.forceUpdate();
+  }
+
+  /* Etapa que le toca hoy a una generación de ingreso: agosto abre semestre impar.
+     1–8 semestres, 9–10 internado, 11–12 servicio social. */
+  segEtapaEsperada(anio) {
+    const hoy = new Date();
+    const n = (hoy.getFullYear() - anio) * 2 + (hoy.getMonth() >= 7 ? 1 : 0);
+    if (n < 1 || n > 12) return null;
+    if (n <= 8) return {id:'sem' + n, n};
+    return {id: n <= 10 ? 'internado' : 'servicio', n};
+  }
+
+  segPestana(etapaId, grupo, n) {
+    if (etapaId === 'internado') return {clave:'Internado', orden:900};
+    if (etapaId === 'servicio') return {clave:'Servicio social', orden:1000};
+    const g = String(grupo || '').toUpperCase().replace(/\s+/g, '');
+    const letra = (g.match(/[A-Z]+$/) || [''])[0];
+    return {clave: n + (letra || ''), orden: n * 100 + (letra ? letra.charCodeAt(0) - 64 : 0)};
+  }
+
+  /* Estudiantes activos hoy: la lista de cada generación en la etapa que le toca.
+     Regular = su generación de ingreso es la de esa lista; repetidor = viene de una
+     generación anterior (se atrasó). */
+  segAlumnos() {
+    if (this._segAl && this._segAl.fuente === this.trayProg()) return this._segAl.val;
+    const gens = this.trayProg();
+    const llave = a => this.normalizaTexto(a.mat || '') || this.claveNombre((a.apellidos || '') + ' ' + (a.nombres || ''));
+    const origen = {};
+    gens.forEach(g => Object.keys(g.etapas || {}).forEach(k => {
+      if (k === 'aspirantes') return;
+      ((g.etapas[k] || {}).alumnos || []).forEach(a => {
+        const c = llave(a); if (!c) return;
+        if (origen[c] == null || g.anio < origen[c]) origen[c] = g.anio;
+      });
+    }));
+    const vistos = {}, lista = [];
+    gens.slice().sort((x, y) => y.anio - x.anio).forEach(g => {
+      const esp = this.segEtapaEsperada(g.anio);
+      if (!esp) return;
+      ((((g.etapas || {})[esp.id]) || {}).alumnos || []).forEach(a => {
+        if ((a.estatus || 'activo') !== 'activo') return;
+        const c = llave(a); if (!c || vistos[c]) return;
+        vistos[c] = true;
+        const nombre = [a.apellidos, a.nombres].filter(Boolean).join(', ') || a.nombre || '—';
+        const p = this.segPestana(esp.id, a.grupo, esp.n);
+        lista.push({id:c, nombre, matricula:a.mat || '—', generacion:String(origen[c] || g.anio), lista:String(g.anio),
+          pestana:p.clave, orden:p.orden, auto: (origen[c] || g.anio) < g.anio ? 'Rp' : 'Rg', historial:[]});
+      });
+    });
+    lista.sort((x, y) => x.nombre.localeCompare(y.nombre));
+    this._segAl = {fuente: gens, val: lista};
+    return lista;
+  }
+
+  segCurriculo() {
+    if (this._curr) return this._curr;
+    const S = [
+      ['1', ['Anatomía I','Biología celular y molecular','Embriología I','Filosofía médica','Histología I','Historia y medicina I','Inglés I','Introducción a la medicina general integral','Metodología de la investigación I']],
+      ['2', ['Anatomía II','Bioestadística','Embriología II','Fisiología I','Histología II','Historia y medicina II','Informática médica I','Inglés II','Metodología de la investigación II']],
+      ['3', ['Anatomía III','Antropología','Fisiología II','Histología III','Informática médica II','Inglés médico I','Introducción a la clínica','Metabolismo intermedio y su regulación','Salud pública y comunidad']],
+      ['4', ['Agentes biológicos','Ambiente, trabajo y salud','Anatomía patológica','Informática médica III','Inglés médico II','Medicina familiar y comunitaria','Práctica de familiarización I','Psicología médica I']],
+      ['5', ['Farmacología I','Genética médica','Medicina interna','Medicina legal','Práctica de familiarización II','Prevención en salud','Propedéutica clínica y semiología médica','Psicología médica II','Psiquiatría']],
+      ['6', ['Farmacología II','Imagenología','Laboratorio clínico','Medicina comunitaria','Medicina general integral I','Nutrición en la comunidad','Práctica de familiarización III','Salud sexual y reproductiva']],
+      ['7', ['Bioética','Cirugía integral','Ginecología y obstetricia I','Medicina de desastres I','Medicina general integral II','Medicina herbolaria','Medicina natural y tradicional','Pediatría','Seminario de investigación']],
+      ['8', ['Dermatología','Ginecología y obstetricia II','Medicina de desastres II','Oftalmología','Ortopedia y traumatología','Otorrinolaringología','Salud pública','Urología']],
+      ['9-10', ['Internado médico de pregrado']],
+      ['11-12', ['Servicio social']]];
+    const A = ['AnI','Bio','EmI','Fil','HiI','HMI','InI','IMG','MeI',
+      'AnII','Bes','EmII','FiI','HiII','HMII','IfI','InII','MeII',
+      'AnIII','Ant','FiII','HiIII','IfII','IMI','ICl','Met','SPC',
+      'AgB','ATS','APa','IfIII','IMII','MFC','PFI','PsI',
+      'FaI','Gen','MIn','MLe','PFII','Pre','Pro','PsII','Psq',
+      'FaII','Img','Lab','MCo','MGI','Nut','PFIII','SSR',
+      'Bet','Cir','GOI','MDI','MGII','Her','MNT','Ped','Sem',
+      'Der','GOII','MDII','Oft','Ort','ORL','SPu','Uro',
+      'IMP','SS'];
+    this._curr = [];
+    S.forEach(([sem, ms]) => ms.forEach(m => this._curr.push({sem, materia:m, abbr: A[this._curr.length], unico: sem.indexOf('-') !== -1})));
+    return this._curr;
+  }
+
+  segNorm(t) { return String(t == null ? '' : t).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/\s+/g, ' ').trim(); }
+
+  /* Calificación del kárdex: escala 0–10,000 (7800 = 7.8). También acepta 0–10 y 0–100. */
+  segNumCalif(v) {
+    if (v === '' || v == null) return null;
+    let x;
+    if (typeof v === 'number') x = v;
+    else {
+      let t = String(v).trim().replace(/\s/g, '');
+      if (!t) return null;
+      if (/^\d{1,2}[.,]\d{3}$/.test(t)) t = t.replace(/[.,]/, '');
+      x = parseFloat(t.replace(',', '.'));
+    }
+    if (isNaN(x)) return null;
+    if (x > 100) x /= 1000; else if (x > 10) x /= 10;
+    return Math.round(x * 1000) / 1000;
+  }
+
+  /* Misma regla que la columna «Promedio final» del formato. */
+  segFinal(c) {
+    const n = v => typeof v === 'number';
+    if (c.reg > 0) return c.reg;
+    if (c.ext > 0) return c.ext;
+    const prom = vs => { const ok = vs.filter(n); return ok.length ? ok.reduce((a, b) => a + b, 0) / ok.length : null; };
+    const v = c.ord > 0 ? prom([c.p1, c.p2, c.p3, c.ord]) : prom([c.p1, c.p2, c.p3]);
+    return v != null ? v : (n(c.final) ? c.final : null);
+  }
+
+  segStats(calif) {
+    const cs = calif || [];
+    const fs = cs.map(c => this.segFinal(c)).filter(f => f != null);
+    return {prom: fs.length ? fs.reduce((a, b) => a + b, 0) / fs.length : null,
+      acred: fs.filter(f => f >= 6).length,
+      ord: cs.filter(c => c.ord > 0).length, ext: cs.filter(c => c.ext > 0).length, reg: cs.filter(c => c.reg > 0).length};
+  }
+
+  segGuardarVarios(cambios) {
+    const d = Object.assign({}, this.segDatos());
+    Object.keys(cambios).forEach(id => { d[id] = Object.assign({}, d[id] || {}, cambios[id]); });
+    this._segCache = {k: this.segClave(), d};
+    try { localStorage.setItem(this.segClave(), JSON.stringify(d)); } catch (e) {}
+    this.forceUpdate();
+  }
+
+  descargarKardex = async () => {
+    const sel = this._segSel;
+    const alumnos = this.segAlumnos().filter(a => a.pestana === sel);
+    if (!alumnos.length) { this.setState({segKardexAviso:'El grupo no tiene estudiantes.'}); return; }
+    this.setState({segKardexAviso:'Preparando el kárdex…'});
+    let XLSX;
+    try { XLSX = await this.cargarLectorXLSX(); }
+    catch (e) { this.setState({segKardexAviso:'No se pudo preparar el formato: sin conexión para armar el archivo de Excel.'}); return; }
+    const datos = this.segDatos(), curr = this.segCurriculo(), N = t => this.segNorm(t);
+    const k = v => typeof v === 'number' ? Math.round(v * 1000) : null;
+    const libro = XLSX.utils.book_new(), usados = {};
+    alumnos.forEach(a => {
+      const prev = {};
+      ((datos[a.id] || {}).calif || []).forEach(c => { prev[N(c.materia)] = c; });
+      const filas = curr.map(c => Object.assign({}, prev[N(c.materia)] || {}, c));
+      Object.keys(prev).forEach(m => { if (!curr.some(c => N(c.materia) === m)) filas.push(prev[m]); });
+      const aoa = [['Nombre:', '', a.nombre.replace(/,\s*/, ' ')], ['Generación:', '', Number(a.generacion) || a.generacion],
+        ['Matrícula:', '', a.matricula === '—' ? '' : a.matricula], [],
+        ['No.','Semestre','Asignatura','Parcial 1','Parcial 2','Parcial 3','Ordinario','Extraordinario','Regularización','Promedio final']];
+      filas.forEach((c, i) => aoa.push([i + 1, /^\d+$/.test(c.sem) ? Number(c.sem) : c.sem, c.materia,
+        k(c.p1), k(c.p2), k(c.p3), k(c.ord), k(c.ext), k(c.reg), c.unico ? k(c.final) : null]));
+      const ws = XLSX.utils.aoa_to_sheet(aoa);
+      filas.forEach((c, i) => {
+        if (c.unico) return;
+        const n = i + 6, f = this.segFinal(c);
+        ws['J' + n] = {t: f == null ? 's' : 'n', v: f == null ? '' : Math.round(f * 1000),
+          f: 'IF(COUNT(D' + n + ':I' + n + ')=0,"",IF(N(I' + n + ')>0,I' + n + ',IF(N(H' + n + ')>0,H' + n + ',IF(N(G' + n + ')>0,AVERAGE(D' + n + ':G' + n + '),AVERAGE(D' + n + ':F' + n + ')))))'};
+      });
+      const ultima = 5 + filas.length;
+      ws['!ref'] = 'A1:J' + ultima;
+      ws['!cols'] = [6, 10, 44, 10, 10, 10, 11, 14, 15, 14].map(w => ({wch: w}));
+      ws['!merges'] = [0, 1, 2].map(r => [{s:{r, c:0}, e:{r, c:1}}, {s:{r, c:2}, e:{r, c:5}}]).flat();
+      ws['!autofilter'] = {ref: 'A5:J' + ultima};
+      const ap = a.nombre.split(',')[0].trim().split(/\s+/);
+      let nom = ap[0] || 'Estudiante';
+      if (usados[nom] && ap[1]) nom = ap[0] + ' ' + ap[1];
+      nom = nom.replace(/[\\\/?*\[\]:]/g, '').slice(0, 28);
+      let fin = nom, i = 2;
+      while (usados[fin]) fin = nom + ' ' + (i++);
+      usados[fin] = true;
+      XLSX.utils.book_append_sheet(libro, ws, fin);
+    });
+    const bytes = XLSX.write(libro, {bookType:'xlsx', type:'array'});
+    const url = URL.createObjectURL(new Blob([bytes], {type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));
+    if (this.state.descargaUrl) URL.revokeObjectURL(this.state.descargaUrl);
+    this.setState({descargaUrl:url, descargaNombre:'Kardex_' + String(sel).replace(/\s+/g, '_') + '_' + (alumnos[0].lista || '') + '.xlsx',
+      segKardexAviso: alumnos.length + ' hoja(s), una por estudiante del grupo ' + sel + '.'});
+  };
+
+  importarKardex = async (ev) => {
+    const archivo = ev.target.files && ev.target.files[0];
+    if (!archivo) return;
+    ev.target.value = '';
+    this.setState({segKardexAviso:'Leyendo el kárdex…'});
+    let libro, XLSX;
+    try { XLSX = await this.cargarLectorXLSX(); libro = XLSX.read(await archivo.arrayBuffer(), {type:'array'}); }
+    catch (e) { this.setState({segKardexAviso:'No se pudo leer el archivo. Verifique que sea el kárdex en Excel (.xlsx).'}); return; }
+    const N = t => this.segNorm(t), M = t => N(t).replace(/[^a-z0-9]/g, '');
+    const lista = this.segAlumnos(), porMat = {}, porNom = {};
+    lista.forEach(a => { if (a.matricula && a.matricula !== '—') porMat[M(a.matricula)] = a; porNom[this.claveNombre(a.nombre.replace(/,/g, ' '))] = a; });
+    const cambios = {}, sinCruce = [];
+    let califs = 0;
+    libro.SheetNames.forEach(hn => {
+      const f = XLSX.utils.sheet_to_json(libro.Sheets[hn], {header:1, raw:true, defval:''});
+      const dato = p => { const r = f.find(r => M(r[0]).indexOf(p) === 0); return r ? String(r.slice(1).find(v => String(v).trim() !== '') || '').trim() : ''; };
+      const nombre = dato('nombre'), mat = dato('matricula');
+      const hi = f.findIndex(r => r.some(c => N(c) === 'asignatura'));
+      if (hi < 0) return;
+      const cab = f[hi].map(N);
+      const ci = (...p) => cab.findIndex(c => p.indexOf(c) !== -1);
+      const ix = {sem:ci('semestre'), mat:ci('asignatura'), p1:ci('parcial 1','1er parcial'), p2:ci('parcial 2','2do parcial'), p3:ci('parcial 3','3er parcial'),
+        ord:ci('ordinario'), ext:ci('extraordinario'), reg:ci('regularizacion'), fin:ci('promedio final','final')};
+      const a = (mat && porMat[M(mat)]) || porNom[this.claveNombre(nombre)];
+      if (!a) { sinCruce.push(nombre || hn); return; }
+      const g = (r, i) => i < 0 ? null : this.segNumCalif(r[i]);
+      const filas = [];
+      f.slice(hi + 1).forEach(r => {
+        const m = String(r[ix.mat] || '').trim();
+        if (!m) return;
+        const sem = String(ix.sem < 0 ? '' : r[ix.sem]).trim();
+        const c = {sem, materia:m, unico: sem.indexOf('-') !== -1, p1:g(r, ix.p1), p2:g(r, ix.p2), p3:g(r, ix.p3), ord:g(r, ix.ord), ext:g(r, ix.ext), reg:g(r, ix.reg), final:g(r, ix.fin)};
+        if (this.segFinal(c) != null) califs++;
+        filas.push(c);
+      });
+      cambios[a.id] = {calif: filas};
+    });
+    const n = Object.keys(cambios).length;
+    if (n) this.segGuardarVarios(cambios);
+    this.setState({segKardexAviso: n + ' estudiante(s) actualizados · ' + califs + ' materia(s) con calificación'
+      + (sinCruce.length ? ' · sin coincidencia: ' + sinCruce.slice(0, 3).join(', ') + (sinCruce.length > 3 ? '…' : '') : '') + '.'});
+  };
+
+  /* Gráfica del histórico: eje x = materias del plan hasta el internado, eje y = calificación. */
+  segGraficaDatos(id, calif) {
+    const N = t => this.segNorm(t);
+    const by = {};
+    (calif || []).forEach(c => { by[N(c.materia)] = c; });
+    const W = 1400, H = 590, L = 74, R = 18, TOP = 116, AX = 482;
+    const items = this.segCurriculo().filter(c => c.sem !== '11-12').map(c => {
+      const r = by[N(c.materia)];
+      return {abbr:c.abbr, materia:c.materia, sem:c.sem, f: r ? this.segFinal(r) : null, w: c.unico ? 5 : 1};
+    });
+    const slot = (W - L - R) / items.reduce((a, b) => a + b.w, 0);
+    let acc = 0;
+    items.forEach(it => { it.x0 = L + acc * slot; acc += it.w; it.x1 = L + acc * slot; it.x = (it.x0 + it.x1) / 2; });
+    const fs = items.filter(i => i.f != null).map(i => i.f);
+    const yMin = Math.max(0, Math.min(5, Math.floor(Math.min.apply(null, fs))));
+    const y = v => AX - (v - yMin) / (10 - yMin) * (AX - TOP);
+    const ticks = [];
+    for (let v = yMin; v <= 10; v++) ticks.push({v, y: y(v)});
+    const TIT = {'1':'1er semestre','2':'2do semestre','3':'3er semestre','4':'4to semestre','5':'5to semestre','6':'6to semestre','7':'7mo semestre','8':'8vo semestre','9-10':'Internado'};
+    const sems = [];
+    items.forEach(it => {
+      let s = sems[sems.length - 1];
+      if (!s || s.sem !== it.sem) { s = {sem:it.sem, titulo:TIT[it.sem] || it.sem, x0:it.x0, items:[]}; sems.push(s); }
+      s.items.push(it); s.x1 = it.x1;
+    });
+    const T0 = 3000, SEG = 95, DIV = 450, LAB = 380, PULSO = 260;
+    const color = f => f >= 9 ? '#2f9e5a' : f >= 8 ? '#ec8a1c' : f >= 6 ? '#efc531' : '#d0342c';
+    let t = T0, prev = null, ultimo = null;
+    const pts = [];
+    sems.forEach(s => {
+      s.cx = (s.x0 + s.x1) / 2;
+      const gs = s.items.filter(i => i.f != null);
+      gs.forEach(it => {
+        const i = items.indexOf(it);
+        const t0 = t;
+        if (prev != null) t += (i - prev) * SEG;
+        pts.push({x:it.x, y:y(it.f), color:color(it.f), t0, t, i, materia:it.materia, f:it.f});
+        prev = i;
+      });
+      if (gs.length) {
+        s.prom = gs.reduce((a, b) => a + b.f, 0) / gs.length;
+        s.divT = t + PULSO; s.labT = s.divT + DIV; t = s.labT + LAB; ultimo = s;
+      }
+    });
+    const genT = t + 150;
+    const divs = sems.slice(0, -1).map(s => ({x:s.x1, t: s.divT != null ? s.divT : genT, tenue: s.divT == null}));
+    return {key:id, W, H, L, R, TOP, AX, items, pts, ticks, divs, genT, fin: genT + 900,
+      sems: sems.filter(s => s.labT != null).map(s => ({titulo:s.titulo, prom:s.prom.toFixed(3), cx:s.cx, labT:s.labT, ancho:s.x1 - s.x0})),
+      gen: (fs.reduce((a, b) => a + b, 0) / fs.length).toFixed(3)};
+  }
+
+  segGraficaComp() {
+    if (this._GC) return this._GC;
+    const h = React.createElement;
+    const FH = 'var(--font-heading)';
+    this._GC = function GraficaKardex({d}) {
+      const BLANCO = 600, FUNDIDO = 650;
+      const [raw, setRaw] = React.useState(0);
+      const [vuelta, setVuelta] = React.useState(0);
+      const salto = React.useRef(false);
+      const [hov, setHov] = React.useState(null);
+      const total = BLANCO + d.fin + FUNDIDO;
+      React.useEffect(() => {
+        salto.current = false;
+        let raf, s = performance.now();
+        const paso = () => {
+          if (salto.current) { s = performance.now() - (BLANCO + d.fin); salto.current = false; }
+          const e = performance.now() - s; setRaw(e);
+          if (e < total) raf = requestAnimationFrame(paso);
+        };
+        setRaw(0);
+        raf = requestAnimationFrame(paso);
+        return () => cancelAnimationFrame(raf);
+      }, [vuelta, d.key]);
+      const dibujar = (t, enPantalla) => {
+        const P = (a, b) => Math.min(1, Math.max(0, (t - a) / (b - a)));
+        const E = x => 1 - Math.pow(1 - x, 3);
+        const {W, H, L, R, TOP, AX} = d, mx = W / 2;
+        const k = [];
+        const pd = E(P(0, 600)), ex = E(P(600, 1300)), ey = E(P(1300, 1900)), eg = E(P(1900, 2500));
+        d.ticks.forEach(tk => { if (tk.v !== d.ticks[0].v && eg > 0) k.push(h('line', {key:'g' + tk.v, x1:L, x2:L + (W - R - L) * eg, y1:tk.y, y2:tk.y, stroke:'var(--color-divider)', strokeWidth:1})); });
+        d.ticks.forEach(tk => k.push(h('text', {key:'yl' + tk.v, x:L - 10, y:tk.y + 4, textAnchor:'end', fontSize:13, fill:'var(--color-neutral-600)', opacity:P(2500, 2900), style:{fontFamily:FH}}, String(tk.v))));
+        const hp = hov && hov.tipo === 'pt' ? d.pts[hov.i] : null;
+        const hx = hov ? (hov.tipo === 'pt' ? hp.i : hov.i) : -1;
+        d.items.forEach((it, i) => k.push(h('text', {key:'xl' + i, transform:'translate(' + it.x + ',' + (AX + 10) + ') rotate(-90)', textAnchor:'end', dominantBaseline:'middle', fontSize:11,
+          fontWeight: hx === i ? 800 : 400, fill: hx === i ? 'var(--color-accent-700)' : it.f != null ? 'var(--color-text)' : 'var(--color-neutral-500)', opacity:P(2500 + i * 6, 2850 + i * 6), style:{pointerEvents:'none'}}, it.abbr)));
+        const ea = P(2500, 2900);
+        k.push(h('text', {key:'tx', x:(L + W - R) / 2, y:H - 4, textAnchor:'middle', fontSize:14, fontWeight:700, fill:'var(--color-neutral-600)', opacity:ea, style:{fontFamily:FH, letterSpacing:'.06em'}}, 'Materias'));
+        k.push(h('text', {key:'ty', transform:'translate(18,' + ((TOP + AX) / 2) + ') rotate(-90)', textAnchor:'middle', fontSize:14, fontWeight:700, fill:'var(--color-neutral-600)', opacity:ea, style:{fontFamily:FH, letterSpacing:'.06em'}}, 'Calificación'));
+        d.divs.forEach((dv, i) => { const p = E(P(dv.t, dv.t + 450)); if (p > 0) k.push(h('line', {key:'d' + i, x1:dv.x, x2:dv.x, y1:AX, y2:AX - (AX - 12) * p, stroke:'var(--color-text)', strokeWidth:1.2, strokeDasharray:'4 5', opacity: dv.tenue ? .3 : .75})); });
+        if (ex > 0) k.push(h('line', {key:'ax', x1:mx - (mx - L) * ex, x2:mx + (W - R - mx) * ex, y1:AX, y2:AX, stroke:'var(--color-text)', strokeWidth:2}));
+        if (ey > 0) k.push(h('line', {key:'ay', x1:L, x2:L, y1:AX, y2:AX - (AX - TOP + 8) * ey, stroke:'var(--color-text)', strokeWidth:2}));
+        if (ex < 1) k.push(h('circle', {key:'pt', cx:mx, cy:H / 2 + (AX - H / 2) * pd, r:6, fill:'var(--color-text)', opacity:P(0, 150)}));
+        d.sems.forEach((s, i) => {
+          const p = E(P(s.labT, s.labT + 380));
+          if (p <= 0) return;
+          const chico = s.ancho < 110;
+          k.push(h('g', {key:'s' + i, opacity:p, transform:'translate(0,' + (10 * (1 - p)) + ')'},
+            h('text', {x:s.cx, y:44, textAnchor:'middle', fontSize:chico ? 12 : 15, fill:'var(--color-neutral-600)', style:{fontFamily:FH}}, s.titulo),
+            h('text', {x:s.cx, y:82, textAnchor:'middle', fontSize:chico ? 22 : 30, fontWeight:800, fill:'var(--color-text)', style:{fontFamily:FH}}, s.prom)));
+        });
+        const vis = [];
+        d.pts.forEach((p, i) => {
+          if (t >= p.t) vis.push([p.x, p.y]);
+          else if (i > 0 && t > p.t0 && t >= d.pts[i - 1].t) { const f = (t - p.t0) / (p.t - p.t0), q = d.pts[i - 1]; vis.push([q.x + (p.x - q.x) * f, q.y + (p.y - q.y) * f]); }
+        });
+        if (vis.length > 1) k.push(h('polyline', {key:'ln', points:vis.map(v => v.join(',')).join(' '), fill:'none', stroke:'var(--color-text)', strokeWidth:2, strokeLinejoin:'round', strokeLinecap:'round'}));
+        d.pts.forEach((p, i) => {
+          if (t < p.t) return;
+          const e = t - p.t, sc = e < 460 ? 1 + .75 * Math.sin(Math.PI * e / 460) : 1;
+          k.push(h('circle', {key:'c' + i, cx:p.x, cy:p.y, r:(hov && hov.tipo === 'pt' && hov.i === i ? 8 : 6) * sc, fill:p.color, stroke:'var(--color-bg)', strokeWidth:2, style:{pointerEvents:'none'}}));
+        });
+        const globo = (x, y, txt, clave) => {
+          const w = txt.length * 7.4 + 20, gx = Math.max(L, Math.min(W - R - w, x - w / 2));
+          return h('g', {key:clave, style:{pointerEvents:'none'}},
+            h('rect', {x:gx, y:y - 30, width:w, height:26, fill:'var(--color-text)'}),
+            h('text', {x:gx + w / 2, y:y - 13, textAnchor:'middle', fontSize:13, fill:'var(--color-bg)', style:{fontFamily:FH}}, txt));
+        };
+        if (hp && t >= hp.t) {
+          k.push(h('line', {key:'hv', x1:hp.x, x2:hp.x, y1:hp.y + 8, y2:AX, stroke:'#9a9a9a', strokeWidth:1.2, strokeDasharray:'3 4', style:{pointerEvents:'none'}}));
+          k.push(h('line', {key:'hh', x1:L, x2:hp.x - 8, y1:hp.y, y2:hp.y, stroke:'#9a9a9a', strokeWidth:1.2, strokeDasharray:'3 4', style:{pointerEvents:'none'}}));
+          k.push(h('text', {key:'hvl', x:L + 6, y:hp.y - 6, fontSize:12, fontWeight:800, fill:'var(--color-text)', style:{fontFamily:FH, pointerEvents:'none'}}, hp.f.toFixed(3)));
+          k.push(globo(hp.x, hp.y - 10, hp.materia + ' · ' + hp.f.toFixed(3), 'hg'));
+        }
+        if (hov && hov.tipo === 'x') k.push(globo(d.items[hov.i].x, AX - 6, d.items[hov.i].materia, 'xg'));
+        if (ea > 0) d.items.forEach((it, i) => k.push(h('rect', {key:'hx' + i, x:it.x0, y:AX + 4, width:it.x1 - it.x0, height:56, fill:'transparent',
+          onMouseEnter: () => setHov({tipo:'x', i}), onMouseLeave: () => setHov(null)})));
+        d.pts.forEach((p, i) => { if (t >= p.t) k.push(h('circle', {key:'hp' + i, cx:p.x, cy:p.y, r:13, fill:'transparent', style:{cursor:'crosshair'},
+          onMouseEnter: () => setHov({tipo:'pt', i}), onMouseLeave: () => setHov(null)})); });
+          const pg = E(P(d.genT, d.genT + 650)), fin = t >= d.fin;
+        return h('div', {style: enPantalla ? {width:'min(100%, 1500px)'} : null},
+          h('div', {style:{display:'grid', gridTemplateColumns:'1fr auto 1fr', alignItems:'end', gap:16, marginBottom:6}},
+            h('div'),
+            h('div', {style:{textAlign:'center', opacity:pg, transform:'translateY(' + (14 * (1 - pg)) + 'px)'}},
+              h('div', {style:{fontFamily:FH, fontSize:16, color:'var(--color-neutral-600)'}}, 'Promedio General'),
+              h('div', {style:{fontFamily:FH, fontWeight:800, fontSize:48, lineHeight:1.05}}, d.gen)),
+            h('button', {className:'btn btn-ghost', onClick: () => { if (enPantalla) salto.current = true; else setVuelta(v => v + 1); }, style:{justifySelf:'end', fontSize:12, visibility: enPantalla && fin ? 'hidden' : 'visible'}}, enPantalla ? 'Saltar animación' : 'Repetir animación')),
+          h('svg', {viewBox:'0 0 ' + W + ' ' + H, width:'100%', style:{display:'block', overflow:'visible'}, role:'img', 'aria-label':'Calificaciones por materia'}, k));
+      };
+      const capa = raw < total;
+      const op = raw <= BLANCO + d.fin ? 1 : 1 - (raw - BLANCO - d.fin) / FUNDIDO;
+      return h(React.Fragment, null,
+        h('div', {style:{visibility: capa ? 'hidden' : 'visible'}}, dibujar(1e9, false)),
+        capa ? h('div', {style:{position:'fixed', left:0, right:0, bottom:0, top:'var(--alto-barra,54px)', zIndex:45, background:'var(--color-bg)', opacity:op,
+          display:'flex', alignItems:'center', justifyContent:'center', padding:'24px 32px', overflow:'auto'}},
+          raw > BLANCO ? dibujar(raw - BLANCO, true) : null) : null);
+    };
+    return this._GC;
+  }
+
+  valsSegAcad() {
+    const s = this.state;
+    if (s.vista !== 'segacad') return {esSegAcad:false};
+    const lista = this.segAlumnos();
+    const datos = this.segDatos();
+    const grupos = {};
+    lista.forEach(a => { (grupos[a.pestana] = grupos[a.pestana] || {clave:a.pestana, orden:a.orden, alumnos:[]}).alumnos.push(a); });
+    const orden = Object.values(grupos).sort((a, b) => a.orden - b.orden);
+    const sel = grupos[s.segGrupo] ? s.segGrupo : (orden[0] ? orden[0].clave : '');
+    const reg = a => Object.assign({estado:a.auto, horasCD:'', horasSS:'', calif:[]}, datos[a.id] || {});
+    const num = v => String(v).replace(/[^\d]/g, '').slice(0, 4);
+    const ESTADOS = {Rg:'Regular', Rp:'Repetidor', Rv:'Revalidando'};
+    const alumno = s.segAlumno ? lista.find(a => a.id === s.segAlumno) : null;
+    this._segSel = sel;
+    const ETQ = {nombre:'nombre', estado:'estado', promedio:'promedio general', horasCD:'horas C y D', horasSS:'horas SS',
+      indisc:'indisciplina', justif:'justificantes', ord:'ordinarios', extra:'extraordinarios', reg:'regularizaciones'};
+    const ord = s.segOrden || {};
+    const fmt = v => v == null ? '—' : v.toFixed(3);
+    const filas = (grupos[sel] ? grupos[sel].alumnos : []).map(a => {
+      const r = reg(a), st = this.segStats(r.calif);
+      const set = k => e => this.segGuardar(a.id, {[k]: num(e.target.value)});
+      return {nombre:a.nombre, matricula:a.matricula, estado:r.estado,
+        setEstado: e => this.segGuardar(a.id, {estado:e.target.value}),
+        promedio:fmt(st.prom), horasCD:r.horasCD, setHorasCD:set('horasCD'), horasSS:r.horasSS, setHorasSS:set('horasSS'),
+        indisc:'0', justif:'0', ord:String(st.ord), extra:String(st.ext), reg:String(st.reg),
+        _v: {nombre:a.nombre, estado:r.estado, promedio:st.prom == null ? -1 : st.prom, horasCD:+r.horasCD || 0, horasSS:+r.horasSS || 0,
+          indisc:0, justif:0, ord:st.ord, extra:st.ext, reg:st.reg},
+        abrir: () => this.setState({segAlumno:a.id})};
+    });
+    if (ord.k) filas.sort((x, y) => {
+      const p = x._v[ord.k], q = y._v[ord.k];
+      const c = typeof p === 'string' ? p.localeCompare(q, 'es') : p - q;
+      return (c || x._v.nombre.localeCompare(y._v.nombre, 'es')) * (c ? ord.dir : 1);
+    });
+    filas.forEach((f, i) => { f.n = String(i + 1); delete f._v; });
+    const o = {
+      esSegAcad: true,
+      segEsLista: !alumno, segEsAlumno: !!alumno,
+      segAviso: lista.length
+        ? lista.length + ' estudiantes activos · listas de Trayectoria escolar en la etapa que corresponde a cada generación.'
+        : 'Sin estudiantes activos: carga en Trayectoria escolar las listas de 1.º, 3.º, 5.º y 7.º semestre, Internado y Servicio social.',
+      segTabs: orden.map(g => ({etiqueta:g.clave, conteo:String(g.alumnos.length), clase: g.clave === sel ? 'btn-primary' : 'btn-secondary',
+        elegir: () => this.setState({segGrupo:g.clave, segAlumno:''})})),
+      segGrupoSel: sel,
+      segHayGrupos: orden.length > 0,
+      segConteo: grupos[sel] ? grupos[sel].alumnos.length + ' estudiantes' : '',
+      segFilas: filas,
+      segOrdenTexto: ord.k ? 'Ordenado por ' + ETQ[ord.k] + (ord.dir > 0 ? ', ascendente' : ', descendente') : '',
+      so: Object.fromEntries(Object.keys(ETQ).map(k => [k, {ind: ord.k === k ? (ord.dir > 0 ? '▲' : '▼') : '↕',
+        fn: () => this.setState({segOrden: ord.k === k ? {k, dir: -ord.dir} : {k, dir: (k === 'nombre' || k === 'estado') ? 1 : -1}})}])),
+      segKardexAviso: s.segKardexAviso || '', segHayKardexAviso: !!s.segKardexAviso,
+      descargarKardex: this.descargarKardex, importarKardex: this.importarKardex,
+      segVolver: () => this.setState({segAlumno:''})
+    };
+    if (alumno) {
+      const r = reg(alumno);
+      const stA = this.segStats(r.calif);
+      const porSem = {}, ordenSem = [];
+      (r.calif || []).forEach(c => {
+        const f = this.segFinal(c); if (f == null) return;
+        if (!porSem[c.sem]) { porSem[c.sem] = []; ordenSem.push(c.sem); }
+        porSem[c.sem].push({materia:c.materia, calif:f.toFixed(3), colorCalif: f < 6 ? '#c8341f' : 'inherit', f,
+          tipo: c.unico ? 'Calificación única' : c.reg > 0 ? 'Regularización' : c.ext > 0 ? 'Extraordinario' : c.ord > 0 ? 'Ordinario' : 'Parciales'});
+      });
+      const semsA = ordenSem.map(k => {
+        const fs = porSem[k];
+        const t = k === '9-10' ? 'Internado' : k === '11-12' ? 'Servicio social' : 'Semestre ' + k;
+        return {titulo:t, promedio: (fs.reduce((x, y) => x + y.f, 0) / fs.length).toFixed(3), filas:fs};
+      });
+      Object.assign(o, {
+        segANombre: alumno.nombre,
+        segADatos: alumno.matricula + ' · generación ' + alumno.generacion + ' · ' + (/^\d/.test(alumno.pestana) ? 'grupo ' : '') + alumno.pestana + ' · ' + ESTADOS[r.estado],
+        segAVolverTexto: '← Volver a ' + sel,
+        segAKpis: [
+          {etiqueta:'Promedio general', valor:fmt(stA.prom)},
+          {etiqueta:'Materias acreditadas', valor:String(stA.acred)},
+          {etiqueta:'Extraordinarios', valor:String(stA.ext)},
+          {etiqueta:'Regularizaciones', valor:String(stA.reg)}],
+        segASinHist: !semsA.length,
+        segAHayGrafica: !!semsA.length,
+        segAGrafica: semsA.length ? React.createElement(this.segGraficaComp(), {d: this.segGraficaDatos(alumno.id, r.calif)}) : null,
+        segASems: semsA
+      });
+    }
+    return o;
+  }
 
   // ================= Control Escolar · padrón =================
 
@@ -6963,6 +7590,12 @@ class Component extends DCLogic {
       esElegirPrograma: s.vista === 'programa',
       epOpTexto: s.epFase ? 0 : 1,
       epInstitucion: inst ? inst.nombre : '',
+      epFondos: (() => {
+        const foto = n => { const t = this.normalizaTexto(n || ''); return t.indexOf('medic') !== -1 ? 'img/ujm-medicina.jpg' : t.indexOf('fisio') !== -1 ? 'img/ujm-fisio.jpg' : t.indexOf('entren') !== -1 || t.indexOf('deport') !== -1 ? 'img/ujm-entrenamiento.jpg' : ''; };
+        const act = foto(s.epFoto);
+        return ['img/ujm-portada.jpg', 'img/ujm-medicina.jpg', 'img/ujm-fisio.jpg', 'img/ujm-entrenamiento.jpg'].map((src, i) => ({src, op: (act ? src === act : i === 0) ? 1 : 0}));
+      })(),
+      salirFotoPrograma: () => this.setState({epFoto:''}),
       epSinProgramas: !progs.length,
       epProgramas: progs.map(p => {
         const alumnos = {};
@@ -6976,6 +7609,7 @@ class Component extends DCLogic {
           opacidad: s.epFase ? (p === s.epSaliendo ? (s.epFase === 2 ? 0 : 1) : 0) : 1,
           escala: p === s.epSaliendo ? (s.epFase === 2 ? 'scale(1.1)' : 'scale(1.04)') : 'none',
           eventos: s.epFase ? 'none' : 'auto',
+          entrar: () => this.setState({epFoto:p}),
           elegir: () => this.salirAPrograma(p)};
       })
     };
@@ -9921,7 +10555,8 @@ class Component extends DCLogic {
       esReingreso: s.vista === 'reingreso',
       esPadron: s.vista === 'padron',
       esIdentidad: s.vista === 'identidad',
-      esObra: ['programa','inicio','admision','fichaid','indicadores','carga','calendario','usuarios','reingreso','padron','identidad','instituciones','trayectoria','contabilidad','expediente','evaldocente','publicas'].indexOf(s.vista) === -1,
+      esObra: ['programa','inicio','admision','fichaid','indicadores','carga','calendario','usuarios','reingreso','padron','identidad','instituciones','trayectoria','contabilidad','expediente','evaldocente','publicas','segacad'].indexOf(s.vista) === -1,
+      ...this.valsSegAcad(),
       ...this.valsExpediente(),
       ...this.valsEvalDocente(),
       ...this.valsTrayectoria(),
